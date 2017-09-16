@@ -79,7 +79,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Android," />
+  <meta name="keywords" content="Help," />
 
 
 
@@ -95,23 +95,18 @@
 
 
 
-<meta name="description" content="在Android开发中我们可能会遇到这样的问题，onTouch与onTouchEvent的区别是什么？onTouch与onClick又有什么区别？什么时候需要重写onTouchEvent事件进行使用呢？为什么我写的view没有不论点击还是滑动都没响应呢？等等这一系列的问题都与Android的事件分发机制有关，现在我们来慢慢剖析Android的事件分发原理。 先提俩个问题：    事件是怎么传递">
-<meta name="keywords" content="Android">
+<meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta name="keywords" content="Help">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Android 事件传递机制解析">
-<meta property="og:url" content="http://lavnfan.github.io/2016/04/21/TouchEvent/index.html">
+<meta property="og:title" content="Hello Hexo">
+<meta property="og:url" content="http://lavnfan.github.io/2017/09/08/hello-hexo/index.html">
 <meta property="og:site_name" content="IvanFan">
-<meta property="og:description" content="在Android开发中我们可能会遇到这样的问题，onTouch与onTouchEvent的区别是什么？onTouch与onClick又有什么区别？什么时候需要重写onTouchEvent事件进行使用呢？为什么我写的view没有不论点击还是滑动都没响应呢？等等这一系列的问题都与Android的事件分发机制有关，现在我们来慢慢剖析Android的事件分发原理。 先提俩个问题：    事件是怎么传递">
+<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/TouchEvent_1.jpg">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/TouchEvent_2.jpg">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/TouchEvent_3.jpg">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/TouchEvent_4.jpg">
-<meta property="og:updated_time" content="2017-09-11T14:57:38.429Z">
+<meta property="og:updated_time" content="2017-09-11T14:57:10.829Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Android 事件传递机制解析">
-<meta name="twitter:description" content="在Android开发中我们可能会遇到这样的问题，onTouch与onTouchEvent的区别是什么？onTouch与onClick又有什么区别？什么时候需要重写onTouchEvent事件进行使用呢？为什么我写的view没有不论点击还是滑动都没响应呢？等等这一系列的问题都与Android的事件分发机制有关，现在我们来慢慢剖析Android的事件分发原理。 先提俩个问题：    事件是怎么传递">
-<meta name="twitter:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/TouchEvent_1.jpg">
+<meta name="twitter:title" content="Hello Hexo">
+<meta name="twitter:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
 
 
 
@@ -141,13 +136,13 @@
 
 
 
-  <link rel="canonical" href="http://lavnfan.github.io/2016/04/21/TouchEvent/"/>
+  <link rel="canonical" href="http://lavnfan.github.io/2017/09/08/hello-hexo/"/>
 
 
 
 
 
-  <title>Android 事件传递机制解析 | IvanFan</title>
+  <title>Hello Hexo | IvanFan</title>
   
 
 
@@ -274,7 +269,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lavnfan.github.io/2016/04/21/TouchEvent/">
+    <link itemprop="mainEntityOfPage" href="http://lavnfan.github.io/2017/09/08/hello-hexo/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="IvanFan">
@@ -291,7 +286,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Android 事件传递机制解析</h1>
+          <h1 class="post-title" itemprop="name headline">Hello Hexo</h1>
         
 
         <div class="post-meta">
@@ -303,8 +298,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-04-21T20:00:00+08:00">
-                2016-04-21
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-08T20:00:00+08:00">
+                2017-09-08
               </time>
             
 
@@ -326,8 +321,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
+                  <a href="/categories/Hexo/" itemprop="url" rel="index">
+                    <span itemprop="name">Hexo</span>
                   </a>
                 </span>
 
@@ -344,9 +339,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2016/04/21/TouchEvent/#comments" itemprop="discussionUrl">
+                <a href="/2017/09/08/hello-hexo/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2016/04/21/TouchEvent/" itemprop="commentCount"></span>
+                        data-disqus-identifier="2017/09/08/hello-hexo/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -379,66 +374,55 @@
       
 
       
-        <p>　　在Android开发中我们可能会遇到这样的问题，onTouch与onTouchEvent的区别是什么？onTouch与onClick又有什么区别？什么时候需要重写onTouchEvent事件进行使用呢？为什么我写的view没有不论点击还是滑动都没响应呢？等等这一系列的问题都与Android的事件分发机制有关，现在我们来慢慢剖析Android的事件分发原理。</p>
-<p><strong>先提俩个问题：</strong>  </p>
-<ol>
-<li>事件是怎么传递的？</li>
-<li>事件又是如何处理？</li>
-</ol>
-<p>Android中与事件有关的API函数是：</p>
-<blockquote>
-<p><code>public boolean dispatchTouchEvent(MotionEvent ev);</code>     //分发事件<br><code>public boolean onInterceptTouchEvent(MotionEvent ev);</code> //拦截事件<br><code>public boolean onTouchEvent(MotionEvent ev);</code>          //处理事件</p>
-</blockquote>
-<h2 id="一、事件分发机制"><a href="#一、事件分发机制" class="headerlink" title="一、事件分发机制"></a>一、事件分发机制</h2><h3 id="1、事件是如何传递的："><a href="#1、事件是如何传递的：" class="headerlink" title="1、事件是如何传递的："></a>1、事件是如何传递的：</h3><p>　　ViewGroup接收到事件后进行事件的分派，如果自己需要处理这个事件，则进行拦截；如果不处理，则传递给子View进行处理，然后由子view进行分派，拦截和处理。可类比于：上级接到任务后进行任务分派，如果上级自己处理这个任务，则自己处理；如果不想处理，则把这个任务丢给下级进行处理…</p>
-<p> 我们需要注意：</p>
-<ul>
-<li>viewGroup中包含的最小子view是不含拦截onInterceptTouchEvent事件的，最小的子view比如Button,TextView…因为他们已在树的最低层，已无法向下传递了。</li>
-</ul>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/TouchEvent_1.jpg" height="600" width="800"><br>上图左边部分很清楚形象的描述了事件的传递：</p>
-<ul>
-<li>对于ViewGroup,接收事件后，进行分发：<ul>
-<li><strong>如果不进行分发</strong>，则dispatchTouchEv返回<strong>true</strong>，事件消亡未处理。</li>
-<li><strong>如果进行分发该事件</strong>，则dispatchTouchEvent返回false，处理或传递该事件：<ul>
-<li><strong>如果想自己处理该事件</strong>,则onInterceptTouchEvent返回true，拦截事件，给自己的onTouchEvent进行处理；</li>
-<li><strong>如果不想处理该事件</strong>，则onInterceptTouchEvent返回false，把事件传递给子View进行处理。</li>
-</ul>
+        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><ul>
+<li><p>Create a new post</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
+<p>  More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
+</li>
+<li><p>Run server</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server(hexo s)</div></pre></td></tr></table></figure>
+<p>  More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
+</li>
+<li><p>Generate static files</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate(hexo g)</div></pre></td></tr></table></figure>
+<p>  More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
+</li>
+<li><p>Deploy to remote sites</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy(hexo d)</div></pre></td></tr></table></figure>
+<p>  More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
 </li>
 </ul>
-</li>
-<li>对于最底层的子View，没有onInterceptEvent拦截事件，接收到事件后进行分发：<ul>
-<li><strong>如果不进行分发</strong>，则dispatchTouchEvent返回<strong>false</strong>，事件未处理，注意这里的最小子view返回false代表未分发事件；</li>
-<li><strong>如果进行分发该事件</strong>，则dispatchTouchEvent返回true：<ul>
-<li><strong>如果处理该事件</strong>，则onTouchEvent返回true把该事件消费掉；</li>
-<li><strong>如果不想处理该事件</strong>，则onTouchEvent返回false，等待上级处理。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>上边所讲的是ViewGroup与最底层的子view之间的事件传递，那Android整个事件的传递机制该如何呢？</p>
-<p><strong>首先由Activity分发事件</strong>(<em>和最底层的子View一样无拦截事件，因为最顶层嘛，拦截了就无法传递了</em>)，  <strong>先分发给根View,也就是DecorView</strong>（<em>DeCorView为整个Window界面的最顶层的View,包含通知栏，标题栏，内容显示栏三块区域,我们经常写的setContentView就是为DecorView中的内容栏进行设置</em>），<br><strong>然后由根View分发到子View。</strong></p>
-<h3 id="2、事件是如何处理的："><a href="#2、事件是如何处理的：" class="headerlink" title="2、事件是如何处理的："></a>2、事件是如何处理的：</h3><p>  <strong>假若经过分发与拦截后，最终将事件传递到了某个子View，则事件处理如下图所示：</strong></p>
-<p>　　<img src="http://7xrhn4.com1.z0.glb.clouddn.com/TouchEvent_2.jpg" height="700"></p>
-<p>子View的onTouchEvent进行事件处理，<strong>如果返回true，则消耗此事件，不会再继续传递；如果返回false，则不处理此事件，把这个事件往上一级的ViewGroup进行传递，由上一级进行处理</strong>。<em>可类比如：上级把任务交给你进行处理，但由于能力不够无法处理，则把任务交给上一级进行处理，如果上一级还处理不了，则继续往上传递处理。</em>最终事件是否处理，由子View和ViewGroup的onTouchEvent的返回值决定是否会把事件消耗掉。</p>
-<h2 id="二、onTouch事件"><a href="#二、onTouch事件" class="headerlink" title="二、onTouch事件"></a>二、onTouch事件</h2><h3 id="1、onTouch与onTouchEvent"><a href="#1、onTouch与onTouchEvent" class="headerlink" title="1、onTouch与onTouchEvent"></a>1、onTouch与onTouchEvent</h3><p>想弄清楚这俩个的关系，我们可以先来看一下他们在源码中的位置：</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/TouchEvent_3.jpg" alt=""></p>
+<h2 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h2><h3 id="更新发布失效"><a href="#更新发布失效" class="headerlink" title="更新发布失效"></a>更新发布失效</h3><p>如果部署到 github 上，但没有更新的话，需要在部署时清掉缓存，重新生成</p>
 <ul>
-<li>首先我们要清楚，dispatchTouchEvent是onTouchEvent，onTouch和onInterceptEvent的入口，他们都是在dispatchTouchEvent分发事件中决定是否要拦截和处理的；</li>
-<li>其次，黄线代表onTouch事件的位置，红线代表onTouchEvent事件的位置，可以得到，<strong>onTouch的执行顺序总是在onTouchEvent事件前的</strong>；而且如果onTouch执行后返回true后，就会使得result为true，不会再去执行onTouchEvent事件了，只有当onTouch事件没有执行或返回为false时onTouchEvent才会得到执行。</li>
-<li>onTouch执行需要俩个前提条件：其一是需要设置mOnTouchListener，其二是当前View必须要enable。如果控件为disable，则onTouch事件不管怎么样都不会执行；但如果需要响应触摸事件呢？这时我们不是还有onTouchEvent事件嘛，重写一下onTouchEvent方法来实现Touch的响应就行了。</li>
+<li>删除 public 文件，<code>npm install</code> 或者 <code>hexo clean</code></li>
 </ul>
-<h3 id="2、onTouch与onClick"><a href="#2、onTouch与onClick" class="headerlink" title="2、onTouch与onClick"></a>2、onTouch与onClick</h3><p>查看源码，我们发现：</p>
-<p>　　<img src="http://7xrhn4.com1.z0.glb.clouddn.com/TouchEvent_4.jpg" height="800" width="700"></p>
-<p>onClick事件藏在onTouchEvent事件的ACTION_UP中，也就是标示的performClick，这样结合上面onTouch与onTouchEvent事件的关系，可以很容易得到：</p>
 <ul>
-<li>执行先后不一样。触摸事件先执行（onTouch&gt;onClick）</li>
-<li>触摸事件返回值影响点击事件（前者影响后者，而后者不影响前者）；onTouch方法的返回值改为true时，只执行onTouch事件，不执行onClick事件，当然也不执行onTouchEvent事件。</li>
+<li>hexo g -d</li>
 </ul>
-<p><strong>参考资料：</strong></p>
-<blockquote>
-<p><a href="http://www.cnblogs.com/smyhvae/p/4802274.html?utm_source=tuicool&amp;utm_medium=referral" target="_blank" rel="external">http://www.cnblogs.com/smyhvae/p/4802274.html?utm_source=tuicool&amp;utm_medium=referral</a></p>
-<p><a href="http://blog.csdn.net/guolin_blog/article/details/9097463" target="_blank" rel="external">http://blog.csdn.net/guolin_blog/article/details/9097463</a></p>
-</blockquote>
+<h3 id="git-添加-next-主题"><a href="#git-添加-next-主题" class="headerlink" title="git 添加 next 主题"></a>git 添加 next 主题</h3><p>next 等主题是直接用 git clone 或 fork下来的，是一个子项目，所以需要引入子模块来管理，否则 next 主题是提交不上的。</p>
+<ul>
+<li><p>如果出现个问题：“already exists in the index”，可以先清掉 .git 中的主题文件：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git rm -r --cached theme/next</div></pre></td></tr></table></figure>
+</li>
+<li><p>在 GitHub 上 fork next 库，再在本地 hexo 的 git 库中添加 submodlue：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git submodule add git@github.com:lavnFan/hexo-theme-next.git themes/next</div></pre></td></tr></table></figure>
+</li>
+<li><p>修改 next 风格，再在 theme/next 的 git 库中提交 </p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">git add .   </div><div class="line">git commit -m &quot;next settings in fork next rep&quot;  </div><div class="line">git push origin master //这是提交到fork后主题的仓库</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>​</p>
+<ul>
+<li><p>回到根目录提交 next，这样以 submodule 的子库形式关联 next 的仓库。  </p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">cd ../../ //切到仓库的根目录   </div><div class="line">git add .   </div><div class="line">git commit -m &quot;update next&quot;   </div><div class="line">git push origin hexo //注意hexo分支</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="多端同步-hexo"><a href="#多端同步-hexo" class="headerlink" title="多端同步 hexo"></a>多端同步 hexo</h3><p>基本思路是用俩个库分别管理：</p>
+<ul>
+<li>master 分支：用来保存 Hexo 生成的博客文件，指向 GitHub Pages</li>
+<li>Hexo 分支：用来保存所有 Hexo 的源文件，需私有，避免暴露，可以指向 GitHub 或 coding 等平台的私有仓库。</li>
+</ul>
 
       
     </div>
@@ -459,7 +443,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://lavnfan.github.io/2016/04/21/TouchEvent/" title="Android 事件传递机制解析">http://lavnfan.github.io/2016/04/21/TouchEvent/</a>
+    <a href="http://lavnfan.github.io/2017/09/08/hello-hexo/" title="Hello Hexo">http://lavnfan.github.io/2017/09/08/hello-hexo/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -474,7 +458,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
+            <a href="/tags/Help/" rel="tag"><i class="fa fa-tag"></i> Help</a>
           
         </div>
       
@@ -487,14 +471,18 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2017/09/04/Effect Java/" rel="next" title="Effect Java">
+                <i class="fa fa-chevron-left"></i> Effect Java
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/04/23/Sort/" rel="prev" title="排序常用算法总结">
-                排序常用算法总结 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/09/16/Java 和 Native 通信/" rel="prev" title="Java和Native通信">
+                Java和Native通信 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -647,7 +635,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、事件分发机制"><span class="nav-number">1.</span> <span class="nav-text">一、事件分发机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、事件是如何传递的："><span class="nav-number">1.1.</span> <span class="nav-text">1、事件是如何传递的：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、事件是如何处理的："><span class="nav-number">1.2.</span> <span class="nav-text">2、事件是如何处理的：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、onTouch事件"><span class="nav-number">2.</span> <span class="nav-text">二、onTouch事件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、onTouch与onTouchEvent"><span class="nav-number">2.1.</span> <span class="nav-text">1、onTouch与onTouchEvent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、onTouch与onClick"><span class="nav-number">2.2.</span> <span class="nav-text">2、onTouch与onClick</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-Start"><span class="nav-number">1.</span> <span class="nav-text">Quick Start</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见问题"><span class="nav-number">2.</span> <span class="nav-text">常见问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#更新发布失效"><span class="nav-number">2.1.</span> <span class="nav-text">更新发布失效</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-添加-next-主题"><span class="nav-number">2.2.</span> <span class="nav-text">git 添加 next 主题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多端同步-hexo"><span class="nav-number">2.3.</span> <span class="nav-text">多端同步 hexo</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -822,9 +810,9 @@
     
       <script type="text/javascript">
         var disqus_config = function () {
-          this.page.url = 'http://lavnfan.github.io/2016/04/21/TouchEvent/';
-          this.page.identifier = '2016/04/21/TouchEvent/';
-          this.page.title = 'Android 事件传递机制解析';
+          this.page.url = 'http://lavnfan.github.io/2017/09/08/hello-hexo/';
+          this.page.identifier = '2017/09/08/hello-hexo/';
+          this.page.title = 'Hello Hexo';
         };
         var d = document, s = d.createElement('script');
         s.src = 'https://ivanfanwu.disqus.com/embed.js';

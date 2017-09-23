@@ -105,7 +105,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/bucket_sort.png">
 <meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/radix_sort.png">
-<meta property="og:updated_time" content="2017-09-11T14:57:30.084Z">
+<meta property="og:updated_time" content="2017-09-23T14:09:42.727Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="排序常用算法总结">
 <meta name="twitter:description" content="排序算法：一种能将一串数据依照特定的排序方式进行排列的一种算法。排序算法性能：取决于时间和空间复杂度，其次还得考虑稳定性，及其适应的场景。稳定性：让原本有相等键值的记录维持相对次序。也就是若一个排序算法是稳定的，当有俩个相等键值的记录R和S，且原本的序列中R在S前，那么排序后的列表中R应该也在S之前。   以下来总结常用的排序算法，加深对排序的理解。 排序算法目录 冒泡排序 插入排序 希尔排序 选">
@@ -396,62 +396,14 @@
 <h2 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a><p id="冒泡排序">冒泡排序</p></h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>俩俩比较相邻记录的排序码，若发生逆序，则交换；有俩种方式进行冒泡，一种是先把小的冒泡到前边去，另一<br>种是把大的元素冒泡到后边。</p>
 <h3 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h3><p>时间复杂度为O(N^2)，空间复杂度为O(1)。排序是稳定的，排序比较次数与初始序列无关，但交换次数与初始序列有关。    </p>
 <h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><p>若初始序列就是排序好的，对于冒泡排序仍然还要比较O(N^2)次，但无交换次数。可根据这个进行优化，设置一个flag，当在一趟序列中没有发生交换，则该序列已排序好，但优化后排序的时间复杂度没有发生量级的改变。</p>
-<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><pre><code>void bubble_sort(int arr[], int len){
-//每次从后往前冒一个最小值，且每次能确定一个数在序列中的最终位置
-    for (int i = 0; i &lt; len-1; i++){         //比较n-1次
-        bool exchange = true;               //冒泡的改进，若在一趟中没有发生逆序，则该序列已有序
-        for (int j = len-1; j &gt;i; j--){    // 每次从后边冒出一个最小值
-            if (arr[j] &lt; arr[j - 1]){       //发生逆序，则交换
-                swap(arr[j], arr[j - 1]);
-                exchange = false;
-            }
-        }
-        if (exchange){
-            return;
-        }
-    }
-}
-</code></pre><h2 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a><p id="插入排序">插入排序</p></h2><h3 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h3><p>依次选择一个待排序的数据，插入到前边已排好序的序列中。</p>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">bubble_sort</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> len)</span></span>&#123;</div><div class="line"><span class="comment">//每次从后往前冒一个最小值，且每次能确定一个数在序列中的最终位置</span></div><div class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len<span class="number">-1</span>; i++)&#123;         <span class="comment">//比较n-1次</span></div><div class="line">		<span class="keyword">bool</span> exchange = <span class="literal">true</span>;               <span class="comment">//冒泡的改进，若在一趟中没有发生逆序，则该序列已有序</span></div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> j = len<span class="number">-1</span>; j &gt;i; j--)&#123;    <span class="comment">// 每次从后边冒出一个最小值</span></div><div class="line">			<span class="keyword">if</span> (arr[j] &lt; arr[j - <span class="number">1</span>])&#123;       <span class="comment">//发生逆序，则交换</span></div><div class="line">				swap(arr[j], arr[j - <span class="number">1</span>]);</div><div class="line">				exchange = <span class="literal">false</span>;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> (exchange)&#123;</div><div class="line">			<span class="keyword">return</span>;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a><p id="插入排序">插入排序</p></h2><h3 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h3><p>依次选择一个待排序的数据，插入到前边已排好序的序列中。</p>
 <h3 id="性能-1"><a href="#性能-1" class="headerlink" title="性能"></a>性能</h3><p>时间复杂度为O(N^2)，空间复杂度为O(1)。算法是稳定的，比较次数和交换次数都与初始序列有关。</p>
 <h3 id="优化-1"><a href="#优化-1" class="headerlink" title="优化"></a>优化</h3><p>直接插入排序每次往前插入时，是按顺序依次往前找，可在这里进行优化，往前找合适的插入位置时采用二分查找的方式，即折半插入。<br><strong>折半插入排序</strong>相对直接插入排序而言：平均性能更快，时间复杂度降至O(NlogN)，排序是稳定的，但排序的比较次数与初始序列无关，总是需要foor(log(i))+1次排序比较。</p>
 <h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>当数据基本有序时，采用插入排序可以明显减少数据交换和数据移动次数，进而提升排序效率。</p>
-<h3 id="代码-1"><a href="#代码-1" class="headerlink" title="代码"></a>代码</h3><pre><code>void insert_sort(int arr[], int len){
-//每次把当前的数往前插入，可以顺序插入，改进的可以进行二分插入
-    for (int i = 1; i &lt; len; i++){
-        if (arr[i] &lt; arr[i - 1]){      //发生逆序，往前插入
-            int temp = arr[i];
-            int j;
-            for (j = i - 1;j&gt;=0 &amp;&amp; arr[j]&gt;temp; j--){
-                arr[j+1] = arr[j];
-            }
-            arr[j+1] = temp;
-        }
-    }
-}
-
-void insert_binary_sort(int arr[], int len){
-    //改进的插入排序，往前插入比较时，进行二分查找
-    for (int i = 1; i &lt; len; i++){
-        if (arr[i] &lt; arr[i - 1]){
-            int temp = arr[i];
-            int low = 0, high = i - 1, mid;
-            while (low &lt;= high){
-                mid = (low + high) / 2;
-                if (temp &lt; arr[mid]){
-                    high = mid - 1;
-                }
-                else{
-                    low = mid + 1;
-                }
-            }
-            for (int j = i; j &gt;low; j--){
-                arr[j] = arr[j - 1];
-            }
-            arr[low] = temp;
-        }
-    }
-}
-</code></pre><h2 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a><p id="希尔排序">希尔排序</p></h2><h3 id="原理-2"><a href="#原理-2" class="headerlink" title="原理"></a>原理</h3><p>插入排序的改进版，是基于插入排序的以下俩点性质而提出的改进方法：  </p>
+<h3 id="代码-1"><a href="#代码-1" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">insert_sort</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> len)</span></span>&#123;</div><div class="line"><span class="comment">//每次把当前的数往前插入，可以顺序插入，改进的可以进行二分插入</span></div><div class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; len; i++)&#123;</div><div class="line">		<span class="keyword">if</span> (arr[i] &lt; arr[i - <span class="number">1</span>])&#123;      <span class="comment">//发生逆序，往前插入</span></div><div class="line">			<span class="keyword">int</span> temp = arr[i];</div><div class="line">			<span class="keyword">int</span> j;</div><div class="line">			<span class="keyword">for</span> (j = i - <span class="number">1</span>;j&gt;=<span class="number">0</span> &amp;&amp; arr[j]&gt;temp; j--)&#123;</div><div class="line">				arr[j+<span class="number">1</span>] = arr[j];</div><div class="line">			&#125;</div><div class="line">			arr[j+<span class="number">1</span>] = temp;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">insert_binary_sort</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> len)</span></span>&#123;</div><div class="line">	<span class="comment">//改进的插入排序，往前插入比较时，进行二分查找</span></div><div class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; len; i++)&#123;</div><div class="line">		<span class="keyword">if</span> (arr[i] &lt; arr[i - <span class="number">1</span>])&#123;</div><div class="line">			<span class="keyword">int</span> temp = arr[i];</div><div class="line">			<span class="keyword">int</span> low = <span class="number">0</span>, high = i - <span class="number">1</span>, mid;</div><div class="line">			<span class="keyword">while</span> (low &lt;= high)&#123;</div><div class="line">				mid = (low + high) / <span class="number">2</span>;</div><div class="line">				<span class="keyword">if</span> (temp &lt; arr[mid])&#123;</div><div class="line">					high = mid - <span class="number">1</span>;</div><div class="line">				&#125;</div><div class="line">				<span class="keyword">else</span>&#123;</div><div class="line">					low = mid + <span class="number">1</span>;</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">for</span> (<span class="keyword">int</span> j = i; j &gt;low; j--)&#123;</div><div class="line">				arr[j] = arr[j - <span class="number">1</span>];</div><div class="line">			&#125;</div><div class="line">			arr[low] = temp;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>​    </p>
+<h2 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a><p id="希尔排序">希尔排序</p></h2><h3 id="原理-2"><a href="#原理-2" class="headerlink" title="原理"></a>原理</h3><p>插入排序的改进版，是基于插入排序的以下俩点性质而提出的改进方法：  </p>
 <ul>
 <li>插入排序对几乎已排好序的数据操作时，效率很高，可以达到线性排序的效率。</li>
 <li>但插入排序在每次往前插入时只能将数据移动一位，效率比较低。</li>
@@ -463,36 +415,11 @@ void insert_binary_sort(int arr[], int len){
 <li>直到，最后gap=1时，将所有元素放在同一个序列中进行插入排序为止。</li>
 </ul>
 <h3 id="性能-2"><a href="#性能-2" class="headerlink" title="性能"></a>性能</h3><p>开始时，gap取值较大，子序列中的元素较少，排序速度快，克服了直接插入排序的缺点；其次，gap值逐渐变小后，虽然子序列的元素逐渐变多，但大多元素已基本有序，所以继承了直接插入排序的优点，能以近线性的速度排好序。  </p>
-<h3 id="代码-2"><a href="#代码-2" class="headerlink" title="代码"></a>代码</h3><pre><code>void shell_sort(int arr[], int len){
-    //每次选择一个gap，对相隔gap的数进行插入排序
-    for (int gap = len / 2; gap &gt; 0; gap /= 2){
-        for (int i = 0; i &lt; len; i = i + gap){
-            int temp = arr[i];
-            int j;
-            for (j = i; j &gt;= gap &amp;&amp; temp &lt; arr[j-gap]; j -= gap){
-                arr[j] = arr[j - gap];
-            }
-            arr[j] = temp;
-        }
-    }
-}
-</code></pre><h2 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a><p id="选择排序">选择排序</p></h2><h3 id="原理-3"><a href="#原理-3" class="headerlink" title="原理"></a>原理</h3><p>每次从未排序的序列中找到最小值，记录并最后存放到已排序序列的末尾</p>
+<h3 id="代码-2"><a href="#代码-2" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">shell_sort</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> len)</span></span>&#123;</div><div class="line">	<span class="comment">//每次选择一个gap，对相隔gap的数进行插入排序</span></div><div class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> gap = len / <span class="number">2</span>; gap &gt; <span class="number">0</span>; gap /= <span class="number">2</span>)&#123;</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i = i + gap)&#123;</div><div class="line">			<span class="keyword">int</span> temp = arr[i];</div><div class="line">			<span class="keyword">int</span> j;</div><div class="line">			<span class="keyword">for</span> (j = i; j &gt;= gap &amp;&amp; temp &lt; arr[j-gap]; j -= gap)&#123;</div><div class="line">				arr[j] = arr[j - gap];</div><div class="line">			&#125;</div><div class="line">			arr[j] = temp;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a><p id="选择排序">选择排序</p></h2><h3 id="原理-3"><a href="#原理-3" class="headerlink" title="原理"></a>原理</h3><p>每次从未排序的序列中找到最小值，记录并最后存放到已排序序列的末尾</p>
 <h3 id="性能-3"><a href="#性能-3" class="headerlink" title="性能"></a>性能</h3><p>时间复杂度为O(N^2)，空间复杂度为O(1)，排序是不稳定的（把最小值交换到已排序的末尾导致的），每次都能确定一个元素所在的最终位置，比较次数与初始序列无关。</p>
-<h3 id="代码-3"><a href="#代码-3" class="headerlink" title="代码"></a>代码</h3><pre><code>void select_sort(int arr[], int len){
-    //每次从后边选择一个最小值
-    for (int i = 0; i &lt; len-1; i++){     //只需选择n-1次
-        int min = i;
-        for (int j = i+1; j &lt; len; j++){
-            if (arr[min]&gt;arr[j]){
-                min = j;
-            }
-        }
-        if (min != i){
-            swap(arr[i], arr[min]);
-        }
-    }
-}
-</code></pre><h2 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a><p id="快速排序">快速排序</p></h2><h3 id="原理-4"><a href="#原理-4" class="headerlink" title="原理"></a>原理</h3><p>分而治之思想：</p>
+<h3 id="代码-3"><a href="#代码-3" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">select_sort</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> len)</span></span>&#123;</div><div class="line">	<span class="comment">//每次从后边选择一个最小值</span></div><div class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len<span class="number">-1</span>; i++)&#123;     <span class="comment">//只需选择n-1次</span></div><div class="line">		<span class="keyword">int</span> min = i;</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> j = i+<span class="number">1</span>; j &lt; len; j++)&#123;</div><div class="line">			<span class="keyword">if</span> (arr[min]&gt;arr[j])&#123;</div><div class="line">				min = j;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> (min != i)&#123;</div><div class="line">			swap(arr[i], arr[min]);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a><p id="快速排序">快速排序</p></h2><h3 id="原理-4"><a href="#原理-4" class="headerlink" title="原理"></a>原理</h3><p>分而治之思想：</p>
 <ul>
 <li>Divide：找到基准元素pivot，将数组A[p..r]划分为A[p..pivotpos-1]和A[pivotpos+1…q]，左边的元素都比基准小，右边的元素都比基准大;</li>
 <li>Conquer：对俩个划分的数组进行递归排序；</li>
@@ -504,62 +431,8 @@ void insert_binary_sort(int arr[], int len){
 <li>优化基准，不每次都从左边取，可以进行三路划分，分别取最左边，中间和最右边的中间值，再交换到最左边进行排序；或者进行随机取得待排序数组中的某一个元素，再交换到最左边，进行排序。</li>
 <li>在规模较小情况下，采用直接插入排序</li>
 </ul>
-<h3 id="代码-4"><a href="#代码-4" class="headerlink" title="代码"></a>代码</h3><pre><code>//快速排序
-int partition(int arr[], const int left, const int right){
-    //对序列进行划分，以第一个为基准
-    int pivot = arr[left];
-    int pivotpos = left;
-    for (int i = left+1; i &lt;= right; i++){
-        if (arr[i] &lt; pivot){
-            pivotpos++;
-            if (pivotpos != i){     //如果交换元素就位于基准后第一个，则不需要交换
-                swap(arr[i], arr[pivotpos]);
-            }
-        }
-    }
-    arr[left] = arr[pivotpos];
-    arr[pivotpos] = pivot;
-    return pivotpos;
-}
-void quick_sort(int arr[],const int left,const int right){
-    if (left &lt; right){
-        int pivotpos = partition(arr, left, right);
-        quick_sort(arr, left, pivotpos - 1);
-        quick_sort(arr, pivotpos + 1, right);
-    }
-}
-void quick_sort(int arr[], int len){
-    quick_sort(arr, 0, len - 1);
-}
-
-int improve_partition(int arr[], int left, int right){
-    //基准进行随机化处理
-    int n = right - left + 1;
-    srand(time((unsigned)0));
-    int gap = rand() % n;
-    swap(arr[left], arr[left + gap]);  //把随机化的基准与左边进行交换
-    //再从左边开始进行
-    return partition(arr,left,right);
-}
-void quick_improve_sort(int arr[], const int left, const int right){
-    //改进的快速排序
-    //改进的地方：1、在规模较小时采用插入排序
-    //2、基准进行随机选择
-    int M = 5;
-    if (right - left &lt; M){
-        insert_sort(arr, right-left+2);
-    }
-    if (left&gt;=right){
-        return;
-    }
-    int pivotpos = improve_partition(arr, left, right);
-    quick_improve_sort(arr, left, pivotpos - 1);
-    quick_improve_sort(arr, pivotpos + 1, right);
-}
-void quick_improve_sort(int arr[], int len){
-    quick_improve_sort(arr, 0, len - 1);
-}
-</code></pre><h2 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a><p id="归并排序">归并排序</p></h2><h3 id="原理-5"><a href="#原理-5" class="headerlink" title="原理"></a>原理</h3><p>分而治之思想：</p>
+<h3 id="代码-4"><a href="#代码-4" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//快速排序</span></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">partition</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">const</span> <span class="keyword">int</span> left, <span class="keyword">const</span> <span class="keyword">int</span> right)</span></span>&#123;</div><div class="line">	<span class="comment">//对序列进行划分，以第一个为基准</span></div><div class="line">	<span class="keyword">int</span> pivot = arr[left];</div><div class="line">	<span class="keyword">int</span> pivotpos = left;</div><div class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = left+<span class="number">1</span>; i &lt;= right; i++)&#123;</div><div class="line">		<span class="keyword">if</span> (arr[i] &lt; pivot)&#123;</div><div class="line">			pivotpos++;</div><div class="line">			<span class="keyword">if</span> (pivotpos != i)&#123;     <span class="comment">//如果交换元素就位于基准后第一个，则不需要交换</span></div><div class="line">				swap(arr[i], arr[pivotpos]);</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	arr[left] = arr[pivotpos];</div><div class="line">	arr[pivotpos] = pivot;</div><div class="line">	<span class="keyword">return</span> pivotpos;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">quick_sort</span><span class="params">(<span class="keyword">int</span> arr[],<span class="keyword">const</span> <span class="keyword">int</span> left,<span class="keyword">const</span> <span class="keyword">int</span> right)</span></span>&#123;</div><div class="line">	<span class="keyword">if</span> (left &lt; right)&#123;</div><div class="line">		<span class="keyword">int</span> pivotpos = partition(arr, left, right);</div><div class="line">		quick_sort(arr, left, pivotpos - <span class="number">1</span>);</div><div class="line">		quick_sort(arr, pivotpos + <span class="number">1</span>, right);</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">quick_sort</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> len)</span></span>&#123;</div><div class="line">	quick_sort(arr, <span class="number">0</span>, len - <span class="number">1</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">improve_partition</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span></span>&#123;</div><div class="line">	<span class="comment">//基准进行随机化处理</span></div><div class="line">	<span class="keyword">int</span> n = right - left + <span class="number">1</span>;</div><div class="line">	srand(time((<span class="keyword">unsigned</span>)<span class="number">0</span>));</div><div class="line">	<span class="keyword">int</span> gap = rand() % n;</div><div class="line">	swap(arr[left], arr[left + gap]);  <span class="comment">//把随机化的基准与左边进行交换</span></div><div class="line">	<span class="comment">//再从左边开始进行</span></div><div class="line">	<span class="keyword">return</span> partition(arr,left,right);</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">quick_improve_sort</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">const</span> <span class="keyword">int</span> left, <span class="keyword">const</span> <span class="keyword">int</span> right)</span></span>&#123;</div><div class="line">	<span class="comment">//改进的快速排序</span></div><div class="line">	<span class="comment">//改进的地方：1、在规模较小时采用插入排序</span></div><div class="line">	<span class="comment">//2、基准进行随机选择</span></div><div class="line">	<span class="keyword">int</span> M = <span class="number">5</span>;</div><div class="line">	<span class="keyword">if</span> (right - left &lt; M)&#123;</div><div class="line">		insert_sort(arr, right-left+<span class="number">2</span>);</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> (left&gt;=right)&#123;</div><div class="line">		<span class="keyword">return</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">int</span> pivotpos = improve_partition(arr, left, right);</div><div class="line">	quick_improve_sort(arr, left, pivotpos - <span class="number">1</span>);</div><div class="line">	quick_improve_sort(arr, pivotpos + <span class="number">1</span>, right);</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">quick_improve_sort</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> len)</span></span>&#123;</div><div class="line">	quick_improve_sort(arr, <span class="number">0</span>, len - <span class="number">1</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a><p id="归并排序">归并排序</p></h2><h3 id="原理-5"><a href="#原理-5" class="headerlink" title="原理"></a>原理</h3><p>分而治之思想：</p>
 <ul>
 <li>Divide：将n个元素平均划分为各含n/2个元素的子序列；</li>
 <li>Conquer：递归的解决俩个规模为n/2的子问题；</li>
@@ -571,60 +444,8 @@ void quick_improve_sort(int arr[], int len){
 <li>在规模较小时，合并排序可采用直接插入；</li>
 <li>在写法上，可以在生成辅助数组时，俩头小，中间大，这时不需要再在后边加俩个while循环进行判断，只需一次比完。</li>
 </ul>
-<h3 id="代码-5"><a href="#代码-5" class="headerlink" title="代码"></a>代码</h3><pre><code>//归并排序
-void merge(int arr[],int temp_arr[],int left,int mid, int right){
-    //简单归并：先复制到temp_arr，再进行归并
-    for (int i = left; i &lt;= right; i++){
-        temp_arr[i] = arr[i];
-    }
-    int pa = left, pb = mid + 1;
-    int index = left;
-    while (pa &lt;= mid &amp;&amp; pb &lt;= right){
-        if (temp_arr[pa] &lt;= temp_arr[pb]){
-            arr[index++] = temp_arr[pa++];
-        }
-        else{
-            arr[index++] = temp_arr[pb++];
-        }
-    }
-    while(pa &lt;= mid){
-        arr[index++] = temp_arr[pa++];
-    }
-    while (pb &lt;= right){
-        arr[index++] = temp_arr[pb++];
-    }
-}
-void merge_improve(int arr[], int temp_arr[], int left, int mid, int right){
-    //优化归并：复制时，俩头小，中间大，一次比较完
-    for (int i = left; i &lt;= mid; i++){
-        temp_arr[i] = arr[i];
-    }
-    for (int i = mid + 1; i &lt;= right; i++){
-        temp_arr[i] = arr[right + mid + 1 - i];
-    }
-    int pa = left, pb = right, p = left;
-    while (p &lt;= right){
-        if (temp_arr[pa] &lt;= temp_arr[pb]){
-            arr[p++] = temp_arr[pa++];
-        }else{
-            arr[p++] = temp_arr[pb--];
-        }
-    }
-}
-void merge_sort(int arr[],int temp_arr[], int left, int right){
-    if (left &lt; right){
-        int mid = (left + right) / 2;
-        merge_sort(arr,temp_arr,0, mid);
-        merge_sort(arr, temp_arr,mid + 1, right);
-        merge(arr,temp_arr,left,mid,right);
-    }
-}
-
-void merge_sort(int arr[], int len){
-    int *temp_arr = (int*)malloc(sizeof(int)*len);
-    merge_sort(arr,temp_arr, 0, len - 1);
-}
-</code></pre><h2 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a><p id="堆排序">堆排序</p></h2><h3 id="原理-6"><a href="#原理-6" class="headerlink" title="原理"></a>原理</h3><p>堆的性质：</p>
+<h3 id="代码-5"><a href="#代码-5" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//归并排序</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">merge</span><span class="params">(<span class="keyword">int</span> arr[],<span class="keyword">int</span> temp_arr[],<span class="keyword">int</span> left,<span class="keyword">int</span> mid, <span class="keyword">int</span> right)</span></span>&#123;</div><div class="line">	<span class="comment">//简单归并：先复制到temp_arr，再进行归并</span></div><div class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = left; i &lt;= right; i++)&#123;</div><div class="line">		temp_arr[i] = arr[i];</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">int</span> pa = left, pb = mid + <span class="number">1</span>;</div><div class="line">	<span class="keyword">int</span> index = left;</div><div class="line">	<span class="keyword">while</span> (pa &lt;= mid &amp;&amp; pb &lt;= right)&#123;</div><div class="line">		<span class="keyword">if</span> (temp_arr[pa] &lt;= temp_arr[pb])&#123;</div><div class="line">			arr[index++] = temp_arr[pa++];</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">else</span>&#123;</div><div class="line">			arr[index++] = temp_arr[pb++];</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">while</span>(pa &lt;= mid)&#123;</div><div class="line">		arr[index++] = temp_arr[pa++];</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">while</span> (pb &lt;= right)&#123;</div><div class="line">		arr[index++] = temp_arr[pb++];</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">merge_improve</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> temp_arr[], <span class="keyword">int</span> left, <span class="keyword">int</span> mid, <span class="keyword">int</span> right)</span></span>&#123;</div><div class="line">	<span class="comment">//优化归并：复制时，俩头小，中间大，一次比较完</span></div><div class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = left; i &lt;= mid; i++)&#123;</div><div class="line">		temp_arr[i] = arr[i];</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = mid + <span class="number">1</span>; i &lt;= right; i++)&#123;</div><div class="line">		temp_arr[i] = arr[right + mid + <span class="number">1</span> - i];</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">int</span> pa = left, pb = right, p = left;</div><div class="line">	<span class="keyword">while</span> (p &lt;= right)&#123;</div><div class="line">		<span class="keyword">if</span> (temp_arr[pa] &lt;= temp_arr[pb])&#123;</div><div class="line">			arr[p++] = temp_arr[pa++];</div><div class="line">		&#125;<span class="keyword">else</span>&#123;</div><div class="line">			arr[p++] = temp_arr[pb--];</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">merge_sort</span><span class="params">(<span class="keyword">int</span> arr[],<span class="keyword">int</span> temp_arr[], <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span></span>&#123;</div><div class="line">	<span class="keyword">if</span> (left &lt; right)&#123;</div><div class="line">		<span class="keyword">int</span> mid = (left + right) / <span class="number">2</span>;</div><div class="line">		merge_sort(arr,temp_arr,<span class="number">0</span>, mid);</div><div class="line">		merge_sort(arr, temp_arr,mid + <span class="number">1</span>, right);</div><div class="line">		merge(arr,temp_arr,left,mid,right);</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">merge_sort</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> len)</span></span>&#123;</div><div class="line">	<span class="keyword">int</span> *temp_arr = (<span class="keyword">int</span>*)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">int</span>)*len);</div><div class="line">	merge_sort(arr,temp_arr, <span class="number">0</span>, len - <span class="number">1</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a><p id="堆排序">堆排序</p></h2><h3 id="原理-6"><a href="#原理-6" class="headerlink" title="原理"></a>原理</h3><p>堆的性质：</p>
 <ul>
 <li>是一棵完全二叉树</li>
 <li>每个节点的值都大于或等于其子节点的值，为最大堆；反之为最小堆。</li>
@@ -637,60 +458,12 @@ void merge_sort(int arr[], int len){
 </ul>
 <h3 id="性能-6"><a href="#性能-6" class="headerlink" title="性能"></a>性能</h3><p>时间复杂度为O(NlogN)，空间复杂度为O(1)，因为利用的排序空间仍然是初始的序列，并未开辟新空间。算法是不稳定的，与初始序列无关。</p>
 <h3 id="使用场景-1"><a href="#使用场景-1" class="headerlink" title="使用场景"></a>使用场景</h3><p>想知道最大值或最小值时，比如优先级队列，作业调度等场景。</p>
-<h3 id="代码-6"><a href="#代码-6" class="headerlink" title="代码"></a>代码</h3><pre><code>void shiftDown(int arr[], int start, int end){  
-    //从start出发到end，调整为最大堆
-    int dad = start;
-    int son = dad * 2 + 1;
-    while (son &lt;= end){
-        //先选取子节点中较大的
-        if (son + 1 &lt;= end &amp;&amp; arr[son] &lt; arr[son + 1]){
-            son++;
-        }
-        //若子节点比父节点大，则交换，继续往子节点寻找；否则退出
-        if (arr[dad] &lt; arr[son]){
-            swap(arr[dad], arr[son]);
-            dad = son;
-            son = dad * 2 + 1;
-        }
-        else{
-            break;
-        }
-    }
-}
-void heap_sort(int arr[], int len){
-    //先调整为最大堆，再依次与第一个交换，进行调整，最后构成最小堆
-    for (int i = (len - 2) / 2; i &gt;= 0; i--){   //len为总长度，最后一个为len-1,所以父节点为    (len-1-1)/2
-        shiftDown(arr,i,len-1);
-    }
-    for (int i = len - 1; i &gt;= 0; i--){
-        swap(arr[i], arr[0]);
-        shiftDown(arr, 0,i-1);
-    }
-}
-</code></pre><h2 id="计数排序"><a href="#计数排序" class="headerlink" title="计数排序"></a><p id="计数排序">计数排序</p></h2><h3 id="原理-7"><a href="#原理-7" class="headerlink" title="原理"></a>原理</h3><p>先把每个元素的出现次数算出来，然后算出该元素所在最终排好序列中的绝对位置(最终位置)，再依次把初始序列中的元素，根据该元素所在最终的绝对位置移到排序数组中。</p>
+<h3 id="代码-6"><a href="#代码-6" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">shiftDown</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> start, <span class="keyword">int</span> end)</span></span>&#123;  </div><div class="line">	<span class="comment">//从start出发到end，调整为最大堆</span></div><div class="line">	<span class="keyword">int</span> dad = start;</div><div class="line">	<span class="keyword">int</span> son = dad * <span class="number">2</span> + <span class="number">1</span>;</div><div class="line">	<span class="keyword">while</span> (son &lt;= end)&#123;</div><div class="line">		<span class="comment">//先选取子节点中较大的</span></div><div class="line">		<span class="keyword">if</span> (son + <span class="number">1</span> &lt;= end &amp;&amp; arr[son] &lt; arr[son + <span class="number">1</span>])&#123;</div><div class="line">			son++;</div><div class="line">		&#125;</div><div class="line">		<span class="comment">//若子节点比父节点大，则交换，继续往子节点寻找；否则退出</span></div><div class="line">		<span class="keyword">if</span> (arr[dad] &lt; arr[son])&#123;</div><div class="line">			swap(arr[dad], arr[son]);</div><div class="line">			dad = son;</div><div class="line">			son = dad * <span class="number">2</span> + <span class="number">1</span>;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">else</span>&#123;</div><div class="line">			<span class="keyword">break</span>;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">heap_sort</span><span class="params">(<span class="keyword">int</span> arr[], <span class="keyword">int</span> len)</span></span>&#123;</div><div class="line">	<span class="comment">//先调整为最大堆，再依次与第一个交换，进行调整，最后构成最小堆</span></div><div class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = (len - <span class="number">2</span>) / <span class="number">2</span>; i &gt;= <span class="number">0</span>; i--)&#123;   <span class="comment">//len为总长度，最后一个为len-1,所以父节点为	(len-1-1)/2</span></div><div class="line">		shiftDown(arr,i,len<span class="number">-1</span>);</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = len - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--)&#123;</div><div class="line">		swap(arr[i], arr[<span class="number">0</span>]);</div><div class="line">		shiftDown(arr, <span class="number">0</span>,i<span class="number">-1</span>);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="计数排序"><a href="#计数排序" class="headerlink" title="计数排序"></a><p id="计数排序">计数排序</p></h2><h3 id="原理-7"><a href="#原理-7" class="headerlink" title="原理"></a>原理</h3><p>先把每个元素的出现次数算出来，然后算出该元素所在最终排好序列中的绝对位置(最终位置)，再依次把初始序列中的元素，根据该元素所在最终的绝对位置移到排序数组中。</p>
 <h3 id="性能-7"><a href="#性能-7" class="headerlink" title="性能"></a>性能</h3><p>时间复杂度为O(N+K)，空间复杂度为O(N+K)，算法是稳定的，与初始序列无关，不需要进行比较就能排好序的算法。</p>
 <h3 id="使用场景-2"><a href="#使用场景-2" class="headerlink" title="使用场景"></a>使用场景</h3><p>算法只能使用在已知序列中的元素在0-k之间，且要求排序的复杂度在线性效率上。</p>
-<h3 id="代码-7"><a href="#代码-7" class="headerlink" title="代码"></a>代码</h3><pre><code>//计数排序
-void count_sort(int arr[],int sorted_arr[],int len,int k){
-    //数组中的元素大小为0-k，
-    //先统计每个数的相对位置，再算出该数所在序列中排序后的绝对位置
-    int *count_arr = (int*)malloc(sizeof(int)*(k+1));
-    for (int i = 0; i &lt;= k; i++){
-        count_arr[i] = 0;
-    }
-    for (int i = 0; i &lt; len; i++){       //每个元素的相对位置
-        count_arr[arr[i]]++;
-    }
-    for (int i = 1; i &lt;= k; i++){       //每个元素的绝对位置，位置为第1个到n个
-        count_arr[i] += count_arr[i - 1];
-    }
-    for (int i = len-1; i &gt;=0; i--){     //从后往前，可使排序稳定，相等的俩个数的位置不会发    生逆序
-        count_arr[arr[i]]--;             //把在排序后序列中绝对位置为1-n的数依次放入到0-    (n-1)中
-        sorted_arr[count_arr[arr[i]]] = arr[i];
-    }
-    free(count_arr);
-}
-</code></pre><h2 id="桶排序"><a href="#桶排序" class="headerlink" title="桶排序"></a><p id="桶排序">桶排序</p></h2><h3 id="原理-8"><a href="#原理-8" class="headerlink" title="原理"></a>原理</h3><ul>
+<h3 id="代码-7"><a href="#代码-7" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//计数排序</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">count_sort</span><span class="params">(<span class="keyword">int</span> arr[],<span class="keyword">int</span> sorted_arr[],<span class="keyword">int</span> len,<span class="keyword">int</span> k)</span></span>&#123;</div><div class="line">	<span class="comment">//数组中的元素大小为0-k，</span></div><div class="line">	<span class="comment">//先统计每个数的相对位置，再算出该数所在序列中排序后的绝对位置</span></div><div class="line">	<span class="keyword">int</span> *count_arr = (<span class="keyword">int</span>*)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">int</span>)*(k+<span class="number">1</span>));</div><div class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= k; i++)&#123;</div><div class="line">		count_arr[i] = <span class="number">0</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++)&#123;       <span class="comment">//每个元素的相对位置</span></div><div class="line">		count_arr[arr[i]]++;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= k; i++)&#123;       <span class="comment">//每个元素的绝对位置，位置为第1个到n个</span></div><div class="line">		count_arr[i] += count_arr[i - <span class="number">1</span>];</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = len<span class="number">-1</span>; i &gt;=<span class="number">0</span>; i--)&#123;     <span class="comment">//从后往前，可使排序稳定，相等的俩个数的位置不会发	生逆序</span></div><div class="line">		count_arr[arr[i]]--;             <span class="comment">//把在排序后序列中绝对位置为1-n的数依次放入到0-	(n-1)中</span></div><div class="line">		sorted_arr[count_arr[arr[i]]] = arr[i];</div><div class="line">	&#125;</div><div class="line">	<span class="built_in">free</span>(count_arr);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="桶排序"><a href="#桶排序" class="headerlink" title="桶排序"></a><p id="桶排序">桶排序</p></h2><h3 id="原理-8"><a href="#原理-8" class="headerlink" title="原理"></a>原理</h3><ul>
 <li>根据待排序列元素的大小范围，均匀独立的划分M个桶</li>
 <li>将N个输入元素分布到各个桶中去</li>
 <li>再对各个桶中的元素进行排序</li>

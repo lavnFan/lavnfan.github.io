@@ -104,7 +104,7 @@
 <meta property="og:description" content="Android 进程特性Android 进程优先级在 Android 系统中，当内存不足时，为了新建进程或运行更重要的进程，会根据进程的优先级选择杀掉不那么重要的进程。进程的优先级如下所示：  前台进程 与用户正在交互的 Activity（即已调用 Activity 的 onResume() 方法） 正在执行 onReceive() 方法的 BroadcastReceiver 正在执行onCrea">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/%E8%BF%9B%E7%A8%8B%E4%BC%98%E5%85%88%E7%BA%A7.PNG">
-<meta property="og:updated_time" content="2017-09-23T14:04:47.055Z">
+<meta property="og:updated_time" content="2017-09-23T14:11:56.735Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android 进程保活">
 <meta name="twitter:description" content="Android 进程特性Android 进程优先级在 Android 系统中，当内存不足时，为了新建进程或运行更重要的进程，会根据进程的优先级选择杀掉不那么重要的进程。进程的优先级如下所示：  前台进程 与用户正在交互的 Activity（即已调用 Activity 的 onResume() 方法） 正在执行 onReceive() 方法的 BroadcastReceiver 正在执行onCrea">
@@ -527,18 +527,18 @@
 <li>受系统权限管理影响</li>
 <li>系统广播事件不可控</li>
 </ul>
-<h3 id="账号同步机制"><a href="#账号同步机制" class="headerlink" title="账号同步机制"></a>账号同步机制</h3><p>原理：可以设置定期同步账号，同步时系统会启动对应的Service，目前适用于7.0之前所有版本，包括被 <code>forestop</code> 掉的进程也能进行拉活。</p>
+<h3 id="账号同步机制"><a href="#账号同步机制" class="headerlink" title="账号同步机制"></a>账号同步机制</h3><p>原理：可以设置定期同步账号，同步时系统会启动对应的 Service，目前适用于7.0之前所有版本，包括被 <code>forestop</code> 掉的进程也能进行拉活。</p>
 <p>缺陷：</p>
 <ul>
 <li>Android N 中系统对账户同步这里做了变动，该方法不再有效</li>
 <li>使用不当容易成为耗电大户</li>
 </ul>
-<h3 id="JobScheduler（5-0-）"><a href="#JobScheduler（5-0-）" class="headerlink" title="JobScheduler（5.0+）"></a>JobScheduler（5.0+）</h3><p>原理：系统在 Android5.0 以上版本提供了 <code>JobScheduler</code> 接口，系统会定期调用该进程以使应用进行一些逻辑操作。</p>
+<h3 id="JobScheduler（5-0-）"><a href="#JobScheduler（5-0-）" class="headerlink" title="JobScheduler（5.0+）"></a>JobScheduler（5.0+）</h3><p>原理：系统在 Android 5.0 以上版本提供了 <code>JobScheduler</code> 接口，系统会定期调用该进程以使应用进行一些逻辑操作。</p>
 <p>缺陷：</p>
 <ul>
-<li>只适用于 Android5.0 以上版本手机，某些厂商 Rom 也做了限制</li>
+<li>只适用于 Android 5.0 以上版本手机，某些厂商 Rom 也做了限制</li>
 </ul>
-<h3 id="Native-守护进程"><a href="#Native-守护进程" class="headerlink" title="Native 守护进程"></a>Native 守护进程</h3><p>原理：Native进程不受 AMS 管理(&lt;5.0)，利用 Linux 的fork 机制创建 Native 进程，通过死循环或定时器轮询判断主进程是否存活。</p>
+<h3 id="Native-守护进程"><a href="#Native-守护进程" class="headerlink" title="Native 守护进程"></a>Native 守护进程</h3><p>原理：Native进程不受 AMS 管理(&lt;5.0)，利用 Linux 的 fork 机制创建 Native 进程，通过死循环或定时器轮询判断主进程是否存活。</p>
 <p>缺陷：</p>
 <ul>
 <li>只适用于 Android 5.0 以下版本的手机，在 Android 5.0 以上，系统会依次将所有的 native 进程会杀掉。</li>

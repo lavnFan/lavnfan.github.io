@@ -79,7 +79,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Android," />
+  <meta name="keywords" content="Android,性能优化,ANR," />
 
 
 
@@ -95,23 +95,18 @@
 
 
 
-<meta name="description" content="在Android开发中我们可能会遇到这样的问题，onTouch与onTouchEvent的区别是什么？onTouch与onClick又有什么区别？什么时候需要重写onTouchEvent事件进行使用呢？为什么我写的view没有不论点击还是滑动都没响应呢？等等这一系列的问题都与Android的事件分发机制有关，现在我们来慢慢剖析Android的事件分发原理。 先提俩个问题：    事件是怎么传递">
-<meta name="keywords" content="Android">
+<meta name="description" content="ANR 是什么ANR: Application Not Responding。 ANR 通常由以下三种情形产生：  Key Dispatching Timeout：输入事件超过 5s 无响应，比如按键或触摸事件。 Broadcast Timeout：比如前台广播在 10s （后台广播 60s）内无法完成 onReceive 的执行。 Service Timeout：比如前台服务在 20s （后台服">
+<meta name="keywords" content="Android,性能优化,ANR">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Android 事件传递机制解析">
-<meta property="og:url" content="http://lavnfan.github.io/2016/04/21/TouchEvent/index.html">
+<meta property="og:title" content="ANR 问题分析">
+<meta property="og:url" content="http://lavnfan.github.io/2017/09/24/ANR/index.html">
 <meta property="og:site_name" content="IvanFan">
-<meta property="og:description" content="在Android开发中我们可能会遇到这样的问题，onTouch与onTouchEvent的区别是什么？onTouch与onClick又有什么区别？什么时候需要重写onTouchEvent事件进行使用呢？为什么我写的view没有不论点击还是滑动都没响应呢？等等这一系列的问题都与Android的事件分发机制有关，现在我们来慢慢剖析Android的事件分发原理。 先提俩个问题：    事件是怎么传递">
+<meta property="og:description" content="ANR 是什么ANR: Application Not Responding。 ANR 通常由以下三种情形产生：  Key Dispatching Timeout：输入事件超过 5s 无响应，比如按键或触摸事件。 Broadcast Timeout：比如前台广播在 10s （后台广播 60s）内无法完成 onReceive 的执行。 Service Timeout：比如前台服务在 20s （后台服">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/TouchEvent_1.jpg">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/TouchEvent_2.jpg">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/TouchEvent_3.jpg">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/TouchEvent_4.jpg">
-<meta property="og:updated_time" content="2017-09-11T14:57:38.429Z">
+<meta property="og:updated_time" content="2017-09-24T12:37:13.526Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Android 事件传递机制解析">
-<meta name="twitter:description" content="在Android开发中我们可能会遇到这样的问题，onTouch与onTouchEvent的区别是什么？onTouch与onClick又有什么区别？什么时候需要重写onTouchEvent事件进行使用呢？为什么我写的view没有不论点击还是滑动都没响应呢？等等这一系列的问题都与Android的事件分发机制有关，现在我们来慢慢剖析Android的事件分发原理。 先提俩个问题：    事件是怎么传递">
-<meta name="twitter:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/TouchEvent_1.jpg">
+<meta name="twitter:title" content="ANR 问题分析">
+<meta name="twitter:description" content="ANR 是什么ANR: Application Not Responding。 ANR 通常由以下三种情形产生：  Key Dispatching Timeout：输入事件超过 5s 无响应，比如按键或触摸事件。 Broadcast Timeout：比如前台广播在 10s （后台广播 60s）内无法完成 onReceive 的执行。 Service Timeout：比如前台服务在 20s （后台服">
 
 
 
@@ -141,13 +136,13 @@
 
 
 
-  <link rel="canonical" href="http://lavnfan.github.io/2016/04/21/TouchEvent/"/>
+  <link rel="canonical" href="http://lavnfan.github.io/2017/09/24/ANR/"/>
 
 
 
 
 
-  <title>Android 事件传递机制解析 | IvanFan</title>
+  <title>ANR 问题分析 | IvanFan</title>
   
 
 
@@ -274,7 +269,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lavnfan.github.io/2016/04/21/TouchEvent/">
+    <link itemprop="mainEntityOfPage" href="http://lavnfan.github.io/2017/09/24/ANR/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="IvanFan">
@@ -291,7 +286,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Android 事件传递机制解析</h1>
+          <h1 class="post-title" itemprop="name headline">ANR 问题分析</h1>
         
 
         <div class="post-meta">
@@ -303,8 +298,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-04-21T20:00:00+08:00">
-                2016-04-21
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-24T20:35:00+08:00">
+                2017-09-24
               </time>
             
 
@@ -333,6 +328,17 @@
 
                 
                 
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/性能优化/" itemprop="url" rel="index">
+                    <span itemprop="name">性能优化</span>
+                  </a>
+                </span>
+
+                
+                
               
             </span>
           
@@ -345,8 +351,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2016/04/21/TouchEvent/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count hc-comment-count" data-xid="2016/04/21/TouchEvent/" itemprop="commentsCount"></span>
+                <a href="/2017/09/24/ANR/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count hc-comment-count" data-xid="2017/09/24/ANR/" itemprop="commentsCount"></span>
                 </a>
               </span>
               <!--/noindex-->
@@ -380,66 +386,51 @@
       
 
       
-        <p>　　在Android开发中我们可能会遇到这样的问题，onTouch与onTouchEvent的区别是什么？onTouch与onClick又有什么区别？什么时候需要重写onTouchEvent事件进行使用呢？为什么我写的view没有不论点击还是滑动都没响应呢？等等这一系列的问题都与Android的事件分发机制有关，现在我们来慢慢剖析Android的事件分发原理。</p>
-<p><strong>先提俩个问题：</strong>  </p>
-<ol>
-<li>事件是怎么传递的？</li>
-<li>事件又是如何处理？</li>
-</ol>
-<p>Android中与事件有关的API函数是：</p>
-<blockquote>
-<p><code>public boolean dispatchTouchEvent(MotionEvent ev);</code>     //分发事件<br><code>public boolean onInterceptTouchEvent(MotionEvent ev);</code> //拦截事件<br><code>public boolean onTouchEvent(MotionEvent ev);</code>          //处理事件</p>
-</blockquote>
-<h2 id="一、事件分发机制"><a href="#一、事件分发机制" class="headerlink" title="一、事件分发机制"></a>一、事件分发机制</h2><h3 id="1、事件是如何传递的："><a href="#1、事件是如何传递的：" class="headerlink" title="1、事件是如何传递的："></a>1、事件是如何传递的：</h3><p>　　ViewGroup接收到事件后进行事件的分派，如果自己需要处理这个事件，则进行拦截；如果不处理，则传递给子View进行处理，然后由子view进行分派，拦截和处理。可类比于：上级接到任务后进行任务分派，如果上级自己处理这个任务，则自己处理；如果不想处理，则把这个任务丢给下级进行处理…</p>
-<p> 我们需要注意：</p>
+        <h2 id="ANR-是什么"><a href="#ANR-是什么" class="headerlink" title="ANR 是什么"></a>ANR 是什么</h2><p>ANR: Application Not Responding。</p>
+<p>ANR 通常由以下三种情形产生：</p>
 <ul>
-<li>viewGroup中包含的最小子view是不含拦截onInterceptTouchEvent事件的，最小的子view比如Button,TextView…因为他们已在树的最低层，已无法向下传递了。</li>
+<li>Key Dispatching Timeout：输入事件超过 5s 无响应，比如按键或触摸事件。</li>
+<li>Broadcast Timeout：比如前台广播在 10s （后台广播 60s）内无法完成 <code>onReceive</code> 的执行。</li>
+<li>Service Timeout：比如前台服务在 20s （后台服务 200s）内无法完成 <code>onCreate</code> 或 <code>onStartCommand</code> 的执行。</li>
 </ul>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/TouchEvent_1.jpg" height="600" width="800"><br>上图左边部分很清楚形象的描述了事件的传递：</p>
+<h2 id="ANR-产生原因"><a href="#ANR-产生原因" class="headerlink" title="ANR 产生原因"></a>ANR 产生原因</h2><h3 id="耗时操作"><a href="#耗时操作" class="headerlink" title="耗时操作"></a>耗时操作</h3><p>主线程做了一些耗时操作，比如 I/O，请求网络或进行了一些耗时的计算。</p>
 <ul>
-<li>对于ViewGroup,接收事件后，进行分发：<ul>
-<li><strong>如果不进行分发</strong>，则dispatchTouchEv返回<strong>true</strong>，事件消亡未处理。</li>
-<li><strong>如果进行分发该事件</strong>，则dispatchTouchEvent返回false，处理或传递该事件：<ul>
-<li><strong>如果想自己处理该事件</strong>,则onInterceptTouchEvent返回true，拦截事件，给自己的onTouchEvent进行处理；</li>
-<li><strong>如果不想处理该事件</strong>，则onInterceptTouchEvent返回false，把事件传递给子View进行处理。</li>
+<li>I/O 操作<ul>
+<li>文件操作，比如 <code>file.exists()</code> 的判断，在某些低端机型上会引发 ANR。</li>
+<li>数据库操作</li>
 </ul>
 </li>
+<li>网络操作，4.0后 Android 强制在子线程中进行。</li>
+<li>耗时计算，如对 bitmap 进行调整计算等。</li>
 </ul>
-</li>
-<li>对于最底层的子View，没有onInterceptEvent拦截事件，接收到事件后进行分发：<ul>
-<li><strong>如果不进行分发</strong>，则dispatchTouchEvent返回<strong>false</strong>，事件未处理，注意这里的最小子view返回false代表未分发事件；</li>
-<li><strong>如果进行分发该事件</strong>，则dispatchTouchEvent返回true：<ul>
-<li><strong>如果处理该事件</strong>，则onTouchEvent返回true把该事件消费掉；</li>
-<li><strong>如果不想处理该事件</strong>，则onTouchEvent返回false，等待上级处理。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>上边所讲的是ViewGroup与最底层的子view之间的事件传递，那Android整个事件的传递机制该如何呢？</p>
-<p><strong>首先由Activity分发事件</strong>(<em>和最底层的子View一样无拦截事件，因为最顶层嘛，拦截了就无法传递了</em>)，  <strong>先分发给根View,也就是DecorView</strong>（<em>DeCorView为整个Window界面的最顶层的View,包含通知栏，标题栏，内容显示栏三块区域,我们经常写的setContentView就是为DecorView中的内容栏进行设置</em>），<br><strong>然后由根View分发到子View。</strong></p>
-<h3 id="2、事件是如何处理的："><a href="#2、事件是如何处理的：" class="headerlink" title="2、事件是如何处理的："></a>2、事件是如何处理的：</h3><p>  <strong>假若经过分发与拦截后，最终将事件传递到了某个子View，则事件处理如下图所示：</strong></p>
-<p>　　<img src="http://7xrhn4.com1.z0.glb.clouddn.com/TouchEvent_2.jpg" height="700"></p>
-<p>子View的onTouchEvent进行事件处理，<strong>如果返回true，则消耗此事件，不会再继续传递；如果返回false，则不处理此事件，把这个事件往上一级的ViewGroup进行传递，由上一级进行处理</strong>。<em>可类比如：上级把任务交给你进行处理，但由于能力不够无法处理，则把任务交给上一级进行处理，如果上一级还处理不了，则继续往上传递处理。</em>最终事件是否处理，由子View和ViewGroup的onTouchEvent的返回值决定是否会把事件消耗掉。</p>
-<h2 id="二、onTouch事件"><a href="#二、onTouch事件" class="headerlink" title="二、onTouch事件"></a>二、onTouch事件</h2><h3 id="1、onTouch与onTouchEvent"><a href="#1、onTouch与onTouchEvent" class="headerlink" title="1、onTouch与onTouchEvent"></a>1、onTouch与onTouchEvent</h3><p>想弄清楚这俩个的关系，我们可以先来看一下他们在源码中的位置：</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/TouchEvent_3.jpg" alt=""></p>
+<h3 id="线程饥饿"><a href="#线程饥饿" class="headerlink" title="线程饥饿"></a>线程饥饿</h3><p>cpu 分配给了其他线程，而主线程一直处于阻塞状态。</p>
+<h3 id="线程死锁"><a href="#线程死锁" class="headerlink" title="线程死锁"></a>线程死锁</h3><p>当线程进入等待状态时，需要的资源被另一个线程持有，而该线程也在等待第一个线程所持有的资源。这种相互等待但又不肯释放会造成线程死锁。</p>
+<h2 id="如何分析-ANR"><a href="#如何分析-ANR" class="headerlink" title="如何分析 ANR"></a>如何分析 ANR</h2><p>发生 ANR 时，系统会收集 ANR 相关的信息，直接打印在系统日志上，并且会把收集的 trace 信息保存在本地，因此分析的思路就有以下俩种。</p>
+<h3 id="logcat-日志"><a href="#logcat-日志" class="headerlink" title="logcat 日志"></a>logcat 日志</h3><p>对于 logcat 日志我们可以根据 CPU 和 I/O 的使用率，可以大概分析出以下几点：</p>
 <ul>
-<li>首先我们要清楚，dispatchTouchEvent是onTouchEvent，onTouch和onInterceptEvent的入口，他们都是在dispatchTouchEvent分发事件中决定是否要拦截和处理的；</li>
-<li>其次，黄线代表onTouch事件的位置，红线代表onTouchEvent事件的位置，可以得到，<strong>onTouch的执行顺序总是在onTouchEvent事件前的</strong>；而且如果onTouch执行后返回true后，就会使得result为true，不会再去执行onTouchEvent事件了，只有当onTouch事件没有执行或返回为false时onTouchEvent才会得到执行。</li>
-<li>onTouch执行需要俩个前提条件：其一是需要设置mOnTouchListener，其二是当前View必须要enable。如果控件为disable，则onTouch事件不管怎么样都不会执行；但如果需要响应触摸事件呢？这时我们不是还有onTouchEvent事件嘛，重写一下onTouchEvent方法来实现Touch的响应就行了。</li>
+<li>如果 CPU 使用量接近100%，说明当前设备很忙，有可能是 CPU 饥饿了。</li>
+<li>如果 CPU 使用量很少，说明主线程被 BLOCK 了。</li>
+<li>如果 IOwait 很高，说明 ANR 有可能是主线程在进行 I/O 操作造成。</li>
 </ul>
-<h3 id="2、onTouch与onClick"><a href="#2、onTouch与onClick" class="headerlink" title="2、onTouch与onClick"></a>2、onTouch与onClick</h3><p>查看源码，我们发现：</p>
-<p>　　<img src="http://7xrhn4.com1.z0.glb.clouddn.com/TouchEvent_4.jpg" height="800" width="700"></p>
-<p>onClick事件藏在onTouchEvent事件的ACTION_UP中，也就是标示的performClick，这样结合上面onTouch与onTouchEvent事件的关系，可以很容易得到：</p>
+<h3 id="trace-txt"><a href="#trace-txt" class="headerlink" title="trace.txt"></a>trace.txt</h3><p>traces.txt 文件会记录应用的 ANR 问题，并且会打印当时 App 的运行堆栈信息。traces 文件夹可能有多份，会命名为：traces.txt, traces1.txt, traces2.txt 等，最新的ANR永远写在 traces.txt 文件中。我们可以把 trace.txt 文件拷贝出来：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">adb shell cat /data/anr/traces.txt &gt; d:/traces.txt</div></pre></td></tr></table></figure>
+<p>然后可以具体分析文件中的调用栈，定位到具体代码，结合 ANR 问题的类型，解决代码的逻辑缺陷。</p>
+<h2 id="怎么避免-ANR"><a href="#怎么避免-ANR" class="headerlink" title="怎么避免 ANR"></a>怎么避免 ANR</h2><h3 id="Strict-Mode"><a href="#Strict-Mode" class="headerlink" title="Strict Mode"></a>Strict Mode</h3><p>开启 Strict Mode，检测在主线程中执行的磁盘或网络操作。我们可以把这些操作移到子线程中执行，同时可以在主线程中使用 dialog 来保持在主线程中的响应。</p>
+<h3 id="耗时操作-1"><a href="#耗时操作-1" class="headerlink" title="耗时操作"></a>耗时操作</h3><ul>
+<li>将耗时操作都放到其他非 UI 线程、AsyncTask 或 IntentService 中执行。</li>
+<li>当存储简单信息时，可以考虑使用文件或者 sharedpreference 代替数据库。</li>
+<li>如果使用数据库，考虑使用 batch 方法或事务提高效率。</li>
+</ul>
+<h3 id="线程操作"><a href="#线程操作" class="headerlink" title="线程操作"></a>线程操作</h3><ul>
+<li>主线程中尽量避免调用任何 synchronized 方法。</li>
+</ul>
 <ul>
-<li>执行先后不一样。触摸事件先执行（onTouch&gt;onClick）</li>
-<li>触摸事件返回值影响点击事件（前者影响后者，而后者不影响前者）；onTouch方法的返回值改为true时，只执行onTouch事件，不执行onClick事件，当然也不执行onTouchEvent事件。</li>
+<li>主线程中尽量避免调用 <code>wait()</code>, <code>sleep()</code> 操作。</li>
 </ul>
-<p><strong>参考资料：</strong></p>
-<blockquote>
-<p><a href="http://www.cnblogs.com/smyhvae/p/4802274.html?utm_source=tuicool&amp;utm_medium=referral" target="_blank" rel="external">http://www.cnblogs.com/smyhvae/p/4802274.html?utm_source=tuicool&amp;utm_medium=referral</a></p>
-<p><a href="http://blog.csdn.net/guolin_blog/article/details/9097463" target="_blank" rel="external">http://blog.csdn.net/guolin_blog/article/details/9097463</a></p>
-</blockquote>
+<h3 id="使用-HandlerThread"><a href="#使用-HandlerThread" class="headerlink" title="使用 HandlerThread"></a>使用 HandlerThread</h3><p>普通 Handler 的 <code>handleMessage</code> 是在主线程中执行，当需要在接收到消息后执行耗时操作时，可以用 HandlerThread 替换 Thread。HandlerThread 比 Thread 多了一个 Looper，而Looper是线程相关的，所以 Looper 分发给 Handler 的消息也会在 HandlerThread 创建的线程里，这样就实现了子线程之间的通信。</p>
+<p>HandlerThread 有自己的消息队列，处理任务时是串行的，不太适合频繁且耗时的网络请求，容易阻塞。</p>
+<h3 id="使用-IntentService"><a href="#使用-IntentService" class="headerlink" title="使用 IntentService"></a>使用 IntentService</h3><p>IntentService 继承 Service，内部封装了 HandlerThread 和 Handler，轮流把每个收到的 Intent 放到子线程中执行，完成所有工作后自动退出，这样就不会阻塞主线程。</p>
+<h3 id="减少-BroadCast-receivers-的操作"><a href="#减少-BroadCast-receivers-的操作" class="headerlink" title="减少 BroadCast receivers 的操作"></a>减少 BroadCast receivers 的操作</h3><p>broadCastReceiver 要进行复杂操作的的时候，可以在 <code>onReceive()</code> 方法中启动一个 IntentService 来处理。</p>
 
       
     </div>
@@ -460,7 +451,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://lavnfan.github.io/2016/04/21/TouchEvent/" title="Android 事件传递机制解析">http://lavnfan.github.io/2016/04/21/TouchEvent/</a>
+    <a href="http://lavnfan.github.io/2017/09/24/ANR/" title="ANR 问题分析">http://lavnfan.github.io/2017/09/24/ANR/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -477,6 +468,10 @@
           
             <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
           
+            <a href="/tags/性能优化/" rel="tag"><i class="fa fa-tag"></i> 性能优化</a>
+          
+            <a href="/tags/ANR/" rel="tag"><i class="fa fa-tag"></i> ANR</a>
+          
         </div>
       
 
@@ -488,15 +483,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2017/09/23/进程保活/" rel="next" title="Android 进程保活">
+                <i class="fa fa-chevron-left"></i> Android 进程保活
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/04/23/Sort/" rel="prev" title="排序常用算法总结">
-                排序常用算法总结 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -649,7 +644,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、事件分发机制"><span class="nav-number">1.</span> <span class="nav-text">一、事件分发机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、事件是如何传递的："><span class="nav-number">1.1.</span> <span class="nav-text">1、事件是如何传递的：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、事件是如何处理的："><span class="nav-number">1.2.</span> <span class="nav-text">2、事件是如何处理的：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、onTouch事件"><span class="nav-number">2.</span> <span class="nav-text">二、onTouch事件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、onTouch与onTouchEvent"><span class="nav-number">2.1.</span> <span class="nav-text">1、onTouch与onTouchEvent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、onTouch与onClick"><span class="nav-number">2.2.</span> <span class="nav-text">2、onTouch与onClick</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ANR-是什么"><span class="nav-number">1.</span> <span class="nav-text">ANR 是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ANR-产生原因"><span class="nav-number">2.</span> <span class="nav-text">ANR 产生原因</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#耗时操作"><span class="nav-number">2.1.</span> <span class="nav-text">耗时操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程饥饿"><span class="nav-number">2.2.</span> <span class="nav-text">线程饥饿</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程死锁"><span class="nav-number">2.3.</span> <span class="nav-text">线程死锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何分析-ANR"><span class="nav-number">3.</span> <span class="nav-text">如何分析 ANR</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#logcat-日志"><span class="nav-number">3.1.</span> <span class="nav-text">logcat 日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#trace-txt"><span class="nav-number">3.2.</span> <span class="nav-text">trace.txt</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#怎么避免-ANR"><span class="nav-number">4.</span> <span class="nav-text">怎么避免 ANR</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Strict-Mode"><span class="nav-number">4.1.</span> <span class="nav-text">Strict Mode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#耗时操作-1"><span class="nav-number">4.2.</span> <span class="nav-text">耗时操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程操作"><span class="nav-number">4.3.</span> <span class="nav-text">线程操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用-HandlerThread"><span class="nav-number">4.4.</span> <span class="nav-text">使用 HandlerThread</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用-IntentService"><span class="nav-number">4.5.</span> <span class="nav-text">使用 IntentService</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#减少-BroadCast-receivers-的操作"><span class="nav-number">4.6.</span> <span class="nav-text">减少 BroadCast receivers 的操作</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -828,7 +823,7 @@
 		_hcwp.push({widget:"Bloggerstream", widget_id: 95590, selector:".hc-comment-count", label: "{\%COUNT%\}" });
 
 		
-		_hcwp.push({widget:"Stream", widget_id: 95590, xid: "2016/04/21/TouchEvent/"});
+		_hcwp.push({widget:"Stream", widget_id: 95590, xid: "2017/09/24/ANR/"});
 		
 
 		(function() {

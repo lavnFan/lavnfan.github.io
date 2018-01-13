@@ -79,7 +79,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Android,性能优化,ANR," />
+  <meta name="keywords" content="Android,Java," />
 
 
 
@@ -95,18 +95,20 @@
 
 
 
-<meta name="description" content="ANR 是什么ANR: Application Not Responding。 ANR 通常由以下三种情形产生：  Key Dispatching Timeout：输入事件超过 5s 无响应，比如按键或触摸事件。 Broadcast Timeout：比如前台广播在 10s （后台广播 60s）内无法完成 onReceive 的执行。 Service Timeout：比如前台服务在 20s （后台服">
-<meta name="keywords" content="Android,性能优化,ANR">
+<meta name="description" content="Java 异常异常是指阻止当前方法或作用域继续执行的问题。当异常发生时，它会强制终止程序运行，记录异常信息并进行反馈。Java 为我们提供了非常完善的异常机制来保证程序的正常运行，其异常类层次结构如下图所示：  Throwable 是 Java 中所有异常的基类。它分为俩大类：Error（错误）和 Exception（异常）。 Error（错误）：是程序无法处理的错误，大多数错误表示 JVM（Ja">
+<meta name="keywords" content="Android,Java">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ANR 问题分析">
-<meta property="og:url" content="http://lavnfan.github.io/2017/09/24/ANR/index.html">
+<meta property="og:title" content="Java crash 异常分析">
+<meta property="og:url" content="http://lavnfan.github.io/2018/01/13/Java crash 异常分析/index.html">
 <meta property="og:site_name" content="IvanFan">
-<meta property="og:description" content="ANR 是什么ANR: Application Not Responding。 ANR 通常由以下三种情形产生：  Key Dispatching Timeout：输入事件超过 5s 无响应，比如按键或触摸事件。 Broadcast Timeout：比如前台广播在 10s （后台广播 60s）内无法完成 onReceive 的执行。 Service Timeout：比如前台服务在 20s （后台服">
+<meta property="og:description" content="Java 异常异常是指阻止当前方法或作用域继续执行的问题。当异常发生时，它会强制终止程序运行，记录异常信息并进行反馈。Java 为我们提供了非常完善的异常机制来保证程序的正常运行，其异常类层次结构如下图所示：  Throwable 是 Java 中所有异常的基类。它分为俩大类：Error（错误）和 Exception（异常）。 Error（错误）：是程序无法处理的错误，大多数错误表示 JVM（Ja">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-09-24T12:37:13.526Z">
+<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/throwable.png">
+<meta property="og:updated_time" content="2018-01-13T10:48:28.895Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ANR 问题分析">
-<meta name="twitter:description" content="ANR 是什么ANR: Application Not Responding。 ANR 通常由以下三种情形产生：  Key Dispatching Timeout：输入事件超过 5s 无响应，比如按键或触摸事件。 Broadcast Timeout：比如前台广播在 10s （后台广播 60s）内无法完成 onReceive 的执行。 Service Timeout：比如前台服务在 20s （后台服">
+<meta name="twitter:title" content="Java crash 异常分析">
+<meta name="twitter:description" content="Java 异常异常是指阻止当前方法或作用域继续执行的问题。当异常发生时，它会强制终止程序运行，记录异常信息并进行反馈。Java 为我们提供了非常完善的异常机制来保证程序的正常运行，其异常类层次结构如下图所示：  Throwable 是 Java 中所有异常的基类。它分为俩大类：Error（错误）和 Exception（异常）。 Error（错误）：是程序无法处理的错误，大多数错误表示 JVM（Ja">
+<meta name="twitter:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/throwable.png">
 
 
 
@@ -136,13 +138,13 @@
 
 
 
-  <link rel="canonical" href="http://lavnfan.github.io/2017/09/24/ANR/"/>
+  <link rel="canonical" href="http://lavnfan.github.io/2018/01/13/Java crash 异常分析/"/>
 
 
 
 
 
-  <title>ANR 问题分析 | IvanFan</title>
+  <title>Java crash 异常分析 | IvanFan</title>
   
 
 
@@ -269,7 +271,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://lavnfan.github.io/2017/09/24/ANR/">
+    <link itemprop="mainEntityOfPage" href="http://lavnfan.github.io/2018/01/13/Java crash 异常分析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="IvanFan">
@@ -286,7 +288,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">ANR 问题分析</h1>
+          <h1 class="post-title" itemprop="name headline">Java crash 异常分析</h1>
         
 
         <div class="post-meta">
@@ -298,8 +300,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-24T20:35:00+08:00">
-                2017-09-24
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-13T20:00:00+08:00">
+                2018-01-13
               </time>
             
 
@@ -321,19 +323,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/性能优化/" itemprop="url" rel="index">
-                    <span itemprop="name">性能优化</span>
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
                   </a>
                 </span>
 
@@ -351,8 +342,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2017/09/24/ANR/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count hc-comment-count" data-xid="2017/09/24/ANR/" itemprop="commentsCount"></span>
+                <a href="/2018/01/13/Java crash 异常分析/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count hc-comment-count" data-xid="2018/01/13/Java crash 异常分析/" itemprop="commentsCount"></span>
                 </a>
               </span>
               <!--/noindex-->
@@ -386,51 +377,43 @@
       
 
       
-        <h2 id="ANR-是什么"><a href="#ANR-是什么" class="headerlink" title="ANR 是什么"></a>ANR 是什么</h2><p>ANR: Application Not Responding。</p>
-<p>ANR 通常由以下三种情形产生：</p>
+        <h2 id="Java-异常"><a href="#Java-异常" class="headerlink" title="Java 异常"></a>Java 异常</h2><p>异常是指阻止当前方法或作用域继续执行的问题。当异常发生时，它会强制终止程序运行，记录异常信息并进行反馈。Java 为我们提供了非常完善的异常机制来保证程序的正常运行，其异常类层次结构如下图所示：</p>
+<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/throwable.png" alt="throwable"></p>
+<p>Throwable 是 Java 中所有异常的基类。它分为俩大类：Error（错误）和 Exception（异常）。</p>
+<p><strong>Error（错误）：</strong>是程序无法处理的错误，大多数错误表示 JVM（Java 虚拟机）出现的问题，如 Java 虚拟机运行错误（Virtual MachineError）、类定义错误（NoClassDefFoundError）等。</p>
+<p><strong>Exception（异常）：</strong>是程序本身可以处理的异常。例如 NullPointerException、IndexOutOfBoundException 等。</p>
+<p>Java 的异常可以根据编译期间是否需要检查，分为受检异常和未受检异常：</p>
 <ul>
-<li>Key Dispatching Timeout：输入事件超过 5s 无响应，比如按键或触摸事件。</li>
-<li>Broadcast Timeout：比如前台广播在 10s （后台广播 60s）内无法完成 <code>onReceive</code> 的执行。</li>
-<li>Service Timeout：比如前台服务在 20s （后台服务 200s）内无法完成 <code>onCreate</code> 或 <code>onStartCommand</code> 的执行。</li>
-</ul>
-<h2 id="ANR-产生原因"><a href="#ANR-产生原因" class="headerlink" title="ANR 产生原因"></a>ANR 产生原因</h2><h3 id="耗时操作"><a href="#耗时操作" class="headerlink" title="耗时操作"></a>耗时操作</h3><p>主线程做了一些耗时操作，比如 I/O，请求网络或进行了一些耗时的计算。</p>
-<ul>
-<li>I/O 操作<ul>
-<li>文件操作，比如 <code>file.exists()</code> 的判断，在某些低端机型上会引发 ANR。</li>
-<li>数据库操作</li>
+<li>受检异常：是 RuntimeException 以外的 Exception 异常，类型上都属于 Exception 类及其子类。这些异常在编译期间就必须进行处理，否则会编译不通过。通过抛出受检的异常，强迫调用者在一个 catch 中处理该异常或传播出去，期望调用者能适当地恢复。</li>
+<li>未受检异常：不需要也不应该被捕获的可抛出结构，包含 Error 和 RuntimeException 异常。<ul>
+<li>运行时异常：表明编程错误，是 RuntimeException 的子类，运行时检查。</li>
+<li>错误：表示资源不足，约束失败，或其他使程序无法继续执行的条件。</li>
 </ul>
 </li>
-<li>网络操作，4.0后 Android 强制在子线程中进行。</li>
-<li>耗时计算，如对 bitmap 进行调整计算等。</li>
 </ul>
-<h3 id="线程饥饿"><a href="#线程饥饿" class="headerlink" title="线程饥饿"></a>线程饥饿</h3><p>cpu 分配给了其他线程，而主线程一直处于阻塞状态。</p>
-<h3 id="线程死锁"><a href="#线程死锁" class="headerlink" title="线程死锁"></a>线程死锁</h3><p>当线程进入等待状态时，需要的资源被另一个线程持有，而该线程也在等待第一个线程所持有的资源。这种相互等待但又不肯释放会造成线程死锁。</p>
-<h2 id="如何分析-ANR"><a href="#如何分析-ANR" class="headerlink" title="如何分析 ANR"></a>如何分析 ANR</h2><p>发生 ANR 时，系统会收集 ANR 相关的信息，直接打印在系统日志上，并且会把收集的 trace 信息保存在本地，因此分析的思路就有以下俩种。</p>
-<h3 id="logcat-日志"><a href="#logcat-日志" class="headerlink" title="logcat 日志"></a>logcat 日志</h3><p>对于 logcat 日志我们可以根据 CPU 和 I/O 的使用率，可以大概分析出以下几点：</p>
+<p>需要注意的是：异常是为了在异常情况下使用而设计的，不要将他们用于普通的控制流。其次，基于异常的循环模式不仅模糊了代码的意图，降低了性能（ JVM 不会对异常的代码块进行优化），而且还不能保证正常工作。</p>
+<h3 id="处理异常"><a href="#处理异常" class="headerlink" title="处理异常"></a>处理异常</h3><p>在 Java 中若出现可受检异常，则可以选择使用 try-catch-finally 捕捉异常，或重新抛出异常扔给上一级处理，不处理将会导致编译错误。对于未受检异常，一般由系统在运行时抛出，不需要去捕获或处理。</p>
+<h4 id="try-catch-finally-捕捉异常"><a href="#try-catch-finally-捕捉异常" class="headerlink" title="try-catch-finally 捕捉异常"></a>try-catch-finally 捕捉异常</h4><ul>
+<li>try：捕获异常的代码块，监控可能产生异常的代码。其后可以接零个或多个 catch 块，如果没有 catch 块，则必须跟一个 finally 块。</li>
+<li>catch：处于 try 捕获到的异常。</li>
+<li>finally：无论是否捕获到异常，finally 块都会被执行。一般把除内存之外的资源恢复到他们的初始状态。</li>
+</ul>
+<h4 id="抛出异常"><a href="#抛出异常" class="headerlink" title="抛出异常"></a>抛出异常</h4><h5 id="throws"><a href="#throws" class="headerlink" title="throws"></a>throws</h5><p>throws 总是出现在一个函数头中，用来表明该成员函数可能抛出的各种异常。由调用这个方法的上一级处理。</p>
+<h5 id="throw"><a href="#throw" class="headerlink" title="throw"></a>throw</h5><p>throw 总是出现在函数体，用来抛出一个异常实例。程序会在 throw 语句后立即终止，它后面的语句执行不到。然后在包含它的所有 try 块中从里向外寻找含有其匹配的 catch 处理。</p>
+<h2 id="常见异常"><a href="#常见异常" class="headerlink" title="常见异常"></a>常见异常</h2><h3 id="NullPointException"><a href="#NullPointException" class="headerlink" title="NullPointException"></a>NullPointException</h3><h4 id="接口传入空值"><a href="#接口传入空值" class="headerlink" title="接口传入空值"></a>接口传入空值</h4><ul>
+<li>在使用后台接口或调用外部 API 时，不要轻易相信别人做的空指针保护，null 很有可能是返回的结果之一。</li>
+<li>json 解析的空值，使用 get 解析时会有 null 的情况。</li>
+</ul>
+<h4 id="在其他地方置空"><a href="#在其他地方置空" class="headerlink" title="在其他地方置空"></a>在其他地方置空</h4><p>如果使用的变量会在某些地方置空，这时需要注意在某些条件下，如延迟执行的任务里，可能会产生该变量的空指针异常。</p>
+<h3 id="IndexOutOfBoundsException"><a href="#IndexOutOfBoundsException" class="headerlink" title="IndexOutOfBoundsException"></a>IndexOutOfBoundsException</h3><ul>
+<li>单线程时，注意是否为空，长度是否大于0，是否有预判那么长</li>
+<li>多线程时，操作同一个对象，在未同步的情况下，clear时会导致另一个线程使用时越界</li>
+</ul>
+<h3 id="ConcurrentModificationException"><a href="#ConcurrentModificationException" class="headerlink" title="ConcurrentModificationException"></a>ConcurrentModificationException</h3><p>多线程情况下，不同线程一边访问一边修改会造成并发访问异常。</p>
+<p>案例：</p>
 <ul>
-<li>如果 CPU 使用量接近100%，说明当前设备很忙，有可能是 CPU 饥饿了。</li>
-<li>如果 CPU 使用量很少，说明主线程被 BLOCK 了。</li>
-<li>如果 IOwait 很高，说明 ANR 有可能是主线程在进行 I/O 操作造成。</li>
+<li>多线程情况下，直接返回成员变量，而不是一份新的赋值拷贝，很有可能在获取返回值后进行读取或修改时，其他地方也在操作这个成员变量，此时会造成并发访问的异常。</li>
 </ul>
-<h3 id="trace-txt"><a href="#trace-txt" class="headerlink" title="trace.txt"></a>trace.txt</h3><p>traces.txt 文件会记录应用的 ANR 问题，并且会打印当时 App 的运行堆栈信息。traces 文件夹可能有多份，会命名为：traces.txt, traces1.txt, traces2.txt 等，最新的ANR永远写在 traces.txt 文件中。我们可以把 trace.txt 文件拷贝出来：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">adb shell cat /data/anr/traces.txt &gt; d:/traces.txt</div></pre></td></tr></table></figure>
-<p>然后可以具体分析文件中的调用栈，定位到具体代码，结合 ANR 问题的类型，解决代码的逻辑缺陷。</p>
-<h2 id="怎么避免-ANR"><a href="#怎么避免-ANR" class="headerlink" title="怎么避免 ANR"></a>怎么避免 ANR</h2><h3 id="Strict-Mode"><a href="#Strict-Mode" class="headerlink" title="Strict Mode"></a>Strict Mode</h3><p>开启 Strict Mode，检测在主线程中执行的磁盘或网络操作。我们可以把这些操作移到子线程中执行，同时可以在主线程中使用 dialog 来保持在主线程中的响应。</p>
-<h3 id="耗时操作-1"><a href="#耗时操作-1" class="headerlink" title="耗时操作"></a>耗时操作</h3><ul>
-<li>将耗时操作都放到其他非 UI 线程、AsyncTask 或 IntentService 中执行。</li>
-<li>当存储简单信息时，可以考虑使用文件或者 sharedpreference 代替数据库。</li>
-<li>如果使用数据库，考虑使用 batch 方法或事务提高效率。</li>
-</ul>
-<h3 id="线程操作"><a href="#线程操作" class="headerlink" title="线程操作"></a>线程操作</h3><ul>
-<li>主线程中尽量避免调用任何 synchronized 方法。</li>
-</ul>
-<ul>
-<li>主线程中尽量避免调用 <code>wait()</code>, <code>sleep()</code> 操作。</li>
-</ul>
-<h3 id="使用-HandlerThread"><a href="#使用-HandlerThread" class="headerlink" title="使用 HandlerThread"></a>使用 HandlerThread</h3><p>普通 Handler 的 <code>handleMessage</code> 是在主线程中执行，当需要在接收到消息后执行耗时操作时，可以用 HandlerThread 替换 Thread。HandlerThread 比 Thread 多了一个 Looper，而Looper是线程相关的，所以 Looper 分发给 Handler 的消息也会在 HandlerThread 创建的线程里，这样就实现了子线程之间的通信。</p>
-<p>HandlerThread 有自己的消息队列，处理任务时是串行的，不太适合频繁且耗时的网络请求，容易阻塞。</p>
-<h3 id="使用-IntentService"><a href="#使用-IntentService" class="headerlink" title="使用 IntentService"></a>使用 IntentService</h3><p>IntentService 继承 Service，内部封装了 HandlerThread 和 Handler，轮流把每个收到的 Intent 放到子线程中执行，完成所有工作后自动退出，这样就不会阻塞主线程。</p>
-<h3 id="减少-BroadCast-receivers-的操作"><a href="#减少-BroadCast-receivers-的操作" class="headerlink" title="减少 BroadCast receivers 的操作"></a>减少 BroadCast receivers 的操作</h3><p>broadCastReceiver 要进行复杂操作的的时候，可以在 <code>onReceive()</code> 方法中启动一个 IntentService 来处理。</p>
 
       
     </div>
@@ -451,7 +434,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://lavnfan.github.io/2017/09/24/ANR/" title="ANR 问题分析">http://lavnfan.github.io/2017/09/24/ANR/</a>
+    <a href="http://lavnfan.github.io/2018/01/13/Java crash 异常分析/" title="Java crash 异常分析">http://lavnfan.github.io/2018/01/13/Java crash 异常分析/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -468,9 +451,7 @@
           
             <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
           
-            <a href="/tags/性能优化/" rel="tag"><i class="fa fa-tag"></i> 性能优化</a>
-          
-            <a href="/tags/ANR/" rel="tag"><i class="fa fa-tag"></i> ANR</a>
+            <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
           
         </div>
       
@@ -483,8 +464,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/09/23/进程保活/" rel="next" title="Android 进程保活">
-                <i class="fa fa-chevron-left"></i> Android 进程保活
+              <a href="/2017/12/16/Collections.sort() 出现 IllegalArgumentException？因为它：TimSort/" rel="next" title="Collections.sort() 出现 IllegalArgumentException？因为它：TimSort">
+                <i class="fa fa-chevron-left"></i> Collections.sort() 出现 IllegalArgumentException？因为它：TimSort
               </a>
             
           </div>
@@ -492,10 +473,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/10/14/UML 及 StarUml/" rel="prev" title="UML 及 StarUML">
-                UML 及 StarUML <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -648,7 +625,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ANR-是什么"><span class="nav-number">1.</span> <span class="nav-text">ANR 是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ANR-产生原因"><span class="nav-number">2.</span> <span class="nav-text">ANR 产生原因</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#耗时操作"><span class="nav-number">2.1.</span> <span class="nav-text">耗时操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程饥饿"><span class="nav-number">2.2.</span> <span class="nav-text">线程饥饿</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程死锁"><span class="nav-number">2.3.</span> <span class="nav-text">线程死锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何分析-ANR"><span class="nav-number">3.</span> <span class="nav-text">如何分析 ANR</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#logcat-日志"><span class="nav-number">3.1.</span> <span class="nav-text">logcat 日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#trace-txt"><span class="nav-number">3.2.</span> <span class="nav-text">trace.txt</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#怎么避免-ANR"><span class="nav-number">4.</span> <span class="nav-text">怎么避免 ANR</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Strict-Mode"><span class="nav-number">4.1.</span> <span class="nav-text">Strict Mode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#耗时操作-1"><span class="nav-number">4.2.</span> <span class="nav-text">耗时操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程操作"><span class="nav-number">4.3.</span> <span class="nav-text">线程操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用-HandlerThread"><span class="nav-number">4.4.</span> <span class="nav-text">使用 HandlerThread</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用-IntentService"><span class="nav-number">4.5.</span> <span class="nav-text">使用 IntentService</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#减少-BroadCast-receivers-的操作"><span class="nav-number">4.6.</span> <span class="nav-text">减少 BroadCast receivers 的操作</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-异常"><span class="nav-number">1.</span> <span class="nav-text">Java 异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#处理异常"><span class="nav-number">1.1.</span> <span class="nav-text">处理异常</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#try-catch-finally-捕捉异常"><span class="nav-number">1.1.1.</span> <span class="nav-text">try-catch-finally 捕捉异常</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#抛出异常"><span class="nav-number">1.1.2.</span> <span class="nav-text">抛出异常</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#throws"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">throws</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#throw"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">throw</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见异常"><span class="nav-number">2.</span> <span class="nav-text">常见异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#NullPointException"><span class="nav-number">2.1.</span> <span class="nav-text">NullPointException</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#接口传入空值"><span class="nav-number">2.1.1.</span> <span class="nav-text">接口传入空值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#在其他地方置空"><span class="nav-number">2.1.2.</span> <span class="nav-text">在其他地方置空</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IndexOutOfBoundsException"><span class="nav-number">2.2.</span> <span class="nav-text">IndexOutOfBoundsException</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ConcurrentModificationException"><span class="nav-number">2.3.</span> <span class="nav-text">ConcurrentModificationException</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -827,7 +804,7 @@
 		_hcwp.push({widget:"Bloggerstream", widget_id: 95590, selector:".hc-comment-count", label: "{\%COUNT%\}" });
 
 		
-		_hcwp.push({widget:"Stream", widget_id: 95590, xid: "2017/09/24/ANR/"});
+		_hcwp.push({widget:"Stream", widget_id: 95590, xid: "2018/01/13/Java crash 异常分析/"});
 		
 
 		(function() {

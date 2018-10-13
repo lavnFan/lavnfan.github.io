@@ -104,7 +104,7 @@
 <meta property="og:description" content="作为跨平台的解决方案之一，使用 webview 这种 hybrid 方式是最早被应用起来的，现在也已慢慢走向成熟。本文简单介绍一下使用 webview 过程中 js 和 native 的几种通信方式和性能对比。  通信方式介绍Android webview 关于 Js 和 Native 的几种通信方式如下所示：  Native-Jswebview.loadUrlJava 中调用 Js 代码，使用">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://qny.ivanfan.site/webview-native%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F.png">
-<meta property="og:updated_time" content="2018-10-13T09:11:13.507Z">
+<meta property="og:updated_time" content="2018-10-13T09:15:50.719Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Webview 和 Native 通信总结">
 <meta name="twitter:description" content="作为跨平台的解决方案之一，使用 webview 这种 hybrid 方式是最早被应用起来的，现在也已慢慢走向成熟。本文简单介绍一下使用 webview 过程中 js 和 native 的几种通信方式和性能对比。  通信方式介绍Android webview 关于 Js 和 Native 的几种通信方式如下所示：  Native-Jswebview.loadUrlJava 中调用 Js 代码，使用">
@@ -380,7 +380,7 @@
 <p>作为跨平台的解决方案之一，使用 webview 这种 hybrid 方式是最早被应用起来的，现在也已慢慢走向成熟。本文简单介绍一下使用 webview 过程中 js 和 native 的几种通信方式和性能对比。</p>
 </blockquote>
 <h2 id="通信方式介绍"><a href="#通信方式介绍" class="headerlink" title="通信方式介绍"></a>通信方式介绍</h2><p>Android webview 关于 Js 和 Native 的几种通信方式如下所示：</p>
-<p><img src="http://qny.ivanfan.site/webview-native%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F.png" alt="webview-native通信方式"></p>
+<p><img src="http://qny.ivanfan.site/webview-native%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F.png" alt=""></p>
 <h3 id="Native-Js"><a href="#Native-Js" class="headerlink" title="Native-Js"></a>Native-Js</h3><h4 id="webview-loadUrl"><a href="#webview-loadUrl" class="headerlink" title="webview.loadUrl"></a>webview.loadUrl</h4><p>Java 中调用 Js 代码，使用 <code>loadUrl()</code> 比较简单，如下所示条用弹出一个提示框：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">webView.loadUrl(<span class="string">"javascript:alert('hello')"</span>);</div></pre></td></tr></table></figure>
 <p>Js 代码统一在页面加载完成，即 <code>onPageFinished()</code> 之后调用。</p>

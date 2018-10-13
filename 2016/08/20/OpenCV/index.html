@@ -103,14 +103,14 @@
 <meta property="og:site_name" content="IvanFan">
 <meta property="og:description" content="Android 中写的 JNI 如何调用 OpenCV ？ OpenCV 如何配置到 Linux 服务器上？  OpenCV for Android如果想实现图片的高斯模糊，图片比较，人脸识别等算法，OpenCV 可能是现成库里比较好的选择。使用 OpenCV 的优缺点：    现成库 C++ 调用，封装很好，实现较为简单，上层 JNI 调用性能较好 失去 Java 的跨平台特性  下边我们来看">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/native_jni_directory.PNG">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/shared_warning.PNG">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/TARGET_ARCH_ABI.PNG">
-<meta property="og:updated_time" content="2017-09-11T14:57:23.949Z">
+<meta property="og:image" content="http://qny.ivanfan.site/native_jni_directory.PNG">
+<meta property="og:image" content="http://qny.ivanfan.site/shared_warning.PNG">
+<meta property="og:image" content="http://qny.ivanfan.site/TARGET_ARCH_ABI.PNG">
+<meta property="og:updated_time" content="2018-10-13T09:09:51.119Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OpenCV for Andorid 的总结">
 <meta name="twitter:description" content="Android 中写的 JNI 如何调用 OpenCV ？ OpenCV 如何配置到 Linux 服务器上？  OpenCV for Android如果想实现图片的高斯模糊，图片比较，人脸识别等算法，OpenCV 可能是现成库里比较好的选择。使用 OpenCV 的优缺点：    现成库 C++ 调用，封装很好，实现较为简单，上层 JNI 调用性能较好 失去 Java 的跨平台特性  下边我们来看">
-<meta name="twitter:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/native_jni_directory.PNG">
+<meta name="twitter:image" content="http://qny.ivanfan.site/native_jni_directory.PNG">
 
 
 
@@ -403,28 +403,43 @@
 <li>新建 JNI Folder，并在目录下创建俩个文件：Android.mk 和 Application.mk</li>
 </ul>
 <p>建立在Project展开如下：</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/native_jni_directory.PNG" alt=""></p>
+<p><img src="http://qny.ivanfan.site/native_jni_directory.PNG" alt=""></p>
 <h4 id="2-2、-文件配置"><a href="#2-2、-文件配置" class="headerlink" title="2.2、 文件配置"></a>2.2、 文件配置</h4><ul>
 <li><p>Android.mk</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">LOCAL_PATH := $(call my-dir)</div><div class="line"></div><div class="line">include $(CLEAR_VARS)</div><div class="line"></div><div class="line"></div><div class="line">OpenCV_INSTALL_MODULES := on</div><div class="line">OpenCV_CAMERA_MODULES := off</div><div class="line"></div><div class="line">OPENCV_LIB_TYPE :=STATIC</div><div class="line"></div><div class="line">ifeq (&quot;$(wildcard $(OPENCV_MK_PATH))&quot;,&quot;&quot;)</div><div class="line">include ..\..\..\..\native\jni\OpenCV.mk</div><div class="line">else</div><div class="line">include $(OPENCV_MK_PATH)</div><div class="line">endif</div><div class="line"></div><div class="line">LOCAL_MODULE := OpenCV</div><div class="line"></div><div class="line">LOCAL_SRC_FILES :=</div><div class="line"></div><div class="line">LOCAL_LDLIBS +=  -lm -llog</div><div class="line"></div><div class="line">include $(BUILD_SHARED_LIBRARY)</div></pre></td></tr></table></figure>
-<p>  这里是以静态链接导入 OpenCV 库，然后编译成 共享的 so 库，所以会导致最终的 so 库体积比较大。 </p>
-<p>  <strong>注意：<code>include ..\..\..\..\native\jni\OpenCV.mk</code> 的路径一定要对！！！</strong></p>
-</li>
-<li><p>Application.mk</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">APP_STL := gnustl_static</div><div class="line">APP_CPPFLAGS := -frtti -fexceptions</div><div class="line">APP_ABI := armeabi armeabi-v7a</div><div class="line">APP_PLATFORM := android-8</div></pre></td></tr></table></figure>
-<p>  这里配置了 OpenCV 需要用到的 <strong>STL</strong> 库，以及编译的硬件平台等。</p>
-</li>
-<li><p>build.gradle</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">sourceSets.main.jni.srcDirs = []</div><div class="line">   //禁止自带的ndk功能</div><div class="line">   sourceSets.main.jniLibs.srcDirs = [&apos;src/main/libs&apos;,&apos;src/main/jniLibs&apos;]</div><div class="line">   //重定向so目录为src/main/libs，原来为src/main/jniLibs</div><div class="line"></div><div class="line">   task ndkBuild(type: Exec, description: &apos;Compile JNI source with NDK&apos;) &#123;</div><div class="line">       Properties properties = new Properties()</div><div class="line">       properties.load(project.rootProject.file(&apos;local.properties&apos;).newDataInputStream())</div><div class="line">       def ndkDir = properties.getProperty(&apos;ndk.dir&apos;)</div><div class="line"></div><div class="line">       if (org.apache.tools.ant.taskdefs.condition.Os.isFamily(org.apache.tools.ant.taskdefs.condition.Os.FAMILY_WINDOWS)) &#123;</div><div class="line">           commandLine &quot;$ndkDir/ndk-build.cmd&quot;, &apos;-C&apos;, file(&apos;src/main/jni&apos;).absolutePath</div><div class="line">       &#125; else &#123;</div><div class="line">           commandLine &quot;$ndkDir/ndk-build&quot;, &apos;-C&apos;, file(&apos;src/main/jni&apos;).absolutePath</div><div class="line">       &#125;</div><div class="line">   &#125;</div><div class="line"></div><div class="line">   tasks.withType(JavaCompile) &#123;</div><div class="line">       compileTask -&gt; compileTask.dependsOn ndkBuild</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
-</li>
-<li><p>local.properties</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ndk.dir=D\:\\program\\Android\\sdk\\ndk-bundle</div></pre></td></tr></table></figure>
-<p>  这里配置 NDK 的路径</p>
-</li>
-</ul>
-<h4 id="2-3、JNI-调用"><a href="#2-3、JNI-调用" class="headerlink" title="2.3、JNI 调用"></a>2.3、JNI 调用</h4><ul>
-<li><p>声明 java 层的 native 方法</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"> public class OpenCVHelper &#123;</div><div class="line"></div><div class="line">  		 static &#123;</div><div class="line">      		 System.loadLibrary(&quot;OpenCV&quot;);</div><div class="line">  		 &#125;</div><div class="line"></div><div class="line">	   public static native double compareImages(String old_image, String new_image,int type);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">LOCAL_PATH := $(call my-dir)</div><div class="line"></div><div class="line">include $(CLEAR_VARS)</div></pre></td></tr></table></figure>
+<p>  OpenCV_INSTALL_MODULES := on<br>  OpenCV_CAMERA_MODULES := off</p>
+<p>  OPENCV_LIB_TYPE :=STATIC</p>
+<p>  ifeq (“$(wildcard $(OPENCV_MK_PATH))”,””)<br>  include ........\native\jni\OpenCV.mk<br>  else<br>  include $(OPENCV_MK_PATH)<br>  endif</p>
+<p>  LOCAL_MODULE := OpenCV</p>
+<p>  LOCAL_SRC_FILES :=</p>
+<p>  LOCAL_LDLIBS +=  -lm -llog</p>
+<p>  include $(BUILD_SHARED_LIBRARY)</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">	这里是以静态链接导入 OpenCV 库，然后编译成 共享的 so 库，所以会导致最终的 so 库体积比较大。 </div><div class="line">	  </div><div class="line">	**注意：`include ..\..\..\..\native\jni\OpenCV.mk` 的路径一定要对！！！**</div><div class="line"></div><div class="line">* Application.mk</div></pre></td></tr></table></figure>
+<p>  APP_STL := gnustl_static<br>  APP_CPPFLAGS := -frtti -fexceptions<br>  APP_ABI := armeabi armeabi-v7a<br>  APP_PLATFORM := android-8</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">	这里配置了 OpenCV 需要用到的 **STL** 库，以及编译的硬件平台等。</div><div class="line"></div><div class="line">* build.gradle</div></pre></td></tr></table></figure>
+<p>  sourceSets.main.jni.srcDirs = []<br>  //禁止自带的ndk功能<br>  sourceSets.main.jniLibs.srcDirs = [‘src/main/libs’,’src/main/jniLibs’]<br>  //重定向so目录为src/main/libs，原来为src/main/jniLibs</p>
+<p>  task ndkBuild(type: Exec, description: ‘Compile JNI source with NDK’) {</p>
+<pre><code>Properties properties = new Properties()
+properties.load(project.rootProject.file(&apos;local.properties&apos;).newDataInputStream())
+def ndkDir = properties.getProperty(&apos;ndk.dir&apos;)
+
+if (org.apache.tools.ant.taskdefs.condition.Os.isFamily(org.apache.tools.ant.taskdefs.condition.Os.FAMILY_WINDOWS)) {
+    commandLine &quot;$ndkDir/ndk-build.cmd&quot;, &apos;-C&apos;, file(&apos;src/main/jni&apos;).absolutePath
+} else {
+    commandLine &quot;$ndkDir/ndk-build&quot;, &apos;-C&apos;, file(&apos;src/main/jni&apos;).absolutePath
+}
+</code></pre><p>  }</p>
+<p>  tasks.withType(JavaCompile) {</p>
+<pre><code>compileTask -&gt; compileTask.dependsOn ndkBuild
+</code></pre><p>  }</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">* local.properties</div></pre></td></tr></table></figure>
+<p>  ndk.dir=D\:\program\Android\sdk\ndk-bundle</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">	这里配置 NDK 的路径</div><div class="line"></div><div class="line">#### 2.3、JNI 调用</div><div class="line">* 声明 java 层的 native 方法</div></pre></td></tr></table></figure>
+<p> public class OpenCVHelper {</p>
+<pre><code>static {
+    System.loadLibrary(&quot;OpenCV&quot;);
+}
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"> 	   public static native double compareImages(String old_image, String new_image,int type);</div><div class="line">​	&#125;</div><div class="line">​</div></pre></td></tr></table></figure>
 </li>
 <li><p>使用 javah 命令生成头文件</p>
   <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">javah -jni com.aliyun.utils.OpenCVHelper</div></pre></td></tr></table></figure>
@@ -445,7 +460,7 @@
 </ul>
 <h3 id="3、静态还是共享链接-OpenCV"><a href="#3、静态还是共享链接-OpenCV" class="headerlink" title="3、静态还是共享链接 OpenCV"></a>3、静态还是共享链接 OpenCV</h3><p>上边我们在 Android.mk 中，使得 <code>OPENCV_LIB_TYPE :=STATIC</code>，以静态库的方式导入 OpenCV ，所以生成的 so 库比较大，达到好几M。   </p>
 <p>另一种方式是使用动态库的方式引入 OpenCV ，即把<code>OPENCV_LIB_TYPE :=SHARED</code>，动态加载所需要的库，在 ndk-build 时，会报 <code>-lopencv_java3</code> 的 warning :</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/shared_warning.PNG" alt="libopencv_java3.so"></p>
+<p><img src="http://qny.ivanfan.site/shared_warning.PNG" alt="libopencv_java3.so"></p>
 <p>这时我们把 native-jni-编译平台下的 <code>libopencv_java3.so</code> 导入即可。</p>
 <h2 id="OpenCV-for-Linux"><a href="#OpenCV-for-Linux" class="headerlink" title="OpenCV for Linux"></a>OpenCV for Linux</h2><p>OpenCV for Android 的 demo 完成了，但配置到服务器上，就是各种坑啊，一个 bug 接着一个 bug，所幸最终都依依解决了，现在把那些 bug 场景重现！</p>
 <p>要完成 JNI 中对 OpenCV 库的引用，<strong>关键</strong>就是需要把 <strong>OpenCV 库导入</strong>进来，不管是静态方式还是动态方式。<br>以下有俩种选择导入：</p>
@@ -461,9 +476,8 @@
 </code></pre><p>代码修改成这样：</p>
 <pre><code>$(LOCAL_PATH)\..\..\native\jni\OpenCV.mk
 </code></pre><p>还是报同样的错误。。。<br>认真思考一番,有办法了！！！   </p>
-<p><strong>解决：</strong><br>可以用 <strong>ls 命令在服务器上看能不能进入这个目录~</strong>，发现进不了，再细细思考一下，应该把斜杠给改反一下。<br>比如这样：</p>
-<pre><code>include $(LOCAL_PATH)/../../native/jni/OpenCV.mk
-</code></pre><p>恩，没有报这个错误了，但紧接着又报了第二个错误。。。</p>
+<p><strong>解决：</strong><br>可以用 <strong>ls 命令在服务器上看能不能进入这个目录~</strong>，发现进不了，再细细思考一下，应该把斜杠给改反一下。<br>比如这样：<br>​<br>    include $(LOCAL_PATH)/../../native/jni/OpenCV.mk</p>
+<p>恩，没有报这个错误了，但紧接着又报了第二个错误。。。</p>
 <h4 id="2、TARGET-ARCH-ABI-的问题"><a href="#2、TARGET-ARCH-ABI-的问题" class="headerlink" title="2、TARGET_ARCH_ABI 的问题"></a>2、TARGET_ARCH_ABI 的问题</h4><p><strong>报错</strong>：</p>
 <pre><code>packages/apps/DVRRecorder/jni/OpenCV/../../native/jni/OpenCV.mk:40: packages/apps/DVRRecorder/jni/OpenCV/../../native/jni/OpenCV-.mk: No such file or directory
 </code></pre><p>OpenCV-.mk 是个什么鬼，但明显已经解决了 OpenCV.mk 的路径问题，怎么又出来 OpenCV-.mk 呢？   </p>
@@ -479,7 +493,7 @@ jni/OpenCV.mk:76:    OPENCV_MK_$(OPENCV_TARGET_ARCH_ABI)_ALREADY_INCLUDED:=on
 </code></pre><p>搜索后发现<strong>只有使用，但没有定义</strong>！！！<br>问题就很明显了，<strong>没有导入编译的硬件平台</strong>，很有可能也是路径问题。   </p>
 <p><strong>解决：</strong><br>这里我们就不用去找 TARGET_ARCH_ABI 的路径了，直接根据所编译的平台，合理取值。   </p>
 <p>在 Android developer Guide上有说明：<a href="https://developer.android.com/ndk/guides/android_mk.html" target="_blank" rel="external">https://developer.android.com/ndk/guides/android_mk.html</a></p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/TARGET_ARCH_ABI.PNG" alt="TARGET_ARCH_ABI"></p>
+<p><img src="http://qny.ivanfan.site/TARGET_ARCH_ABI.PNG" alt="TARGET_ARCH_ABI"></p>
 <p>用 <code>mm -B</code> 编译时，可以发现所编译的平台，根据使用的 CPU 架构来选取一个合理值，比如：</p>
 <pre><code>TARGET_ARCH_ABI := armeabi-v7a
 </code></pre><p>恩，以为没问题了，但下一个错误马上来~~~</p>
@@ -494,14 +508,11 @@ OPENCV_LIB_TYPE :=STATIC
 </code></pre><p>于是追踪到 OpenCV.mk 中发现：</p>
 <pre><code>ifeq ($(OPENCV_INSTALL_MODULES),on)
         LOCAL_$(OPENCV_LIB_TYPE)_LIBRARIES += $(foreach mod, $(OPENCV_LIBS), opencv_$(mod))
-else
-        LOCAL_LDLIBS += -L$(call host-path,$(LOCAL_PATH)/$(OPENCV_LIBS_DIR)) $(foreach lib, $(OPENCV_LIBS), -lopencv_$(lib))
-endif
-
-ifeq ($(OPENCV_LIB_TYPE),STATIC)
+</code></pre><p>​    else<br>            LOCAL_LDLIBS += -L$(call host-path,$(LOCAL_PATH)/$(OPENCV_LIBS_DIR)) $(foreach lib, $(OPENCV<em>LIBS), -lopencv</em>$(lib))<br>​    endif</p>
+<pre><code>ifeq ($(OPENCV_LIB_TYPE),STATIC)
         LOCAL_STATIC_LIBRARIES += $(OPENCV_3RDPARTY_COMPONENTS)
-endif
-</code></pre><p>猜测是这俩个条件判断后进去的语句出问题了，</p>
+</code></pre><p>​    endif</p>
+<p>猜测是这俩个条件判断后进去的语句出问题了，</p>
 <ul>
 <li>当为 <code>on</code> 时，以模块方式加载 <code>LOCAL_STATIC_LIBRARIES</code>，当为 <code>off</code> 时，以 <code>LOCAL_LDLIBS</code> 方式加载lib下的库。</li>
 <li>当 <code>OPENCV_LIB_TYPE==STATIC</code> 时，第三方的lib加载到 <code>LOCAL_STATIC_LIBRARIES</code> 中。</li>
@@ -797,7 +808,7 @@ LOCAL_LDFLAGS += -L$(prebuilt_stdcxx_PATH)/libs/armeabi-v7a -lgnustl_static -lsu
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#OpenCV-for-Android"><span class="nav-number">1.</span> <span class="nav-text">OpenCV for Android</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、下载-OpenCV-for-Android-的-SDK"><span class="nav-number">1.1.</span> <span class="nav-text">1、下载 OpenCV for Android 的 SDK</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#解压后有："><span class="nav-number">1.1.1.</span> <span class="nav-text">解压后有：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#具体的-IDE-配置方法"><span class="nav-number">1.1.2.</span> <span class="nav-text">具体的 IDE 配置方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、Android-studio-配置"><span class="nav-number">1.2.</span> <span class="nav-text">2、Android studio 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1、拷贝-native"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1、拷贝 native</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2、-文件配置"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2、 文件配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3、JNI-调用"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.3、JNI 调用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4、ndk-build"><span class="nav-number">1.2.4.</span> <span class="nav-text">2.4、ndk-build</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、静态还是共享链接-OpenCV"><span class="nav-number">1.3.</span> <span class="nav-text">3、静态还是共享链接 OpenCV</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OpenCV-for-Linux"><span class="nav-number">2.</span> <span class="nav-text">OpenCV for Linux</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#方法一、利用原来的-OpenCV-mk-引入"><span class="nav-number">2.1.</span> <span class="nav-text">方法一、利用原来的 OpenCV.mk 引入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、OpenCV-mk-的路径问题"><span class="nav-number">2.1.1.</span> <span class="nav-text">1、OpenCV.mk 的路径问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2、TARGET-ARCH-ABI-的问题"><span class="nav-number">2.1.2.</span> <span class="nav-text">2、TARGET_ARCH_ABI 的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3、编译，连接的问题"><span class="nav-number">2.1.3.</span> <span class="nav-text">3、编译，连接的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4、STL-的头文件问题"><span class="nav-number">2.1.4.</span> <span class="nav-text">4、STL 的头文件问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法二、另启炉灶，在-Android-mk-中一个库一个库的引入"><span class="nav-number">2.2.</span> <span class="nav-text">方法二、另启炉灶，在 Android.mk 中一个库一个库的引入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1、静态库的引入"><span class="nav-number">2.3.</span> <span class="nav-text">1、静态库的引入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、STL-库的引入"><span class="nav-number">2.4.</span> <span class="nav-text">2、STL 库的引入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、LOCAL-LDIBS-的引入"><span class="nav-number">2.5.</span> <span class="nav-text">3、LOCAL_LDIBS 的引入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#OpenCV-for-Android"><span class="nav-number">1.</span> <span class="nav-text">OpenCV for Android</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、下载-OpenCV-for-Android-的-SDK"><span class="nav-number">1.1.</span> <span class="nav-text">1、下载 OpenCV for Android 的 SDK</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#解压后有："><span class="nav-number">1.1.1.</span> <span class="nav-text">解压后有：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#具体的-IDE-配置方法"><span class="nav-number">1.1.2.</span> <span class="nav-text">具体的 IDE 配置方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、Android-studio-配置"><span class="nav-number">1.2.</span> <span class="nav-text">2、Android studio 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1、拷贝-native"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1、拷贝 native</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2、-文件配置"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2、 文件配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4、ndk-build"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.4、ndk-build</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、静态还是共享链接-OpenCV"><span class="nav-number">1.3.</span> <span class="nav-text">3、静态还是共享链接 OpenCV</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OpenCV-for-Linux"><span class="nav-number">2.</span> <span class="nav-text">OpenCV for Linux</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#方法一、利用原来的-OpenCV-mk-引入"><span class="nav-number">2.1.</span> <span class="nav-text">方法一、利用原来的 OpenCV.mk 引入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、OpenCV-mk-的路径问题"><span class="nav-number">2.1.1.</span> <span class="nav-text">1、OpenCV.mk 的路径问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2、TARGET-ARCH-ABI-的问题"><span class="nav-number">2.1.2.</span> <span class="nav-text">2、TARGET_ARCH_ABI 的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3、编译，连接的问题"><span class="nav-number">2.1.3.</span> <span class="nav-text">3、编译，连接的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4、STL-的头文件问题"><span class="nav-number">2.1.4.</span> <span class="nav-text">4、STL 的头文件问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法二、另启炉灶，在-Android-mk-中一个库一个库的引入"><span class="nav-number">2.2.</span> <span class="nav-text">方法二、另启炉灶，在 Android.mk 中一个库一个库的引入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1、静态库的引入"><span class="nav-number">2.3.</span> <span class="nav-text">1、静态库的引入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、STL-库的引入"><span class="nav-number">2.4.</span> <span class="nav-text">2、STL 库的引入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、LOCAL-LDIBS-的引入"><span class="nav-number">2.5.</span> <span class="nav-text">3、LOCAL_LDIBS 的引入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
 
           </div>

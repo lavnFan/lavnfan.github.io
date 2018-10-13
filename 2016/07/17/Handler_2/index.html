@@ -103,14 +103,14 @@
 <meta property="og:site_name" content="IvanFan">
 <meta property="og:description" content="承接上一篇Handler系列一，上篇主要总结了Handler如何通信，这篇来介绍Handler怎么通信。   Handler的通信机制 Handler，Looper，MessageQueue如何关联  Handler 通信机制  创建Handler，并采用当前线程的Looper创建消息循环系统； Handler通过sendMessage(Message)或Post(Runnable)发送消息，调">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/handler.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/handler_Looper_MessageQueue_class.jpg">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/handler_Looper_MessageQueue.jpg">
-<meta property="og:updated_time" content="2017-09-23T14:59:09.031Z">
+<meta property="og:image" content="http://qny.ivanfan.site/handler.png">
+<meta property="og:image" content="http://qny.ivanfan.site/handler_Looper_MessageQueue_class.jpg">
+<meta property="og:image" content="http://qny.ivanfan.site/handler_Looper_MessageQueue.jpg">
+<meta property="og:updated_time" content="2018-10-13T09:07:07.447Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Handler 系列二">
 <meta name="twitter:description" content="承接上一篇Handler系列一，上篇主要总结了Handler如何通信，这篇来介绍Handler怎么通信。   Handler的通信机制 Handler，Looper，MessageQueue如何关联  Handler 通信机制  创建Handler，并采用当前线程的Looper创建消息循环系统； Handler通过sendMessage(Message)或Post(Runnable)发送消息，调">
-<meta name="twitter:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/handler.png">
+<meta name="twitter:image" content="http://qny.ivanfan.site/handler.png">
 
 
 
@@ -374,13 +374,13 @@
 <li>Handler的通信机制</li>
 <li>Handler，Looper，MessageQueue如何关联</li>
 </ul>
-<h2 id="Handler-通信机制"><a href="#Handler-通信机制" class="headerlink" title="Handler 通信机制"></a>Handler 通信机制</h2><p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/handler.png" alt="Handler 通信机制"></p>
+<h2 id="Handler-通信机制"><a href="#Handler-通信机制" class="headerlink" title="Handler 通信机制"></a>Handler 通信机制</h2><p><img src="http://qny.ivanfan.site/handler.png" alt="Handler 通信机制"></p>
 <ul>
 <li>创建Handler，并采用当前线程的Looper创建消息循环系统；</li>
 <li>Handler通过sendMessage(Message)或Post(Runnable)发送消息，调用enqueueMessage把消息插入到消息链表中；</li>
 <li>Looper循环检测消息队列中的消息，若有消息则取出该消息，并调用该消息持有的handler的dispatchMessage方法，回调到创建Handler线程中重写的handleMessage里执行。</li>
 </ul>
-<h2 id="Handler如何关联Looper、MessageQueue"><a href="#Handler如何关联Looper、MessageQueue" class="headerlink" title="Handler如何关联Looper、MessageQueue"></a>Handler如何关联Looper、MessageQueue</h2><p><strong>Handler及其关联的类图</strong><br><img src="http://7xrhn4.com1.z0.glb.clouddn.com/handler_Looper_MessageQueue_class.jpg" alt="Handler及其关联的类图"></p>
+<h2 id="Handler如何关联Looper、MessageQueue"><a href="#Handler如何关联Looper、MessageQueue" class="headerlink" title="Handler如何关联Looper、MessageQueue"></a>Handler如何关联Looper、MessageQueue</h2><p><strong>Handler及其关联的类图</strong><br><img src="http://qny.ivanfan.site/handler_Looper_MessageQueue_class.jpg" alt="Handler及其关联的类图"></p>
 <p>以上类图可以快速帮助我们理清Handler与Looper、MessageQueue的关系，以下从源码的角度慢慢分析：</p>
 <h3 id="1、Handler-发送消息"><a href="#1、Handler-发送消息" class="headerlink" title="1、Handler 发送消息"></a>1、Handler 发送消息</h3><p>上一段很熟悉的代码：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Message msg =Message.obtain();  <span class="comment">//从全局池中返回一个message实例，避免多次创建message（如new Message）</span></div><div class="line">msg.obj = data;</div><div class="line">msg.what=<span class="number">1</span>;   <span class="comment">//标志消息的标志</span></div><div class="line">handler.sendMessage(msg);</div></pre></td></tr></table></figure>
@@ -436,7 +436,7 @@ private static void prepare(boolean quitAllowed) {
 </li>
 </ul>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>以一个时序图来总结handler的消息机制，包含上述如何关联Looper和MessageQueue的过程。</p>
-<p><strong>Handler-Looper-MessageQueue时序图</strong><br><img src="http://7xrhn4.com1.z0.glb.clouddn.com/handler_Looper_MessageQueue.jpg" alt="Handler-Looper-MessageQueue时序图"></p>
+<p><strong>Handler-Looper-MessageQueue时序图</strong><br><img src="http://qny.ivanfan.site/handler_Looper_MessageQueue.jpg" alt="Handler-Looper-MessageQueue时序图"></p>
 
       
     </div>

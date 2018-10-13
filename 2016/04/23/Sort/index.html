@@ -79,7 +79,7 @@
 <link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="算法,排序,C++," />
+  <meta name="keywords" content="算法,C++,排序," />
 
 
 
@@ -96,20 +96,20 @@
 
 
 <meta name="description" content="排序算法：一种能将一串数据依照特定的排序方式进行排列的一种算法。排序算法性能：取决于时间和空间复杂度，其次还得考虑稳定性，及其适应的场景。稳定性：让原本有相等键值的记录维持相对次序。也就是若一个排序算法是稳定的，当有俩个相等键值的记录R和S，且原本的序列中R在S前，那么排序后的列表中R应该也在S之前。   以下来总结常用的排序算法，加深对排序的理解。 排序算法目录 冒泡排序 插入排序 希尔排序 选">
-<meta name="keywords" content="算法,排序,C++">
+<meta name="keywords" content="算法,C++,排序">
 <meta property="og:type" content="article">
 <meta property="og:title" content="排序常用算法总结">
 <meta property="og:url" content="http://lavnfan.github.io/2016/04/23/Sort/index.html">
 <meta property="og:site_name" content="IvanFan">
 <meta property="og:description" content="排序算法：一种能将一串数据依照特定的排序方式进行排列的一种算法。排序算法性能：取决于时间和空间复杂度，其次还得考虑稳定性，及其适应的场景。稳定性：让原本有相等键值的记录维持相对次序。也就是若一个排序算法是稳定的，当有俩个相等键值的记录R和S，且原本的序列中R在S前，那么排序后的列表中R应该也在S之前。   以下来总结常用的排序算法，加深对排序的理解。 排序算法目录 冒泡排序 插入排序 希尔排序 选">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/bucket_sort.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/radix_sort.png">
-<meta property="og:updated_time" content="2017-09-23T14:09:42.727Z">
+<meta property="og:image" content="http://qny.ivanfan.site/bucket_sort.png">
+<meta property="og:image" content="http://qny.ivanfan.site/radix_sort.png">
+<meta property="og:updated_time" content="2018-10-13T09:10:21.653Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="排序常用算法总结">
 <meta name="twitter:description" content="排序算法：一种能将一串数据依照特定的排序方式进行排列的一种算法。排序算法性能：取决于时间和空间复杂度，其次还得考虑稳定性，及其适应的场景。稳定性：让原本有相等键值的记录维持相对次序。也就是若一个排序算法是稳定的，当有俩个相等键值的记录R和S，且原本的序列中R在S前，那么排序后的列表中R应该也在S之前。   以下来总结常用的排序算法，加深对排序的理解。 排序算法目录 冒泡排序 插入排序 希尔排序 选">
-<meta name="twitter:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/bucket_sort.png">
+<meta name="twitter:image" content="http://qny.ivanfan.site/bucket_sort.png">
 
 
 
@@ -455,14 +455,14 @@
 <li>根据待排序列元素的大小范围，均匀独立的划分M个桶</li>
 <li>将N个输入元素分布到各个桶中去</li>
 <li>再对各个桶中的元素进行排序</li>
-<li>此时再按次序把各桶中的元素列出来即是已排序好的。<br><img src="http://7xrhn4.com1.z0.glb.clouddn.com/bucket_sort.png" alt=""></li>
+<li>此时再按次序把各桶中的元素列出来即是已排序好的。<br><img src="http://qny.ivanfan.site/bucket_sort.png" alt=""></li>
 </ul>
 <h3 id="性能-8"><a href="#性能-8" class="headerlink" title="性能"></a>性能</h3><p>时间复杂度为O(N+C)，O(C)=O(M<em>(N/M)</em>log(N/M))=O(N<em>logN-N</em>logM)，空间复杂度为O(N+M)，算法是稳定的，且与初始序列无关。</p>
 <h3 id="使用场景-3"><a href="#使用场景-3" class="headerlink" title="使用场景"></a>使用场景</h3><p>算法思想和散列中的开散列法差不多，当冲突时放入同一个桶中；可应用于数据量分布比较均匀，或比较侧重于区间数量时。</p>
 <h2 id="基数排序"><a href="#基数排序" class="headerlink" title="基数排序"></a><p id="基数排序">基数排序</p></h2><h3 id="原理-9"><a href="#原理-9" class="headerlink" title="原理"></a>原理</h3><p>对于有d个关键字时，可以分别按关键字进行排序。有俩种方法：</p>
 <ul>
 <li>MSD：先从高位开始进行排序，在每个关键字上，可采用计数排序</li>
-<li>LSD：先从低位开始进行排序，在每个关键字上，可采用桶排序<br><img src="http://7xrhn4.com1.z0.glb.clouddn.com/radix_sort.png" alt=""><h3 id="性能-9"><a href="#性能-9" class="headerlink" title="性能"></a>性能</h3>时间复杂度为O(d*(N+K))，空间复杂度为O(N+K)。</li>
+<li>LSD：先从低位开始进行排序，在每个关键字上，可采用桶排序<br><img src="http://qny.ivanfan.site/radix_sort.png" alt=""><h3 id="性能-9"><a href="#性能-9" class="headerlink" title="性能"></a>性能</h3>时间复杂度为O(d*(N+K))，空间复杂度为O(N+K)。</li>
 </ul>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a><p id="总结">总结</p></h2><p>以上排序算法的时间、空间与稳定性的总结如下：</p>
 <table>
@@ -580,9 +580,9 @@
           
             <a href="/tags/算法/" rel="tag"><i class="fa fa-tag"></i> 算法</a>
           
-            <a href="/tags/排序/" rel="tag"><i class="fa fa-tag"></i> 排序</a>
-          
             <a href="/tags/C/" rel="tag"><i class="fa fa-tag"></i> C++</a>
+          
+            <a href="/tags/排序/" rel="tag"><i class="fa fa-tag"></i> 排序</a>
           
         </div>
       

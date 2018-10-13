@@ -103,28 +103,28 @@
 <meta property="og:site_name" content="IvanFan">
 <meta property="og:description" content="在阅读代码过程中，我们经常会使用 UML 来快速地分析和总结，其中最常用到的便是类图和时序图了，但有时会被类之间的关系搞得迷糊，如聚合、组合，依赖等。所以本文主要总结下类之间的关系和使用 StarUML 画复杂的时序图。  UMLUML：统一建模语言（Unified Modeling Language）。在 UML 系统开发中有三个主要的模型：  功能模型：从用户的角度展示系统的功能，包括用例图">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/connect_singe.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/connect_double.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/connect_self.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/connect_multiple.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/contains.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/has.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/depend.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/extends.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/implent.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/seq.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/license_verify.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/class_relationship.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/reelization.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/seq_alt_1.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/seq_alt_2.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/seq_alt_3.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/seq_alt_4.png">
-<meta property="og:updated_time" content="2017-10-14T11:56:40.304Z">
+<meta property="og:image" content="http://qny.ivanfan.site/connect_singe.png">
+<meta property="og:image" content="http://qny.ivanfan.site/connect_double.png">
+<meta property="og:image" content="http://qny.ivanfan.site/connect_self.png">
+<meta property="og:image" content="http://qny.ivanfan.site/connect_multiple.png">
+<meta property="og:image" content="http://qny.ivanfan.site/contains.png">
+<meta property="og:image" content="http://qny.ivanfan.site/has.png">
+<meta property="og:image" content="http://qny.ivanfan.site/depend.png">
+<meta property="og:image" content="http://qny.ivanfan.site/extends.png">
+<meta property="og:image" content="http://qny.ivanfan.site/implent.png">
+<meta property="og:image" content="http://qny.ivanfan.site/seq.png">
+<meta property="og:image" content="http://qny.ivanfan.site/license_verify.png">
+<meta property="og:image" content="http://qny.ivanfan.site/class_relationship.png">
+<meta property="og:image" content="http://qny.ivanfan.site/reelization.png">
+<meta property="og:image" content="http://qny.ivanfan.site/seq_alt_1.png">
+<meta property="og:image" content="http://qny.ivanfan.site/seq_alt_2.png">
+<meta property="og:image" content="http://qny.ivanfan.site/seq_alt_3.png">
+<meta property="og:image" content="http://qny.ivanfan.site/seq_alt_4.png">
+<meta property="og:updated_time" content="2018-10-13T09:10:57.430Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="UML 及 StarUML">
 <meta name="twitter:description" content="在阅读代码过程中，我们经常会使用 UML 来快速地分析和总结，其中最常用到的便是类图和时序图了，但有时会被类之间的关系搞得迷糊，如聚合、组合，依赖等。所以本文主要总结下类之间的关系和使用 StarUML 画复杂的时序图。  UMLUML：统一建模语言（Unified Modeling Language）。在 UML 系统开发中有三个主要的模型：  功能模型：从用户的角度展示系统的功能，包括用例图">
-<meta name="twitter:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/connect_singe.png">
+<meta name="twitter:image" content="http://qny.ivanfan.site/connect_singe.png">
 
 
 
@@ -401,15 +401,15 @@
 <h3 id="类之间的关系"><a href="#类之间的关系" class="headerlink" title="类之间的关系"></a>类之间的关系</h3><h4 id="关联关系"><a href="#关联关系" class="headerlink" title="关联关系"></a>关联关系</h4><p>关联关系(Association)是类与类之间最常用的一种关系，它是一种结构化关系，用于表示一个类对象与另一个类对象之间有联系。</p>
 <p>在 UML 类图中，用实线连接有关联的对象所对应的类。在实现关联关系时，通常将一个类的对象作为另一个类的属性。</p>
 <h5 id="单向关联"><a href="#单向关联" class="headerlink" title="单向关联"></a>单向关联</h5><p>类的关联关系可以是单向的，单向关联用带箭头的实线表示。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/connect_singe.png" alt="connect_singe"></p>
+<p><img src="http://qny.ivanfan.site/connect_singe.png" alt="connect_singe"></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Customer</span></span></div><div class="line"><span class="class"></span>&#123;</div><div class="line">    <span class="keyword">private</span> Address address;</div><div class="line">    ……</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Address</span></span></div><div class="line"><span class="class"></span>&#123;</div><div class="line">    ……</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h5 id="双向关联"><a href="#双向关联" class="headerlink" title="双向关联"></a>双向关联</h5><p>默认情况下，关联是双向的。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/connect_double.png" alt="connect_double"></p>
+<p><img src="http://qny.ivanfan.site/connect_double.png" alt="connect_double"></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Customer</span></span></div><div class="line"><span class="class"></span>&#123;</div><div class="line">    <span class="keyword">private</span> Product[] products;</div><div class="line">    ……</div><div class="line">&#125;</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Product</span></span></div><div class="line"><span class="class"></span>&#123;</div><div class="line">    <span class="keyword">private</span> Customer customer;</div><div class="line">    ……</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h5 id="自关联"><a href="#自关联" class="headerlink" title="自关联"></a>自关联</h5><p>在系统中可能会存在一些类的属性对象类型为该类本身，这种特殊的关联关系称为自关联。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/connect_self.png" alt="connect_self"></p>
+<p><img src="http://qny.ivanfan.site/connect_self.png" alt="connect_self"></p>
 <h5 id="重数性关联"><a href="#重数性关联" class="headerlink" title="重数性关联"></a>重数性关联</h5><p>重数性关联关系又称为多重性关联关系(Multiplicity)，表示一个类的对象与另一个类的对象连接的个数。在 UML 中多重性关系可以直接在关联直线上增加一个数字表示与之对应的另一个类的对象的个数。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/connect_multiple.png" alt="connect_multiple"></p>
+<p><img src="http://qny.ivanfan.site/connect_multiple.png" alt="connect_multiple"></p>
 <table>
 <thead>
 <tr>
@@ -442,22 +442,22 @@
 </table>
 <h4 id="聚合关系"><a href="#聚合关系" class="headerlink" title="聚合关系"></a>聚合关系</h4><p>聚合关系(Aggregation)表示一个整体与部分的关系。通常在定义一个整体类后，再去找出这个整体类的一些成员类，该整体类和成员类之间就形成了聚合关系。</p>
 <p>在聚合关系中，成员类是整体类的一部分，即成员对象是整体对象的一部分，但是成员对象可以脱离整体对象独立存在。在 UML 中，聚合关系用带空心菱形的直线表示。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/contains.png" alt="contains"></p>
+<p><img src="http://qny.ivanfan.site/contains.png" alt="contains"></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span></span></div><div class="line"><span class="class"></span>&#123;</div><div class="line">    <span class="keyword">private</span> Engine engine;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Car</span><span class="params">(Engine engine)</span></span></div><div class="line"><span class="function">   </span>&#123;</div><div class="line">        <span class="keyword">this</span>.engine = engine;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setEngine</span><span class="params">(Engine engine)</span></span></div><div class="line"><span class="function">    </span>&#123;</div><div class="line">        <span class="keyword">this</span>.engine = engine;</div><div class="line">    &#125;</div><div class="line">    ……</div><div class="line">&#125;</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Engine</span></span></div><div class="line"><span class="class"></span>&#123;</div><div class="line">    ……</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h4 id="组合关系"><a href="#组合关系" class="headerlink" title="组合关系"></a>组合关系</h4><p>组合关系(Composition)也表示类之间整体和部分的关系，但是组合关系中部分和整体具有统一的生存期。一旦整体对象不存在，部分对象也将不存在，部分对象与整体对象之间具有同生共死的关系。</p>
 <p>在组合关系中，成员类是整体类的一部分，而且整体类可以控制成员类的生命周期，即成员类的存在依赖于整体类。在UML中，组合关系用带实心菱形的直线表示。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/has.png" alt="has"></p>
+<p><img src="http://qny.ivanfan.site/has.png" alt="has"></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Head</span></span></div><div class="line"><span class="class"></span>&#123;</div><div class="line">    <span class="keyword">private</span> Mouth mouth;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Head</span><span class="params">()</span></span></div><div class="line"><span class="function">    </span>&#123;</div><div class="line">	mouth = <span class="keyword">new</span> Mouth();</div><div class="line">    &#125;</div><div class="line">    ……</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Mouth</span></span></div><div class="line"><span class="class"></span>&#123;</div><div class="line">    ……</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h4 id="依赖关系"><a href="#依赖关系" class="headerlink" title="依赖关系"></a>依赖关系</h4><p>依赖关系(Dependency)是一种使用关系，特定事物的改变有可能会影响到使用该事物的其他事物，在需要表示一个事物使用另一个事物时使用依赖关系。大多数情况下，依赖关系体现在某个类的方法使用另一个类的对象作为参数。</p>
 <p>在UML中，依赖关系用带箭头的虚线表示，由依赖的一方指向被依赖的一方。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/depend.png" alt="depend"></p>
+<p><img src="http://qny.ivanfan.site/depend.png" alt="depend"></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Driver</span></span></div><div class="line"><span class="class"></span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">drive</span><span class="params">(Car car)</span></span></div><div class="line"><span class="function">    </span>&#123;</div><div class="line">        car.move();</div><div class="line">    &#125;</div><div class="line">    ……</div><div class="line">&#125;</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span></span></div><div class="line"><span class="class"></span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">move</span><span class="params">()</span></span></div><div class="line"><span class="function">    </span>&#123;</div><div class="line">        ......</div><div class="line">    &#125;</div><div class="line">    ……</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h4 id="泛化关系"><a href="#泛化关系" class="headerlink" title="泛化关系"></a>泛化关系</h4><p>泛化关系(Generalization)也就是继承关系，也称为“is-a-kind-of”关系，泛化关系用于描述父类与子类之间的关系，父类又称作基类或超类，子类又称作派生类。在 UML 中，泛化关系用带空心三角形的直线来表示。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/extends.png" alt="extends"></p>
+<p><img src="http://qny.ivanfan.site/extends.png" alt="extends"></p>
 <h4 id="实现关系"><a href="#实现关系" class="headerlink" title="实现关系"></a>实现关系</h4><p>实现关系(Realization)是类实现了接口，类中的操作实现了接口中所声明的操作。在UML中，类与接口之间的实现关系用带空心三角形的虚线来表示。 </p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/implent.png" alt="implent"></p>
+<p><img src="http://qny.ivanfan.site/implent.png" alt="implent"></p>
 <h3 id="时序图"><a href="#时序图" class="headerlink" title="时序图"></a>时序图</h3><p>时序图用于表示对象之间的交互，重点表示对象之间发送消息的时间顺序。它以图形化的方式描述了在一个用例或操作的执行过程中对象如何通过消息相互交互，说明了消息如何在对象之间被发送和接收以及发送的顺序。时序图允许直观地表示出对象的生存期，在生存期内，对象可以对输入消息做出响应，还可以发送信息。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/seq.png" alt="seq"></p>
+<p><img src="http://qny.ivanfan.site/seq.png" alt="seq"></p>
 <p>一个复杂的时序图可以划分为几个小块，每一个小块称为一个交互片段(Interaction Fragment)。每个交互片段由一个大方框包围，在方框左上角的间隔区内标注该交互片段的操作类型，该操作类型用操作符表示，常用的操作符包括：</p>
 <ul>
 <li>alt：多条路径，条件为真时执行。</li>
@@ -467,28 +467,28 @@
 </ul>
 <h2 id="StarUML"><a href="#StarUML" class="headerlink" title="StarUML"></a>StarUML</h2><p>开发过程中需要绘制类图和时序图，常用的软件有：StarUML，PowerDesigner 等，在线的有：ProcessOn。这里我最常用的是 StarUML，因为它颜值高~~~</p>
 <h3 id="软件破解"><a href="#软件破解" class="headerlink" title="软件破解"></a>软件破解</h3><p>StarUML 是一款收费软件，但它的破解很有意思。在安装 StarUML 的 <code>www/license/node</code> 目录下，找到 LicenseManagerDomain.js，在校验函数中直接返回用户信息即可。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/license_verify.png" alt="license_verify"></p>
+<p><img src="http://qny.ivanfan.site/license_verify.png" alt="license_verify"></p>
 <h3 id="类之间的关系-1"><a href="#类之间的关系-1" class="headerlink" title="类之间的关系"></a>类之间的关系</h3><p>在绘制类之间的关系时，对应 UML 的工具如下图所示：</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/class_relationship.png" alt="class_relationship"></p>
+<p><img src="http://qny.ivanfan.site/class_relationship.png" alt="class_relationship"></p>
 <p>其中实现的关系，要达到带空心三角形的虚线表示，则不要使用这个 Interface Realization，而应该在 Composite Structure 目录下找到 Realization 的工具。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/reelization.png" alt="reelization"></p>
+<p><img src="http://qny.ivanfan.site/reelization.png" alt="reelization"></p>
 <h3 id="复杂时序图"><a href="#复杂时序图" class="headerlink" title="复杂时序图"></a>复杂时序图</h3><p>在绘制时序图的时候，会遇上选择，循环等复杂的表示，StarUML 可以利用组合片段来完成。</p>
 <ol>
 <li>添加组合片段到时序图上：</li>
 </ol>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/seq_alt_1.png" alt="seq_alt_1"></p>
+<p><img src="http://qny.ivanfan.site/seq_alt_1.png" alt="seq_alt_1"></p>
 <ol>
 <li>如果有多条分支，则在右边菜单中，拷贝 Operand：</li>
 </ol>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/seq_alt_2.png" alt="seq_alt_2"></p>
+<p><img src="http://qny.ivanfan.site/seq_alt_2.png" alt="seq_alt_2"></p>
 <ol>
 <li>更改名字和操作类型，默认是seq，还有 alt，opt，loop 等。</li>
 </ol>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/seq_alt_3.png" alt="seq_alt_3"></p>
+<p><img src="http://qny.ivanfan.site/seq_alt_3.png" alt="seq_alt_3"></p>
 <ol>
 <li>填写不同分支的“guard” 信息（如双击左边对应分支的空白处，输入的[yes]和[no]），再处理对应的消息：</li>
 </ol>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/seq_alt_4.png" alt="seq_alt_4"></p>
+<p><img src="http://qny.ivanfan.site/seq_alt_4.png" alt="seq_alt_4"></p>
 
       
     </div>

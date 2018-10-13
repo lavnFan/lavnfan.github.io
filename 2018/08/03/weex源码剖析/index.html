@@ -103,18 +103,18 @@
 <meta property="og:site_name" content="IvanFan">
 <meta property="og:description" content="用 Weex 跨平台框架完全开发一款 APP，终端只搭建基础能力，前端完成所有 UI 界面和业务开发。所以接下来总结使用 Weex 开发过程中的一些心得。  Weex 介绍Weex 是一个使用 Web 开发体验来开发高性能、可扩展的原生应用的框架。使用 Vue、Rax 为上层框架，遵循 W3C 标准实现了统一的 JSEngine 和 DOM API，并用同一套代码构建 Android、iOS 和">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/weex%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86.jpeg">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/Weex%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/JS%20Bundle%20%E5%8A%A0%E8%BD%BD.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/DOM-Tree%20%E6%9E%84%E9%80%A0.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/weex_create_instance_error_0.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/weex_create_instance_error_1.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/weex_create_instance_error_2.png">
-<meta property="og:updated_time" content="2018-08-03T12:51:11.678Z">
+<meta property="og:image" content="http://qny.ivanfan.site/weex%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86.jpeg">
+<meta property="og:image" content="http://qny.ivanfan.site/Weex%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84.png">
+<meta property="og:image" content="http://qny.ivanfan.site/JS%20Bundle%20%E5%8A%A0%E8%BD%BD.png">
+<meta property="og:image" content="http://qny.ivanfan.site/DOM-Tree%20%E6%9E%84%E9%80%A0.png">
+<meta property="og:image" content="http://qny.ivanfan.site/weex_create_instance_error_0.png">
+<meta property="og:image" content="http://qny.ivanfan.site/weex_create_instance_error_1.png">
+<meta property="og:image" content="http://qny.ivanfan.site/weex_create_instance_error_2.png">
+<meta property="og:updated_time" content="2018-10-13T09:11:40.974Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Weex 源码分析和实践总结">
 <meta name="twitter:description" content="用 Weex 跨平台框架完全开发一款 APP，终端只搭建基础能力，前端完成所有 UI 界面和业务开发。所以接下来总结使用 Weex 开发过程中的一些心得。  Weex 介绍Weex 是一个使用 Web 开发体验来开发高性能、可扩展的原生应用的框架。使用 Vue、Rax 为上层框架，遵循 W3C 标准实现了统一的 JSEngine 和 DOM API，并用同一套代码构建 Android、iOS 和">
-<meta name="twitter:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/weex%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86.jpeg">
+<meta name="twitter:image" content="http://qny.ivanfan.site/weex%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86.jpeg">
 
 
 
@@ -386,7 +386,7 @@
 <p>用 Weex 跨平台框架完全开发一款 APP，终端只搭建基础能力，前端完成所有 UI 界面和业务开发。所以接下来总结使用 Weex 开发过程中的一些心得。</p>
 </blockquote>
 <h2 id="Weex-介绍"><a href="#Weex-介绍" class="headerlink" title="Weex 介绍"></a>Weex 介绍</h2><p>Weex 是一个使用 Web 开发体验来开发高性能、可扩展的原生应用的框架。使用 Vue、Rax 为上层框架，遵循 W3C 标准实现了统一的 JSEngine 和 DOM API，并用同一套代码构建 Android、iOS 和 Web 三端一致的应用。 </p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/weex%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86.jpeg" alt="weex工作原理"></p>
+<p><img src="http://qny.ivanfan.site/weex%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86.jpeg" alt="weex工作原理"></p>
 <p>我们可以通过前端框架 Vue.js 和 Rax 编写，再用命令行工具将 Weex 文件生成对应的 JS Bundle。之后可以将生成的 JS Bundle 部署到服务端做动态下发到终端。</p>
 <p>在各个客户端里，Weex 会准备一个 JS Framework 的执行环境，打开 Weex 页面时，就会执行该页面的 JS bundle，并将执行过程产生的各种命令发送到客户端进行界面渲染，数据通信及用户交互响应等。</p>
 <h2 id="Why-Weex"><a href="#Why-Weex" class="headerlink" title="Why Weex"></a>Why Weex</h2><p>对于开发一款新的 APP，自然是想节省人力、尽快上线，于是瞄准现有的跨平台框架，有 Facebook 推的 React Native，google 推的 flutter 等，可最终为什么团队选择了 Weex 呢？</p>
@@ -473,7 +473,7 @@
 </ul>
 <p>所以在经过和前端同学商讨后，决定选择 Weex 作为开发我们新 APP 的跨平台框架。</p>
 <h2 id="Weex-整体架构"><a href="#Weex-整体架构" class="headerlink" title="Weex 整体架构"></a>Weex 整体架构</h2><p>Weex 的整体架构如下所示：</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/Weex%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84.png" alt="Weex整体架构"></p>
+<p><img src="http://qny.ivanfan.site/Weex%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84.png" alt="Weex整体架构"></p>
 <p>Weex 整体分为俩大块，一部分是 Weex Core 引擎，来自几个 so：libweexjsc.so、libweexjss.so 等，另一部分是 Weex 提供的上层 SDK。</p>
 <p><strong>Weex Core 引擎</strong>：</p>
 <ul>
@@ -494,7 +494,7 @@
 <li>Weex 页面渲染</li>
 </ul>
 <h3 id="JS-Bundle-加载"><a href="#JS-Bundle-加载" class="headerlink" title="JS Bundle 加载"></a>JS Bundle 加载</h3><p>经过 weex-loader 生成的 JS Bundle 以 <code>String</code> 形式加载到内存中，可以通过 url 网络请求获取，也可直接从本地文件中加载。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/JS%20Bundle%20%E5%8A%A0%E8%BD%BD.png" alt="JS Bundle 加载"></p>
+<p><img src="http://qny.ivanfan.site/JS%20Bundle%20%E5%8A%A0%E8%BD%BD.png" alt="JS Bundle 加载"></p>
 <ul>
 <li>通过 url 加载时，会获取 IWXHttpAdapter 的实现类（默认是 Weex 的 <code>DefaultWXHttpAdapter</code>）去请求。无论是网络请求还是本地加载的 JS Bundle 都会通过字节流以 <code>String</code> 形式保存在内存中。</li>
 <li>注册当前实例，并把当前实例加载的 JS Bundle 的 js 代码以 <code>String</code> 类型通过 WXBridge 传入 WeexCore 执行创建 <code>Instance</code>。</li>
@@ -502,7 +502,7 @@
 <h3 id="页面渲染"><a href="#页面渲染" class="headerlink" title="页面渲染"></a>页面渲染</h3><p>Weex 的页面渲染流程可以分为三个部分：JSFramework 构建 Virtual DOM，WeexCore 构建渲染树，终端接受渲染指令绘制每个节点的 View。</p>
 <h4 id="构建-Virutal-DOM"><a href="#构建-Virutal-DOM" class="headerlink" title="构建 Virutal DOM"></a>构建 Virutal DOM</h4><p>在初始化 Weex SDK 时，就会调用 <code>initJSFramework</code>，加载 weex-main-jsfm.js 在 V8 引擎上执行。在 Weex 页面创建实例时，加载对应的 JS Bundle 运行，并提供 <code>define()</code>和<code>bootstrap()</code> 函数调用。<code>define()</code> 用来注册模块，<code>bootstrap()</code> 会编译主要的模块为 Virtual DOM，并发送渲染指令给 Weex Core 的 JSC（libweexjsc.so） 渲染引擎。</p>
 <h4 id="生成-Render-Tree"><a href="#生成-Render-Tree" class="headerlink" title="生成 Render Tree"></a>生成 Render Tree</h4><p>生成的 Virtual Dom 会以 Json 数据传入渲染引擎中，生成 Render Tree，再调用对应的 Native 命令进行真实 UI 的渲染，时序图如下所示：</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/DOM-Tree%20%E6%9E%84%E9%80%A0.png" alt="DOM-Tree 构造"></p>
+<p><img src="http://qny.ivanfan.site/DOM-Tree%20%E6%9E%84%E9%80%A0.png" alt="DOM-Tree 构造"></p>
 <p>DOM Tree 的渲染，可以从 createBody 开始分析，在 WeexJSCoreApi.cpp 中如下：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">void</span> _callCreateBody(<span class="keyword">const</span> <span class="keyword">char</span> *pageId, <span class="keyword">const</span> <span class="keyword">char</span> *domStr) &#123;</div><div class="line"><span class="meta">#<span class="meta-keyword">if</span> JSAPI_LOG</span></div><div class="line">    LOGD(<span class="string">"[ExtendJSApi] functionCallCreateBody &gt;&gt;&gt;&gt; pageId: %s, domStr: %s"</span>, pageId, domStr);</div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div><div class="line"></div><div class="line">    RenderManager::GetInstance()-&gt;CreatePage(pageId, domStr) ? <span class="number">0</span> : <span class="number">-1</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>传入某个页面 Id，及该页面的 domStr，调用到 RenderManager 中：</p>
@@ -554,13 +554,13 @@
 </ul>
 <h3 id="一些-bug"><a href="#一些-bug" class="headerlink" title="一些 bug"></a>一些 bug</h3><p>在 Weex 开发过程中，遇到了一些常遇到的 bug，这里总结一下。</p>
 <h4 id="wx-create-instance-error"><a href="#wx-create-instance-error" class="headerlink" title="wx_create_instance_error"></a>wx_create_instance_error</h4><p>在开发时或外网用户反馈，经常遇到的一个问题是 error：-1001，errMsg：wx_create_instance_error，其中一个路径如下所示：</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/weex_create_instance_error_0.png" alt="weex_create_instance_error_0"></p>
+<p><img src="http://qny.ivanfan.site/weex_create_instance_error_0.png" alt="weex_create_instance_error_0"></p>
 <p>-1001 这个问题基本都是创建 instance 失败，因为 weex 的 framework 还未初始化好，导致用户看到界面是白屏的。</p>
 <p><strong>问题原因：</strong> </p>
 <p>在启动时我们就会初始化 Weex 的 sdk，看下边在 Weex 的实现上，会使用 JSBridge 的线程异步执行 initScriptsFramework：</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/weex_create_instance_error_1.png" alt="weex_create_instance_error_1"></p>
+<p><img src="http://qny.ivanfan.site/weex_create_instance_error_1.png" alt="weex_create_instance_error_1"></p>
 <p>当我们进入到 Weex 页面时，会先创建页面的实例：</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/weex_create_instance_error_2.png" alt="weex_create_instance_error_2"></p>
+<p><img src="http://qny.ivanfan.site/weex_create_instance_error_2.png" alt="weex_create_instance_error_2"></p>
 <p>这里，判断当前的 JSFramework 是否初始化好，如果还未初始化，则会抛 -1001 创建实例失败的错误。</p>
 <p>可以得出这个问题的原因是：异步初始化 JSFramework 还没执行完，就进入 Weex 页面渲染，导致创建实例失败。 </p>
 <p><strong>解决方案：</strong></p>

@@ -103,28 +103,28 @@
 <meta property="og:site_name" content="IvanFan">
 <meta property="og:description" content="使用 Collections.sort() 对 ArrayList 数组进行排序时，偶现了 IllegalArgumentException 异常，于是追根溯源，对使用的排序算法-TimSort，出现异常的原因及其解决方案进行了如下的总结。  在灰度期间，上报了一个排序的 bug，如下所示： 1234567java.lang.IllegalArgumentException: Compariso">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/run.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BE%85%E6%8E%92%E5%BA%8F.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/run%E5%8C%BA%E9%97%B4.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6_1.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6_2.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_1.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_2.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_3.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_4.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_5.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_6.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_0.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_1.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_3.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_4.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_5.png">
-<meta property="og:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_6.png">
-<meta property="og:updated_time" content="2017-12-16T04:40:30.107Z">
+<meta property="og:image" content="http://qny.ivanfan.site/run.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BE%85%E6%8E%92%E5%BA%8F.png">
+<meta property="og:image" content="http://qny.ivanfan.site/run%E5%8C%BA%E9%97%B4.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6_1.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6_2.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_1.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_2.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_3.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_4.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_5.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_6.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_0.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_1.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_3.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_4.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_5.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_6.png">
+<meta property="og:updated_time" content="2018-10-13T09:06:10.616Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Collections.sort() 出现 IllegalArgumentException？因为它：TimSort">
 <meta name="twitter:description" content="使用 Collections.sort() 对 ArrayList 数组进行排序时，偶现了 IllegalArgumentException 异常，于是追根溯源，对使用的排序算法-TimSort，出现异常的原因及其解决方案进行了如下的总结。  在灰度期间，上报了一个排序的 bug，如下所示： 1234567java.lang.IllegalArgumentException: Compariso">
-<meta name="twitter:image" content="http://7xrhn4.com1.z0.glb.clouddn.com/run.png">
+<meta name="twitter:image" content="http://qny.ivanfan.site/run.png">
 
 
 
@@ -393,12 +393,12 @@
 <p> JDK ≥ 7 在这里更新了排序算法，如果指定了 <code>LegacyMergeSort.userRequested</code> 值为 true，则使用老的 （ JDK &lt; 7）mergeSort；如果没有指定，则使用 TimSort。老的归并排序没有产生过这种异常，那为什么 Java 竟然会放弃兼容，替换成 TimSort 后会异常呢？接下来我们先深入 TimSort 的排序原理，再来看看出错的原因及其解决方案。</p>
 <h2 id="TimSort-原理"><a href="#TimSort-原理" class="headerlink" title="TimSort 原理"></a>TimSort 原理</h2><p>TimSort 结合了归并排序（merge sort）和插入排序（insertion sort），它基于一个简单的事实：大部分数据都是部分有序的。Youtube 上有一个很直观的 TimSort 排序视频：<a href="https://www.youtube.com/watch?v=NVIjHj-lrT4，可以通过这段视频对算法的过程有一个感性的了解。" target="_blank" rel="external">https://www.youtube.com/watch?v=NVIjHj-lrT4，可以通过这段视频对算法的过程有一个感性的了解。</a></p>
 <p>TimSort 算法定义数组中一个有序的片段为 run，每个 run 都要求严格升序或降序，来保证算法的稳定性，如下所示：</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/run.png" alt="run"></p>
+<p><img src="http://qny.ivanfan.site/run.png" alt="run"></p>
 <h3 id="划分-run"><a href="#划分-run" class="headerlink" title="划分 run"></a>划分 run</h3><p>TimSort 首先将待排序的数组，按照严格升序或降序（保证算法稳定性）划分一段一段的 run，如果为逆序则进行翻转，但是它的长度不能小于 minRun 这个阈值；如果长度小于 minRun，则把之后的数按照二分查找插入到该区间直到满足最小的长度要求。</p>
 <p>这里我们定义一组待排序的数列： </p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BE%85%E6%8E%92%E5%BA%8F.png" alt="待排序"></p>
+<p><img src="http://qny.ivanfan.site/%E5%BE%85%E6%8E%92%E5%BA%8F.png" alt="待排序"></p>
 <p>假设最小的 run 长度为 <code>minRun = 4</code> ，则上述待排序数组可以分为以下不同的 run 区间：</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/run%E5%8C%BA%E9%97%B4.png" alt="run区间"></p>
+<p><img src="http://qny.ivanfan.site/run%E5%8C%BA%E9%97%B4.png" alt="run区间"></p>
 <ul>
 <li>如果该数组是一个完全正序或逆序的，则只需要划分一个 run，这时排序只需要 O(N) 的时间。</li>
 <li>划分过程中，如果长度小于 minRun，则会把后边的数按照二分查找算法插入补齐，如果是最后剩余的部分，则单独组成一个 run。</li>
@@ -406,31 +406,31 @@
 <h3 id="run-合并"><a href="#run-合并" class="headerlink" title="run 合并"></a>run 合并</h3><p>TimSort 第二步就是对划分的 run 进行压栈，对于在栈顶的 run[i]，必须同时满足以下条件：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="number">1</span>. runLen[i - <span class="number">2</span>] &gt; runLen[i - <span class="number">1</span>] + runLen[i]</div><div class="line"><span class="number">2</span>. runLen[i - <span class="number">1</span>] &gt; runLen[i]</div></pre></td></tr></table></figure>
 <p>如果有一个不满足，则会把最短的 2 个 run 进行归并成一个新的 run。接下来看看上述待排序的数组是如何把 run 进行合并的。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6_1.png" alt="归并_1"></p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6_1.png" alt="归并_1"></p>
 <p>当把 run[1] 压栈时，可以看到 runLen[0] &lt; runLen[1] ，所以需要把俩个 run 进行归并，合成一个新的 run 再重新压入栈中。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6_2.png" alt="归并_2"></p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6_2.png" alt="归并_2"></p>
 <p>之后我们一次把 run[1]（10 &gt; 5），run[2]（10&gt;5+4 &amp; 5&gt;4）入栈，因为在栈顶的 run 都满足约束条件。当把 run[3] 入栈时，发现 runLen[1]  &gt; runLen[2] + runLen[3] 不成立，所以需要把 run[3]  和 run[2] 合并。之后也仍然按照这样的规则进行，当栈空时，也就排好序了。</p>
 <h3 id="俩个-run-的归并排序"><a href="#俩个-run-的归并排序" class="headerlink" title="俩个 run 的归并排序"></a>俩个 run 的归并排序</h3><p>TimSort 把 run 压人栈顶，如果不满足俩个约束条件，会把较短的俩个 run 进行归并排序，这里的归并排序相对普通的归并做了俩个优化点，都是充分利用一个简单的事实：大部分数据都是部分有序的。</p>
 <h4 id="Galloping-Mode-减少参与归并的数据"><a href="#Galloping-Mode-减少参与归并的数据" class="headerlink" title="Galloping Mode 减少参与归并的数据"></a>Galloping Mode 减少参与归并的数据</h4><p>假若有以下俩个 run ，不满足约束条件需要进行合并。设 run[0] 别称为 A，首地址为 base1，长度为 len1；run[1] 别称为 B，首地址为 base2，长度为len2。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_1.png" alt="归并排序_1"></p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_1.png" alt="归并排序_1"></p>
 <p>在 Galloping Mode 下，会根据以下条件查找对应区间：</p>
 <ul>
 <li>取 B 片段的起始值 B[base2]，在 A 片段中使用二分查找，则 A 片段中小于等于 B[base2] 段就是最终排好序的起始部分。</li>
 <li>取 A 片段的终点值 A[base1 + len1 - 1]，在 B 片段中进行二分查找，则 B 片段中大于等于 A[base1 + len1 - 1] 的区间就是最终归并排序的结束部分。</li>
 </ul>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_2.png" alt="归并排序_2"></p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_2.png" alt="归并排序_2"></p>
 <p>这里充分利用了部分数据有序这个事实，形象的“掐头去尾”，这样最终需要归并的数据只有中间的俩段数据。</p>
 <h4 id="连续胜利-MIN-GALLOP-次继续触发-Galloping"><a href="#连续胜利-MIN-GALLOP-次继续触发-Galloping" class="headerlink" title="连续胜利 MIN_GALLOP 次继续触发 Galloping"></a>连续胜利 MIN_GALLOP 次继续触发 Galloping</h4><p>对 A 和 B 的俩个剩余片段，添加俩个指针，cursor1 指向 A 片段的末尾 <code>cursor1 = base1 + len1 - 1</code> ，dest 指向 B 的剩余片段的末尾  <code>dest = base2 + len2 - 1</code> 。</p>
 <p>因为在上一步骤中保证了 A [cursor1] &gt; B[dest]，所以会先把 A 片段的最后一个数据直接拷贝到 B 片段的末尾，同时 <code>cursor--,dest--</code> 。</p>
 <p>剩余的俩段区间，选择长度较小的一段复制到临时的 tmp 数组（节省内存开销），这里 B 片段的区间小一点，所以会放到临时数组的是 B 的剩余归并片段。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_3.png" alt="归并排序_3"></p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_3.png" alt="归并排序_3"></p>
 <p>接着对 A 片段和 tmp 片段做普通的归并，A[cursor1] 和 tmp[cursor2] 进行比较，把比较大数移到 A[dest]，同时 dest 和对应片段的指针减1。</p>
 <p>在俩个片段的比较过程中，会记录 A 片段和 tmp 片段比较胜利（大于对方）次数，比较失败会直接把胜利次数清零。当某个片段的胜利次数大于 <strong>minGallop</strong> ，会进一步触发 <strong>Galloping</strong> 。假设 <code>minGallop = 4</code> ，则 A 片段在胜利 4 次后会如下图所示，</p>
-<p> <img src="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_4.png" alt="归并排序_4"></p>
+<p> <img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_4.png" alt="归并排序_4"></p>
 <h5 id="触发-Galloping"><a href="#触发-Galloping" class="headerlink" title="触发 Galloping"></a>触发 Galloping</h5><p>取 tmp 片段的终点值 tmp[cursor2]，在 A 片段中二分查找到小于 tmp[cursor2] 的索引 k，则 A[k + 1, cursor1] 这个片段都大于 tmp[cursor2]，这时就可以直接把 A[k + 1, cursor1] 复制到 A[dest - len, dest]（len = cursor1 - k + 1）。如图找到的 <code>k = -1</code> ，把俩个 10 复制过去后，cursor1 就到了 k 的位置了。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_5.png" alt="归并排序_5"></p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_5.png" alt="归并排序_5"></p>
 <p>如果 <code>cursor1 &gt;= 0</code> ，俩个片段会继续进行归并比较，当连胜 minGallop 次才会又一次出发 Galloping。这里 <code>cursor1 = -1</code> ，所以接下来只要把tmp 剩余的数据拷贝到 A[base1, dest] 即可。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_6.png" alt="归并排序_6"></p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_6.png" alt="归并排序_6"></p>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>TimSort 排序算法综合了折半插入（二分查找）排序和归并排序，侧重优化了部分数据有序的情况，减少了对升序部分的回溯和对降序部分的性能倒退（快速排序在有序的情况下会退化到O(N^²)）。其算法思路总结如下</p>
 <ul>
 <li>当待排序数组长度小于 MIN_MERGE(<code>MIN_MERGE = 32</code>)，会使用没有归并的 TimSort，也就是会先进行一次 Galloping 找到左边有序的一个片段，再对后边的数据进行二分查找（折半插入）排序。</li>
@@ -470,16 +470,16 @@
 <li>compare(o2,o1) &lt; 0 </li>
 </ul>
 <p>这里我们假设现在有俩个 run 需要进行归并：</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_0.png" alt="归并排序出错_0"></p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_0.png" alt="归并排序出错_0"></p>
 <p>1、在进行 Galloping “掐头” 过程中，执行 <strong>compare(B[base2], A[base1 + hint])</strong> 过程中，因为 <code>compare(o1,o2) &lt; 0 (o1 = o2)</code>，所以此时 B 片段中的 5 是比 A 片段中的俩个 5 都要小，所以 A 片段的 5 都会保留下来。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_1.png" alt="归并排序出错_1"></p>
-<p>之后中间俩个片段进行正常的归并，当连胜 minGallop(minGallop = 4)次后会又一次触发 Galloping。<img src="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_3.png" alt="归并排序出错_3"></p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_1.png" alt="归并排序出错_1"></p>
+<p>之后中间俩个片段进行正常的归并，当连胜 minGallop(minGallop = 4)次后会又一次触发 Galloping。<img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_3.png" alt="归并排序出错_3"></p>
 <p>2、在这次 Galloping 中，会在 A 片段中查找比 tmp[cursor2] 还要小的位置 k，并把 A[K + 1, cursor1] 移到 A[dest - len, dest] 中，同时 cursor1 和 dest 左移俩位。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_4.png" alt="归并排序出错_4"></p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_4.png" alt="归并排序出错_4"></p>
 <p>3、接下来俩个片段在归并过程中，tmp[cursor2] 连续 4 次比 A[cursor1]  大，又一次触发 Galloping。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_5.png" alt="归并排序出错_5"></p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_5.png" alt="归并排序出错_5"></p>
 <p>4、在这次 Galloping过程中，取 A 片段的 A[cursor1] 的值，去 tmp 片段中查找大于 A[cursor1] 的区间。使用比较器 <strong>compare(A[cursor1]，tmp[k])</strong>，因为 <code>compare(o1,o2) &lt; 0 (o1 = o2)</code>，所以此时 A 片段中的 5 是小于 tmp 片段中的 5。tmp 的数据会依次拷贝到 A[dest] 后，cursor2的指针到-1了，且此时 tmp 数组的长度 len2 为 0。</p>
-<p><img src="http://7xrhn4.com1.z0.glb.clouddn.com/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_6.png" alt="归并排序出错_6"></p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_6.png" alt="归并排序出错_6"></p>
 <p>5、因为 tmp 的长度（len2）为 0，会触发 <code>mergeHi</code> 中如下的异常</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (len2 == <span class="number">0</span>) &#123;</div><div class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(</div><div class="line">        <span class="string">"Comparison method violates its general contract!"</span>);</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div></pre></td></tr></table></figure>
 <p>我们再回顾一下上边的过程，在第 1 步“掐头去尾”中，我们保证 A[base1] &gt; B[base2]，在第 4 步中，cursor2 最终指到 -1 了，所以有 A[cursor1] &lt; tmp[0]，即：A[base1 + 1] &lt; B[base2]。综上可以列出以下等式：</p>

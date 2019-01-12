@@ -105,8 +105,11 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://qny.ivanfan.site/git%E7%8A%B6%E6%80%81%E6%B5%81%E8%BD%AC.png">
 <meta property="og:image" content="http://qny.ivanfan.site/Git%E4%B8%AD%E6%96%87%E4%BB%B6%E7%9A%84%E5%87%A0%E7%A7%8D%E7%8A%B6%E6%80%81.png">
-<meta property="og:image" content="http://qny.ivanfan.site/objects-example.png">
-<meta property="og:updated_time" content="2019-01-06T13:45:23.308Z">
+<meta property="og:image" content="f:/summary/Summary/git/objects-example.png">
+<meta property="og:image" content="http://qny.ivanfan.site/git_merge_2.png">
+<meta property="og:image" content="http://qny.ivanfan.site/git_merge_1.png">
+<meta property="og:image" content="http://qny.ivanfan.site/git_merge_3.png">
+<meta property="og:updated_time" content="2019-01-12T06:56:36.215Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Git 工作原理及常用命令">
 <meta name="twitter:description" content="1、git的工作空间  workspace：工作区，文件改动的区域。 staging area：暂存区，执行 git add 命令后，保存修改的区域，存放在 .git 目录下的 index 文件中。 local repository：本地仓库，存放在 .git 目录下，管理本地仓库。 remote repository：远程仓库。  2、git中文件的几种状态　　  untracked：在 wok">
@@ -389,15 +392,12 @@
 <p>以某一次提交以下内容为例：</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">|-- README</div><div class="line">`-- lib</div><div class="line">    |-- inc</div><div class="line">    |   `-- tricks.rb</div><div class="line">    `-- mylib.rb</div><div class="line">2 directories, 3 files</div></pre></td></tr></table></figure>
 <p>在 git 仓库中保存的结构如下所示：</p>
-<p><img src="http://qny.ivanfan.site/objects-example.png" alt="objects-example"></p>
+<p><img src="F:\summary\Summary\git\objects-example.png" alt="objects-example"></p>
 <p>每个目录都创建了 <strong>tree对象</strong> (包括根目录)，每个文件都创建了一个对应的 <strong>blob对象</strong> 。最后有一个 <strong>commit对象</strong> 来指向根 tree 对象， 这样我们就可以追踪项目每一项提交内容.</p>
 <ul>
-<li><p>一个 blob 用来存储文件的内容，它只是一块二进制数据，文件名是对内容做的 sha-1 hash，如果一个目录下有多个相同内容的文件，则他们会指向同一个 blob 对象。</p>
-</li>
-<li><p>一个 tree 对象有一串指向 blob 对象或是其它 tree 对象的指针，它用来表示内容之间的目录层次关系，tree 对象也是以其内容的 sha-1 hash 来命名的。</p>
-</li>
-<li><p>“commit对象” 指向一个 “tree对象”，并且带有相关的描述信息。它的修改信息都是通过与父提交的内容比较得出。值得一提的是,，尽管 git 可以检测到文件内容不变而路径改变的情况， 但是它不会去显式的记录文件的更名操作，所以肯定不存在 svn 的树冲突。</p>
-</li>
+<li>一个 blob 用来存储文件的内容，它只是一块二进制数据，文件名是对内容做的 sha-1 hash，如果一个目录下有多个相同内容的文件，则他们会指向同一个 blob 对象。</li>
+<li>一个 tree 对象有一串指向 blob 对象或是其它 tree 对象的指针，它用来表示内容之间的目录层次关系，tree 对象也是以其内容的 sha-1 hash 来命名的。</li>
+<li>“commit对象” 指向一个 “tree对象”，并且带有相关的描述信息。它的修改信息都是通过与父提交的内容比较得出。值得一提的是,，尽管 git 可以检测到文件内容不变而路径改变的情况， 但是它不会去显式的记录文件的更名操作，所以肯定不存在 svn 的树冲突。</li>
 </ul>
 <h4 id="分布式管理"><a href="#分布式管理" class="headerlink" title="分布式管理"></a>分布式管理</h4><p>1、分布式版本控制系统没有“中央服务器”，每个人的电脑上都有一个完整的版本库。因此工作的时候，可以不需要联网就可以提交本地仓库。</p>
 <p>2、分布式版本控制系统的安全性要高很多，因为每个人电脑里都有完整的版本库，某一个人的电脑坏掉了可以直接从其他人那里复制一个。而集中式版本控制系统的中央服务器要是出了问题，所有人都没法提交和继续工作。</p>
@@ -408,19 +408,14 @@
 </ul>
 <h3 id="4、git操作流程"><a href="#4、git操作流程" class="headerlink" title="4、git操作流程"></a>4、git操作流程</h3><h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><h5 id="添加远程仓库"><a href="#添加远程仓库" class="headerlink" title="添加远程仓库"></a>添加远程仓库</h5><p>如果是一个空的工程，得先 git init，再用以下方式进行添加：</p>
 <ul>
-<li><p>$ git remote add origin git@github.com://yourName/yourRpo.git</p>
-</li>
-<li><p>$ git remote add origin <a href="https://github.com/yourName/yourRepo.git" target="_blank" rel="external">https://github.com/yourName/yourRepo.git</a></p>
-</li>
+<li>$ git remote add origin git@github.com://yourName/yourRpo.git</li>
+<li>$ git remote add origin <a href="https://github.com/yourName/yourRepo.git" target="_blank" rel="external">https://github.com/yourName/yourRepo.git</a></li>
 </ul>
 <h5 id="删除远程仓库"><a href="#删除远程仓库" class="headerlink" title="删除远程仓库"></a>删除远程仓库</h5><p>如果想更在同一个目录下，更换另一个仓库，则可以先删除再添加，也可以直接更换远程仓库，如下三种方式：</p>
 <ul>
-<li><p>删除：git remote rm origin</p>
-</li>
-<li><p>更换：git remote set-url origin url</p>
-</li>
-<li><p>配置中手动修改：.git/config 的 url</p>
-</li>
+<li>删除：git remote rm origin</li>
+<li>更换：git remote set-url origin url</li>
+<li>配置中手动修改：.git/config 的 url</li>
 </ul>
 <h4 id="拉取"><a href="#拉取" class="headerlink" title="拉取"></a>拉取</h4><h5 id="git-pull"><a href="#git-pull" class="headerlink" title="git pull"></a>git pull</h5><p>拉取远程库上的最新代码更新合并到本地当前分支。</p>
 <h5 id="git-fetch"><a href="#git-fetch" class="headerlink" title="git fetch"></a>git fetch</h5><p>只是将远程的数据拉到本地仓库，并不自动合并到当前分支，需要手动合并。</p>
@@ -433,13 +428,13 @@
 <table>
 <thead>
 <tr>
-<th><strong>git commit -m <message></message></strong></th>
+<th><strong>git commit -m [message]</strong></th>
 <th><strong>提交暂存区到本地仓库，message代表说明信息</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>git commit <file1> -m <message></message></file1></strong></td>
+<td><strong>git commit file1 -m [message]</strong></td>
 <td><strong>提交暂存区的指定文件到本地仓库</strong></td>
 </tr>
 <tr>
@@ -447,7 +442,7 @@
 <td><strong>提交本地暂存区和工作区的文件到本地仓库</strong></td>
 </tr>
 <tr>
-<td><strong>git commit –amend -m <message></message></strong></td>
+<td><strong>git commit –amend -m [message]</strong></td>
 <td><strong>使用一次新的commit，替代上一次提交</strong></td>
 </tr>
 </tbody>
@@ -458,17 +453,17 @@
 <table>
 <thead>
 <tr>
-<th>git push <remote><branch></branch></remote></th>
+<th>git push remote branch</th>
 <th>上传本地指定分支到远程仓库</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>git push <remote> –force</remote></strong></td>
+<td><strong>git push remote –force</strong></td>
 <td><strong>强行推送当前分支到远程仓库，即使有冲突</strong></td>
 </tr>
 <tr>
-<td><strong>git push <remote> –all</remote></strong></td>
+<td><strong>git push remote –all</strong></td>
 <td><strong>推送所有分支到远程仓库</strong></td>
 </tr>
 </tbody>
@@ -490,12 +485,12 @@
 <h4 id="回退"><a href="#回退" class="headerlink" title="回退"></a>回退</h4><h5 id="git-checkout"><a href="#git-checkout" class="headerlink" title="git checkout"></a>git checkout</h5><p>回退在工作区中修改的文件，比如修改了文件a.txt，还没有执行git add命令，这时候要丢弃这些修改，可使用命令：git checkout – a.txt。</p>
 <h5 id="git-reset"><a href="#git-reset" class="headerlink" title="git reset"></a>git reset</h5><p>回退暂存区或仓库中的提交记录。常用的几种组合有：</p>
 <ul>
-<li>git reset –soft <commit>：回退到某个版本，只回退 local repository。</commit></li>
-<li>git reset –hard HEAD：回退暂存区的 add，让工作区回到上次提交时的状态</li>
-</ul>
-<ul>
-<li>git reset –mixed <commit>：此为默认方式，同不带参数的 git reset，只保留 woking directory 的修改，回退 staging area 和 local repository的修改</commit></li>
-<li>git reset –hard <commit>：彻底回退到某个版本，本地的源码也会变为上一个版本的内容，比如 git reset –hard HEADgit reset –hard HEAD</commit></li>
+<li>git reset –soft [commit]：回退到某个版本，只回退 local repository。</li>
+<li><p>git reset –hard HEAD：回退暂存区的 add，让工作区回到上次提交时的状态</p>
+</li>
+<li><p>git reset –mixed [commit]：此为默认方式，同不带参数的 git reset，只保留 woking directory 的修改，回退 staging area 和 local repository的修改</p>
+</li>
+<li>git reset –hard [commit]：彻底回退到某个版本，本地的源码也会变为上一个版本的内容，比如 git reset –hard HEADgit reset –hard HEAD</li>
 </ul>
 <h5 id="git-revert"><a href="#git-revert" class="headerlink" title="git revert"></a>git revert</h5><p>撤销提交，是用一次新的 commit 来回滚之前的 commit，HEAD 继续前进。而 git reset 是直接删除指定的 commit，并把 HEAD 向后移动了一下。</p>
 <h4 id="暂存"><a href="#暂存" class="headerlink" title="暂存"></a>暂存</h4><h5 id="git-stash"><a href="#git-stash" class="headerlink" title="git stash"></a>git stash</h5><ul>
@@ -506,20 +501,38 @@
 <li>git stash pop [stash_id]：恢复进度列表，并删除</li>
 <li>git stash clear：删除所有存储进度</li>
 </ul>
-<h4 id="分支操作"><a href="#分支操作" class="headerlink" title="分支操作"></a>分支操作</h4><h5 id="git-merge"><a href="#git-merge" class="headerlink" title="git merge"></a>git merge</h5><p>多人合作时，一起放到远程仓库，优先使用 merge。</p>
-<h5 id="git-rebase"><a href="#git-rebase" class="headerlink" title="git rebase"></a>git rebase</h5><p>一般为了自己不同分支的提交保持整洁性或追踪清晰，可以使用 rebase </p>
-<p>场景：可能会改写公有的 commit history，当 git push 时，本地和远程的 commit history 不一致时，commit会被拒绝，唯一办法就是使用 -f 强制 commit，会造成别人工作成果的丢失。此时改善的方法是：</p>
-<p>提交时，拉下远程的提交 git fetch origin master 后，再用 rebase 修改本地自己的commit ，而不影响别人的提交历史 git rebase origin/master，最后再 git push 提交。</p>
+<h4 id="分支操作"><a href="#分支操作" class="headerlink" title="分支操作"></a>分支操作</h4><p>多人合作或有一些新需求时，往往需要开辟一些新功能的分支，此时若想把功能分支合并到主干上，如下所示，想把 feature 分支上的 C4 和 C6 提交合并到 master 分支上：</p>
+<p><img src="http://qny.ivanfan.site/git_merge_2.png" alt="git_merge_1"></p>
+<p>常用的有俩种方法：git merge 和 git rebase。</p>
+<h5 id="git-merge"><a href="#git-merge" class="headerlink" title="git merge"></a>git merge</h5><p>使用 git merge 把 feature 分支合并到 master 分支后，记录如下所示：</p>
+<p><img src="http://qny.ivanfan.site/git_merge_1.png" alt="git_merge_2"></p>
+<p>merge 时，会根据 mater 和 feature 的最新节点和共同的祖先节点进行合并，并生成一个新的提交。</p>
+<ul>
+<li>merge 分支的提交历史也被原样保存</li>
+<li>会生成一个额外的合并提交</li>
+<li>历史提交不是线性的</li>
+</ul>
+<h5 id="git-rebase"><a href="#git-rebase" class="headerlink" title="git rebase"></a>git rebase</h5><p>在 master 使用 git rebase feature 后，记录如下所示：</p>
+<p><img src="http://qny.ivanfan.site/git_merge_3.png" alt="git_merge_3"></p>
+<p>在 master 上，把 rebase feature 分支的提交 C4，C6 移到共同祖先的起点 C2，但丢弃原本的，而是创建一个新的提交 C4’， C6’，重写了提交历史。</p>
+<ul>
+<li>把 rebase 分支上的提交历史重写了</li>
+<li>不会生成额外的提交</li>
+<li>历史的提交记录是线性的</li>
+</ul>
+<p>当改写了公有的 commit history，当 git push 时，本地和远程的 commit history 不一致时，commit 会被拒绝，尽量不要使用 -f 强制 commit，这会造导致别人工作成果的丢失。比较好的习惯是约定：拉取 git fetch 后，再用 git rebase origin/maste 修改本地自己的 commit ，而不影响别人的提交历史，最后再 git push 提交。</p>
+<p>rebase 常用命令：</p>
+<ul>
+<li>git rebase –continue：当 rebase 出现冲突时，解决完冲突后 git add 添加暂存，就可以使用 git rebase 继续执行。</li>
+<li>git rebase –abort：放弃此次 rebase。</li>
+<li>git rebase -i HEAD~n：将几次提交合并为一次，再使用 squash 将几次提交合并到前一次。</li>
+</ul>
 <h5 id="git-cherry-pick"><a href="#git-cherry-pick" class="headerlink" title="git cherry-pick"></a>git cherry-pick</h5><p>选择某一个分支的一个或多个 commit 合并：</p>
 <ul>
-<li><p>git cherry-pick <commit id="">：单独合并一个提交。</commit></p>
-</li>
-<li><p>git cherry-pick  -x <commit id="">：同上，但保留原提交者信息。</commit></p>
-</li>
-<li><p>git cherry-pick <start-commit-id>..<end-commit-id>：左开右闭，不包含 start-commit-id的提交cherry-pick到当前分支。</end-commit-id></start-commit-id></p>
-</li>
-<li><p>git cherry-pick <start-commit-id>^..<end-commit-id>：闭区间，包含 start-commit-id 的提交 cherry-pick 到当前分支。</end-commit-id></start-commit-id></p>
-</li>
+<li>git cherry-pick [commit id]：单独合并一个提交。</li>
+<li>git cherry-pick  -x [commit id]：同上，但保留原提交者信息。</li>
+<li>git cherry-pick [start-commit-id]..[end-commit-id]：左开右闭，不包含 start-commit-id的提交cherry-pick到当前分支。</li>
+<li>git cherry-pick [start-commit-id]^..[end-commit-id]：闭区间，包含 start-commit-id 的提交 cherry-pick 到当前分支。</li>
 </ul>
 <h5 id="git-branch"><a href="#git-branch" class="headerlink" title="git branch"></a>git branch</h5><table>
 <thead>
@@ -538,27 +551,27 @@
 <td><strong>列出所有本地分支和远程分支</strong></td>
 </tr>
 <tr>
-<td><strong>git branch <branch-name></branch-name></strong></td>
+<td><strong>git branch [branch-name]</strong></td>
 <td><strong>新建一个分支，但依然停留在当前分支</strong></td>
 </tr>
 <tr>
-<td><strong>git checkout -b <branch-name></branch-name></strong></td>
+<td><strong>git checkout -b [branch-name]</strong></td>
 <td><strong>新建一个分支，并切换到该分支</strong></td>
 </tr>
 <tr>
-<td><strong>git branch –track <branch><remote-branch></remote-branch></branch></strong></td>
+<td><strong>git branch –track [branch] remote-branch</strong></td>
 <td><strong>新建一个分支，与指定的远程分支建立追踪关系</strong></td>
 </tr>
 <tr>
-<td><strong>git checkout <branch-name></branch-name></strong></td>
+<td><strong>git checkout [branch-name]</strong></td>
 <td><strong>切换到指定分支，并更新工作区</strong></td>
 </tr>
 <tr>
-<td><strong>git branch -d <branch-name></branch-name></strong></td>
+<td><strong>git branch -d [branch-name]</strong></td>
 <td><strong>删除分支</strong></td>
 </tr>
 <tr>
-<td><strong>git push origin –delete <branch-name></branch-name></strong></td>
+<td><strong>git push origin –delete [branch-name]</strong></td>
 <td><strong>删除远程分支</strong></td>
 </tr>
 </tbody>

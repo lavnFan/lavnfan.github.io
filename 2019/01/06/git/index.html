@@ -105,11 +105,11 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://qny.ivanfan.site/git%E7%8A%B6%E6%80%81%E6%B5%81%E8%BD%AC.png">
 <meta property="og:image" content="http://qny.ivanfan.site/Git%E4%B8%AD%E6%96%87%E4%BB%B6%E7%9A%84%E5%87%A0%E7%A7%8D%E7%8A%B6%E6%80%81.png">
-<meta property="og:image" content="f:/summary/Summary/git/objects-example.png">
+<meta property="og:image" content="http://qny.ivanfan.site/objects-example.png">
 <meta property="og:image" content="http://qny.ivanfan.site/git_merge_2.png">
 <meta property="og:image" content="http://qny.ivanfan.site/git_merge_1.png">
 <meta property="og:image" content="http://qny.ivanfan.site/git_merge_3.png">
-<meta property="og:updated_time" content="2019-01-12T06:56:36.215Z">
+<meta property="og:updated_time" content="2019-01-12T07:05:56.155Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Git 工作原理及常用命令">
 <meta name="twitter:description" content="1、git的工作空间  workspace：工作区，文件改动的区域。 staging area：暂存区，执行 git add 命令后，保存修改的区域，存放在 .git 目录下的 index 文件中。 local repository：本地仓库，存放在 .git 目录下，管理本地仓库。 remote repository：远程仓库。  2、git中文件的几种状态　　  untracked：在 wok">
@@ -392,7 +392,7 @@
 <p>以某一次提交以下内容为例：</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">|-- README</div><div class="line">`-- lib</div><div class="line">    |-- inc</div><div class="line">    |   `-- tricks.rb</div><div class="line">    `-- mylib.rb</div><div class="line">2 directories, 3 files</div></pre></td></tr></table></figure>
 <p>在 git 仓库中保存的结构如下所示：</p>
-<p><img src="F:\summary\Summary\git\objects-example.png" alt="objects-example"></p>
+<p><img src="http://qny.ivanfan.site/objects-example.png" alt="objects-example"></p>
 <p>每个目录都创建了 <strong>tree对象</strong> (包括根目录)，每个文件都创建了一个对应的 <strong>blob对象</strong> 。最后有一个 <strong>commit对象</strong> 来指向根 tree 对象， 这样我们就可以追踪项目每一项提交内容.</p>
 <ul>
 <li>一个 blob 用来存储文件的内容，它只是一块二进制数据，文件名是对内容做的 sha-1 hash，如果一个目录下有多个相同内容的文件，则他们会指向同一个 blob 对象。</li>
@@ -428,13 +428,13 @@
 <table>
 <thead>
 <tr>
-<th><strong>git commit -m [message]</strong></th>
+<th><strong>git commit -m “message”</strong></th>
 <th><strong>提交暂存区到本地仓库，message代表说明信息</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>git commit file1 -m [message]</strong></td>
+<td><strong>git commit file1 -m “message”</strong></td>
 <td><strong>提交暂存区的指定文件到本地仓库</strong></td>
 </tr>
 <tr>
@@ -442,7 +442,7 @@
 <td><strong>提交本地暂存区和工作区的文件到本地仓库</strong></td>
 </tr>
 <tr>
-<td><strong>git commit –amend -m [message]</strong></td>
+<td><strong>git commit –amend -m “message”</strong></td>
 <td><strong>使用一次新的commit，替代上一次提交</strong></td>
 </tr>
 </tbody>
@@ -477,28 +477,28 @@
 </ul>
 <h5 id="git-blame"><a href="#git-blame" class="headerlink" title="git blame"></a>git blame</h5><p>查看修改记录：</p>
 <ul>
-<li>git blame [filename]：查看文件的每一行修改记录。</li>
-<li>git blame -L 开始,结束行  [filename]：查看文件从开始行到结束行的修改记录。</li>
+<li>git blame “filename”：查看文件的每一行修改记录。</li>
+<li>git blame -L 开始,结束行  “filename”：查看文件从开始行到结束行的修改记录。</li>
 </ul>
 <h5 id="git-status"><a href="#git-status" class="headerlink" title="git status"></a>git status</h5><p>查看文件处于什么状态，会显示 untracked，和 tracked 中的文件。</p>
 <p>git 命令时带上目录，比如git status ./build 只查看build目录下的代码状态</p>
 <h4 id="回退"><a href="#回退" class="headerlink" title="回退"></a>回退</h4><h5 id="git-checkout"><a href="#git-checkout" class="headerlink" title="git checkout"></a>git checkout</h5><p>回退在工作区中修改的文件，比如修改了文件a.txt，还没有执行git add命令，这时候要丢弃这些修改，可使用命令：git checkout – a.txt。</p>
 <h5 id="git-reset"><a href="#git-reset" class="headerlink" title="git reset"></a>git reset</h5><p>回退暂存区或仓库中的提交记录。常用的几种组合有：</p>
 <ul>
-<li>git reset –soft [commit]：回退到某个版本，只回退 local repository。</li>
+<li>git reset –soft “commit”：回退到某个版本，只回退 local repository。</li>
 <li><p>git reset –hard HEAD：回退暂存区的 add，让工作区回到上次提交时的状态</p>
 </li>
-<li><p>git reset –mixed [commit]：此为默认方式，同不带参数的 git reset，只保留 woking directory 的修改，回退 staging area 和 local repository的修改</p>
+<li><p>git reset –mixed “commit”：此为默认方式，同不带参数的 git reset，只保留 woking directory 的修改，回退 staging area 和 local repository的修改</p>
 </li>
-<li>git reset –hard [commit]：彻底回退到某个版本，本地的源码也会变为上一个版本的内容，比如 git reset –hard HEADgit reset –hard HEAD</li>
+<li>git reset –hard “commit”：彻底回退到某个版本，本地的源码也会变为上一个版本的内容，比如 git reset –hard HEADgit reset –hard HEAD</li>
 </ul>
 <h5 id="git-revert"><a href="#git-revert" class="headerlink" title="git revert"></a>git revert</h5><p>撤销提交，是用一次新的 commit 来回滚之前的 commit，HEAD 继续前进。而 git reset 是直接删除指定的 commit，并把 HEAD 向后移动了一下。</p>
 <h4 id="暂存"><a href="#暂存" class="headerlink" title="暂存"></a>暂存</h4><h5 id="git-stash"><a href="#git-stash" class="headerlink" title="git stash"></a>git stash</h5><ul>
 <li>git stash save ‘message’：保存当前工作进度，即保存在工作区，还未提交的</li>
 <li>git stash list：显示保存进度的列表</li>
-<li>git stash apply [stash_id]：恢复进度列表，不删除</li>
-<li>git stash drop [stash_id]：删除某个进度</li>
-<li>git stash pop [stash_id]：恢复进度列表，并删除</li>
+<li>git stash apply “stash_id”：恢复进度列表，不删除</li>
+<li>git stash drop “stash_id”：删除某个进度</li>
+<li>git stash pop “stash_id”：恢复进度列表，并删除</li>
 <li>git stash clear：删除所有存储进度</li>
 </ul>
 <h4 id="分支操作"><a href="#分支操作" class="headerlink" title="分支操作"></a>分支操作</h4><p>多人合作或有一些新需求时，往往需要开辟一些新功能的分支，此时若想把功能分支合并到主干上，如下所示，想把 feature 分支上的 C4 和 C6 提交合并到 master 分支上：</p>
@@ -529,9 +529,9 @@
 </ul>
 <h5 id="git-cherry-pick"><a href="#git-cherry-pick" class="headerlink" title="git cherry-pick"></a>git cherry-pick</h5><p>选择某一个分支的一个或多个 commit 合并：</p>
 <ul>
-<li>git cherry-pick [commit id]：单独合并一个提交。</li>
-<li>git cherry-pick  -x [commit id]：同上，但保留原提交者信息。</li>
-<li>git cherry-pick [start-commit-id]..[end-commit-id]：左开右闭，不包含 start-commit-id的提交cherry-pick到当前分支。</li>
+<li>git cherry-pick “commit id”：单独合并一个提交。</li>
+<li>git cherry-pick  -x “commit id”：同上，但保留原提交者信息。</li>
+<li>git cherry-pick “start-commit-id”..”end-commit-id”：左开右闭，不包含 start-commit-id的提交cherry-pick到当前分支。</li>
 <li>git cherry-pick [start-commit-id]^..[end-commit-id]：闭区间，包含 start-commit-id 的提交 cherry-pick 到当前分支。</li>
 </ul>
 <h5 id="git-branch"><a href="#git-branch" class="headerlink" title="git branch"></a>git branch</h5><table>
@@ -551,27 +551,27 @@
 <td><strong>列出所有本地分支和远程分支</strong></td>
 </tr>
 <tr>
-<td><strong>git branch [branch-name]</strong></td>
+<td><strong>git branch “branch-name”</strong></td>
 <td><strong>新建一个分支，但依然停留在当前分支</strong></td>
 </tr>
 <tr>
-<td><strong>git checkout -b [branch-name]</strong></td>
+<td><strong>git checkout -b “branch-name”</strong></td>
 <td><strong>新建一个分支，并切换到该分支</strong></td>
 </tr>
 <tr>
-<td><strong>git branch –track [branch] remote-branch</strong></td>
+<td><strong>git branch –track “branch” remote-branch</strong></td>
 <td><strong>新建一个分支，与指定的远程分支建立追踪关系</strong></td>
 </tr>
 <tr>
-<td><strong>git checkout [branch-name]</strong></td>
+<td><strong>git checkout “branch-name”</strong></td>
 <td><strong>切换到指定分支，并更新工作区</strong></td>
 </tr>
 <tr>
-<td><strong>git branch -d [branch-name]</strong></td>
+<td><strong>git branch -d “branch-name”</strong></td>
 <td><strong>删除分支</strong></td>
 </tr>
 <tr>
-<td><strong>git push origin –delete [branch-name]</strong></td>
+<td><strong>git push origin –delete “branch-name”</strong></td>
 <td><strong>删除远程分支</strong></td>
 </tr>
 </tbody>

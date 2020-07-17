@@ -108,7 +108,7 @@
 <meta property="og:image" content="http://qny.ivanfan.site/uiwidgets-statefuleWidget.png">
 <meta property="og:image" content="http://qny.ivanfan.site/statefulWidget生命周期.png">
 <meta property="og:image" content="http://qny.ivanfan.site/uiwidgets-tree-update.png">
-<meta property="og:image" content="http://lavnfan.github.io/2020/07/17/uiwidget/渲染模式.png">
+<meta property="og:image" content="http://qny.ivanfan.site/渲染模式.png">
 <meta property="og:image" content="http://qny.ivanfan.site/flutter-platform-channel.png">
 <meta property="og:image" content="http://qny.ivanfan.site/unity通信方式.png">
 <meta property="og:image" content="http://qny.ivanfan.site/uiwidgets-native-send.png">
@@ -117,7 +117,7 @@
 <meta property="og:image" content="http://qny.ivanfan.site/BLOC_MVVM.png">
 <meta property="og:image" content="http://qny.ivanfan.site/Redux.png">
 <meta property="og:image" content="http://qny.ivanfan.site/redux_flutter.png">
-<meta property="og:updated_time" content="2020-07-17T12:31:03.890Z">
+<meta property="og:updated_time" content="2020-07-17T12:46:25.314Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Unity与Flutter的碰撞 - UIWidgets">
 <meta name="twitter:description" content="Unity 是 Unity Technologies 研发的跨平台 2D / 3D 游戏引擎，可用于开发各个平台的单机游戏、手机游戏。Flutter 是 Google 开源的跨平台 UI 框架，可用现代响应式框架来快速构建高性能的应用。当他们结合碰撞，会有什么火花呢？一个使用现代响应式框架快速构建含有 2D/3D 游戏的高性能应用会不会因此诞生？  一、UIWidgets 介绍1、Unity 为">
@@ -433,7 +433,7 @@
 </ul>
 <h3 id="4、UIWidgets-渲染"><a href="#4、UIWidgets-渲染" class="headerlink" title="4、UIWidgets 渲染"></a>4、UIWidgets 渲染</h3><p><img src="http://qny.ivanfan.site/uiwidgets-tree-update.png" alt="uiwidgets-tree-update"></p>
 <p>在下一阶段检测时，发现有俩个 Element 改变后，从改变的 Element 出发检测所有影响的 Element 进行 mark dirty。之后在更新时，只需更新 mark dirty 的 Element，而不会更新没有受影响的 Element，最大限度优化 UI 效率。</p>
-<p><img src="渲染模式.png" alt="渲染模式"></p>
+<p><img src="http://qny.ivanfan.site/渲染模式.png" alt="渲染模式"></p>
 <p>不是每个 UI 元素都会绘制，而是先找到静态的子树（没有发生改变），提前渲染到一个离屏的 Render Texture 上缓存下来，需要的时候再将缓存的 Render Texture 贴到屏幕上。</p>
 <p>这部分不需要开发者管理，全交由 UIWidgets 来实现。当整个UI界面全部静止时，UIWidgets 就只需要在每一帧渲染时调用一次的 Draw call 把离屏的 RT 贴上去。</p>
 <h2 id="三、Widgets-Native-通信"><a href="#三、Widgets-Native-通信" class="headerlink" title="三、Widgets - Native 通信"></a>三、Widgets - Native 通信</h2><p>在和 Native 的通信方式上，UIWidgets 和 Flutter 有点差异，UIWidgets 对 Unity 原本的通道方式进行了简单的封装，没有 Flutter 那么丰富。</p>

@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android,GLSurfaceView,SurfaceView,TextureView,GLTextureView," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="入职转眼三年，而这三年一直围绕着 SurfaceView 或 TextureView 打交道，如今业务调整即将远离，确需要总结下。  对于要实现复杂的 2D/3D 效果，在 Android 上一般是基于 opengl es 来实现（Vulkan要7.0及以上）。那 opengl es 的绘制载体是什么呢？ 普通的 View 在主线程中渲染，是很难承载复杂的、频繁刷新的绘制。此时就会选择 Surf">
+<meta name="keywords" content="Android,GLSurfaceView,SurfaceView,TextureView,GLTextureView">
+<meta property="og:type" content="article">
+<meta property="og:title" content="核心揭秘：GLSurfaceView 和 GLTextureView">
+<meta property="og:url" content="http://lavnfan.github.io/2020/07/01/SurfaceView-TextureView/index.html">
+<meta property="og:site_name" content="IvanFan">
+<meta property="og:description" content="入职转眼三年，而这三年一直围绕着 SurfaceView 或 TextureView 打交道，如今业务调整即将远离，确需要总结下。  对于要实现复杂的 2D/3D 效果，在 Android 上一般是基于 opengl es 来实现（Vulkan要7.0及以上）。那 opengl es 的绘制载体是什么呢？ 普通的 View 在主线程中渲染，是很难承载复杂的、频繁刷新的绘制。此时就会选择 Surf">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://qny.ivanfan.site/SurfaceView.png">
+<meta property="og:image" content="http://qny.ivanfan.site/surfaceView_layer.png">
+<meta property="og:image" content="http://qny.ivanfan.site/GLSurfaceView.png">
+<meta property="og:image" content="http://qny.ivanfan.site//EGL.png">
+<meta property="og:image" content="http://qny.ivanfan.site/surfaceTexture.png">
+<meta property="og:image" content="http://qny.ivanfan.site/TextureView.png">
+<meta property="og:image" content="http://qny.ivanfan.site/GLTextureView.png">
+<meta property="og:updated_time" content="2020-07-21T13:40:38.044Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="核心揭秘：GLSurfaceView 和 GLTextureView">
+<meta name="twitter:description" content="入职转眼三年，而这三年一直围绕着 SurfaceView 或 TextureView 打交道，如今业务调整即将远离，确需要总结下。  对于要实现复杂的 2D/3D 效果，在 Android 上一般是基于 opengl es 来实现（Vulkan要7.0及以上）。那 opengl es 的绘制载体是什么呢？ 普通的 View 在主线程中渲染，是很难承载复杂的、频繁刷新的绘制。此时就会选择 Surf">
+<meta name="twitter:image" content="http://qny.ivanfan.site/SurfaceView.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://lavnfan.github.io/2020/07/01/SurfaceView-TextureView/"/>
+
+
+
+
+
+  <title>核心揭秘：GLSurfaceView 和 GLTextureView | IvanFan</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">IvanFan</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lavnfan.github.io/2020/07/01/SurfaceView-TextureView/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="IvanFan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="IvanFan">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">核心揭秘：GLSurfaceView 和 GLTextureView</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-07-01T20:00:00+08:00">
+                2020-07-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i> 阅读次数
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>入职转眼三年，而这三年一直围绕着 SurfaceView 或 TextureView 打交道，如今业务调整即将远离，确需要总结下。</p>
+</blockquote>
+<p>对于要实现复杂的 2D/3D 效果，在 Android 上一般是基于 opengl es 来实现（Vulkan要7.0及以上）。那 opengl es 的绘制载体是什么呢？</p>
+<p>普通的 View 在主线程中渲染，是很难承载复杂的、频繁刷新的绘制。此时就会选择 SurfaceView 或改版的 TextureView 在独立的子线程中实现。</p>
+<h2 id="一、GLSurfaceView"><a href="#一、GLSurfaceView" class="headerlink" title="一、GLSurfaceView"></a>一、GLSurfaceView</h2><h3 id="1、SurfaceView"><a href="#1、SurfaceView" class="headerlink" title="1、SurfaceView"></a>1、SurfaceView</h3><p>SurfaceView 拥有独立的绘制表面 Surface，运行在独立的子线程中，并实现了多缓冲技术。其类图如下：</p>
+<p><img src="http://qny.ivanfan.site/SurfaceView.png" alt="SurfaceView"></p>
+<h4 id="Surface"><a href="#Surface" class="headerlink" title="Surface"></a>Surface</h4><p>Surface 是原生缓冲器（Raw Buffer）的句柄，由屏幕图像合成器（Screen Compositor）管理。可以获取 Canvas，来保存当前窗口的像素数据。</p>
+<p>Surface 是实现多缓冲的关键，每次通过 <code>lockCanvas</code> 获取一个缓冲区的 Canvas 对象并锁住，绘制完后调用 <code>unlockCanvasAndPost</code> 提交当前缓冲区的 Canvas 到屏幕上显示。SurfaceView 使用了 Surface 的多缓冲来实现，具体是双缓冲还是三缓冲取决于系统和厂商定制。</p>
+<h4 id="SurfaceHolder"><a href="#SurfaceHolder" class="headerlink" title="SurfaceHolder"></a>SurfaceHolder</h4><p>是一个针对 Surface 的抽象接口，用来控制 Surface 的大小、格式和监听变化。SurfaceHolder.Callback 是 SurfaceHolder 的一个内部接口，可以通过 SurfaceHolder 来添加和移除。</p>
+<p>SurfaceView 内部持有一个 SurfaceHolder 的实现，并对 SurfaceHoler.Callback 进行管理和触发。</p>
+<h4 id="SurfaceView"><a href="#SurfaceView" class="headerlink" title="SurfaceView"></a>SurfaceView</h4><p>用来显示 Surface 数据的子 View。它拥有独立的 Surface，与宿主窗口 DecorView 的 Surface 是分离的。而 Surface 会在 WindowManagerService 中有自己的 windowState，并在 SurfaceFlinger 中对应一个独立的 Layer。</p>
+<p><img src="http://qny.ivanfan.site/surfaceView_layer.png" alt="surfaceView_layer"></p>
+<p>虽然在 Client 端在 View hierachy 里，但在 Server 端（WMS和SF）中，它与宿主窗口是分离的。这样就非常容易把 Surface 的渲染放到子线程去做。</p>
+<p>SurfaceView 在 Server 端既然是个独立的 Layer，那数据是和宿主窗口一起显示的呢？SurfaceView 默认在宿主窗口的下面，是通过在宿主窗口里“挖洞”设置一块透明区域，把下边的 Layer 给显示的。</p>
+<p>那怎么把 SurfaceView 显示在宿主窗口的上边呢？当然可以通过 <code>setZOrderOnTop</code> 显示在宿主窗口的上面，同时通过 <code>getHolder().setFormat(PixelFormat.TRANSPARENT)</code> 来设置透明，把下面的宿主窗口显示。</p>
+<p>SurfaceView 提供了两个线程的处理：UI 线程和渲染线程。所有 SurfaceView 和 SurfaceHolder.Callback 的方法都应该在 UI 线程中执行，渲染线程访问的各种变量应该做同步处理。</p>
+<h3 id="2、GLSurfaceView"><a href="#2、GLSurfaceView" class="headerlink" title="2、GLSurfaceView"></a>2、GLSurfaceView</h3><p>GLSurfaceView 在 SurfaceView 的基础上，加入了 EGL 的管理，并自带了一个 GLThread 绘制线程（EGLContext 创建 GL 环境所在线程）。</p>
+<p><img src="http://qny.ivanfan.site/GLSurfaceView.png" alt="GLSurfaceView"></p>
+<p>GLSurfaceView 把 Surface 的创建、改变和每一帧渲染抽象成 Render 接口，让外部实现注入。同时通过 EglHelper 管理 EGL display、Context、Surface 和 Config。</p>
+<ul>
+<li>渲染模式：支持按需渲染（RENDERMODE_WHEN_DIRTY）和连续渲染（RENDERMODE_CONTINUOUSLY），连续渲染 16 ms 回调一次 onDrawFrame，按需渲染需要主动调用 <code>requestRender</code> 触发。</li>
+<li>GPU 加速：GLSurfaceView 使用 opengl 绘制，充分利用 GPU 能力，加速提高绘制效率， 相比 SurfaceView 使用画布绘制的效率要高很多。</li>
+</ul>
+<h5 id="EGL"><a href="#EGL" class="headerlink" title="EGL"></a>EGL</h5><p>EGL(javax.microedition.khronos.egl ) 是定义了控制 displays，contexts 以及 surfaces 的统一的平台接口：</p>
+<p><img src="http://qny.ivanfan.site//EGL.png" alt="EGL"></p>
+<ul>
+<li>Display（EGLDisplay） ：对实际显示设备的抽象。</li>
+<li>Surface（EGLSurface）：对用来存储图像的内存区域 FrameBuffer 的抽象，包括 Color Buffer, Stencil Buffer ,Depth Buffer。</li>
+<li>Context（EGLContext）：存储 OpenGL ES 绘图的一些状态信息。</li>
+</ul>
+<h5 id="渲染流程"><a href="#渲染流程" class="headerlink" title="渲染流程"></a>渲染流程</h5><p>接下来主要分析在 GLSurfaceView 的 GLThread 渲染线程中是怎么执行的，逻辑在 <code>guardedRun</code> 的死循环中。</p>
+<h6 id="1、判断-EventQueue-是否有执行的-runnable"><a href="#1、判断-EventQueue-是否有执行的-runnable" class="headerlink" title="1、判断 EventQueue 是否有执行的 runnable"></a>1、判断 EventQueue 是否有执行的 runnable</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (! mEventQueue.isEmpty()) &#123;</div><div class="line">    event = mEventQueue.remove(<span class="number">0</span>);</div><div class="line">    <span class="keyword">break</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>对于需要 GL 环境操作的事件，可以通过 <code>queueEvent</code> 放入到 eventQueue 中，在每次渲染时就会先执行队列里的任务。UI 线程和渲染线程不是同一个，禁止在 UI 线程调用 opengl es 的 API，</p>
+<h6 id="2、更新-UI-State-状态"><a href="#2、更新-UI-State-状态" class="headerlink" title="2、更新 UI State 状态"></a>2、更新 UI State 状态</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Update the pause state.</span></div><div class="line"><span class="keyword">boolean</span> pausing = <span class="keyword">false</span>;</div><div class="line"><span class="keyword">if</span> (mPaused != mRequestPaused) &#123;</div><div class="line">    pausing = mRequestPaused;</div><div class="line">    mPaused = mRequestPaused;</div><div class="line">    sGLThreadManager.notifyAll();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果当前界面发生 onResume 或 onPause 变化，则 <code>mPaused</code> 修改后，会改变 GLThread 的绘制状态：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">readyToDraw</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> (!mPaused) &amp;&amp; mHasSurface &amp;&amp; (!mSurfaceIsBad)</div><div class="line">        &amp;&amp; (mWidth &gt; <span class="number">0</span>) &amp;&amp; (mHeight &gt; <span class="number">0</span>)</div><div class="line">        &amp;&amp; (mRequestRender || (mRenderMode == RENDERMODE_CONTINUOUSLY));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h6 id="3、判断是否初始化-opengl-es-环境"><a href="#3、判断是否初始化-opengl-es-环境" class="headerlink" title="3、判断是否初始化 opengl es 环境"></a>3、判断是否初始化 opengl es 环境</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// If we don't have an EGL context, try to acquire one.</span></div><div class="line"><span class="keyword">if</span> (! mHaveEglContext) &#123;</div><div class="line">    <span class="keyword">if</span> (askedToReleaseEglContext) &#123;</div><div class="line">        askedToReleaseEglContext = <span class="keyword">false</span>;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            mEglHelper.start();</div><div class="line">        &#125; <span class="keyword">catch</span> (RuntimeException t) &#123;</div><div class="line">            sGLThreadManager.releaseEglContextLocked(<span class="keyword">this</span>);</div><div class="line">            <span class="keyword">throw</span> t;</div><div class="line">        &#125;</div><div class="line">        mHaveEglContext = <span class="keyword">true</span>;</div><div class="line">        createEglContext = <span class="keyword">true</span>;</div><div class="line"></div><div class="line">        sGLThreadManager.notifyAll();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>若没有 EglContext，则通过 <code>EglHelper.start</code> 创建 opengl es 环境，获取 EGLDisplay，EGLConfig对象，创建 EGLContext 实例。</p>
+<h6 id="4、判断创建-Surface"><a href="#4、判断创建-Surface" class="headerlink" title="4、判断创建 Surface"></a>4、判断创建 Surface</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (createEglSurface) &#123;</div><div class="line">    <span class="keyword">if</span> (mEglHelper.createSurface()) &#123;</div><div class="line">        <span class="keyword">synchronized</span>(sGLThreadManager) &#123;</div><div class="line">            mFinishedCreatingEglSurface = <span class="keyword">true</span>;</div><div class="line">            sGLThreadManager.notifyAll();</div><div class="line">        &#125;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">synchronized</span>(sGLThreadManager) &#123;</div><div class="line">            mFinishedCreatingEglSurface = <span class="keyword">true</span>;</div><div class="line">            mSurfaceIsBad = <span class="keyword">true</span>;</div><div class="line">            sGLThreadManager.notifyAll();</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">continue</span>;</div><div class="line">    &#125;</div><div class="line">    createEglSurface = <span class="keyword">false</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>创建 Surface 时，要确保 EGLSurface 和 EGLContext 关联起来，将渲染环境设置到当前线程。</p>
+<h6 id="5、判断创建-GL-环境"><a href="#5、判断创建-GL-环境" class="headerlink" title="5、判断创建 GL 环境"></a>5、判断创建 GL 环境</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (createGlInterface) &#123;</div><div class="line">    gl = (GL10) mEglHelper.createGL();</div><div class="line"></div><div class="line">    createGlInterface = <span class="keyword">false</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>对当前的 EGL context 创建 GL 对象。</p>
+<h6 id="6、触发-SurfaceCreate-或-SurfaceChange-回调"><a href="#6、触发-SurfaceCreate-或-SurfaceChange-回调" class="headerlink" title="6、触发 SurfaceCreate 或 SurfaceChange 回调"></a>6、触发 SurfaceCreate 或 SurfaceChange 回调</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (createEglContext) &#123;</div><div class="line">    GLSurfaceView view = mGLSurfaceViewWeakRef.get();</div><div class="line">    <span class="keyword">if</span> (view != <span class="keyword">null</span>) &#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            view.mRenderer.onSurfaceCreated(gl, mEglHelper.mEglConfig);</div><div class="line">        &#125; <span class="keyword">finally</span> &#123;</div><div class="line">            Trace.traceEnd(Trace.TRACE_TAG_VIEW);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    createEglContext = <span class="keyword">false</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">if</span> (sizeChanged) &#123;</div><div class="line">    GLSurfaceView view = mGLSurfaceViewWeakRef.get();</div><div class="line">    <span class="keyword">if</span> (view != <span class="keyword">null</span>) &#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            view.mRenderer.onSurfaceChanged(gl, w, h);</div><div class="line">        &#125; <span class="keyword">finally</span> &#123;</div><div class="line">            Trace.traceEnd(Trace.TRACE_TAG_VIEW);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    sizeChanged = <span class="keyword">false</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>对于创建 EGLContext 时，回调 <code>onSurfaceCreated</code> ，当大小改变时，回调 <code>onSurfaceChanged</code> 。</p>
+<h6 id="7、触发-onDrawFrame-进行渲染"><a href="#7、触发-onDrawFrame-进行渲染" class="headerlink" title="7、触发 onDrawFrame 进行渲染"></a>7、触发 onDrawFrame 进行渲染</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">    GLSurfaceView view = mGLSurfaceViewWeakRef.get();</div><div class="line">    <span class="keyword">if</span> (view != <span class="keyword">null</span>) &#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            view.mRenderer.onDrawFrame(gl);</div><div class="line">        &#125; <span class="keyword">finally</span> &#123;</div><div class="line">            Trace.traceEnd(Trace.TRACE_TAG_VIEW);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>把 GL 回调到 onDrawFrame 渲染。</p>
+<h6 id="8、交换缓冲区"><a href="#8、交换缓冲区" class="headerlink" title="8、交换缓冲区"></a>8、交换缓冲区</h6><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> swapError = mEglHelper.swap();</div></pre></td></tr></table></figure>
+<p>把当前渲染的缓冲数据交换到当前屏幕上显示。</p>
+<h2 id="二、GLTextureView"><a href="#二、GLTextureView" class="headerlink" title="二、GLTextureView"></a>二、GLTextureView</h2><p>GLTextureView 是仿照 GLSurfaceView，在 TextureView 的基础上添加了 EGL 的管理和 GLThread 线程绘制。而 TextureView 是基于 SurfaceTexture 实现的，下边依次介绍。</p>
+<h3 id="1、SurfaceTexture"><a href="#1、SurfaceTexture" class="headerlink" title="1、SurfaceTexture"></a>1、SurfaceTexture</h3><p>SurfaceTexture 是从图像流中捕获帧数据，用作 OpenGL ES 的纹理。相比 SurfaceView，接收图像流后不需要显示出来，可用于图像流数据的二次处理（如 Camera 滤镜，桌面特效等）。</p>
+<p><img src="http://qny.ivanfan.site/surfaceTexture.png" alt="surfaceTexture"></p>
+<p>SurfaceTexture 核心逻辑都在 native。Surface 作为生产者，通过 BufferQueueProducer 向 BufferQueue 写GraphicBuffer。GLConsumer 作为消费者，通过 BufferQueueConsumer，从 BufferQueue 读取 GraphicBuffer 并转化为纹理。</p>
+<p>GLConsumer 把 GraphicBuffer 转化为纹理后，可以通知注册 <code>OnFrameAvailableListener</code> 的监听者更新，也可以通知 SurfaceFlinger 合成 Layer 进行上屏。</p>
+<h3 id="2、TextureView"><a href="#2、TextureView" class="headerlink" title="2、TextureView"></a>2、TextureView</h3><p>是 View 的子类，在 WMS 中没有独立的窗口，和 View hierachy 普通 View 一样管理和绘制。</p>
+<p><img src="http://qny.ivanfan.site/TextureView.png" alt="TextureView"></p>
+<p>TextureView 使用硬件渲染的 DisplayListCanvas 来绘制，在重写的 draw 方法中，若不支持硬件绘制则直接返回，接着判断 SurfaceTexture 和 TextureLayer 是否存在，若不存在则创建和初始化。然后把收到的图像数据作为纹理更新到 TextureLayer 上。</p>
+<p>TextureView 本质上控制的是 TextureLayer 纹理对象，每次在 ViewRootImpl 刷新时同步宽高，可以和普通的 view 一样做动画。SurfaceView 控制的是 Surface 对象，操作的单位不是 Texture，而是 GraphicBuffer 对象，其宽高没有和 View 的绘制同步，而是在 Surface 每次刷新后的回调设置。</p>
+<h3 id="3、GLTextureView"><a href="#3、GLTextureView" class="headerlink" title="3、GLTextureView"></a>3、GLTextureView</h3><p><img src="http://qny.ivanfan.site/GLTextureView.png" alt="GLTextureView"></p>
+<p>TextureView 还是使用 Canvas 绘制，没有携带高效的 opengl es 绘制，也没有独立的渲染线程。因此，仿造 GLSurfaceView，对 TextureView 引入 GLThread 和 EGL 环境管理组成 GLTextureView。对外暴露 Render 创建、改变和每帧 opengl es 渲染的接口，屏蔽掉 EGL 的管理和线程的切换等。</p>
+<h2 id="三、比较"><a href="#三、比较" class="headerlink" title="三、比较"></a>三、比较</h2><h3 id="SurfaceView-1"><a href="#SurfaceView-1" class="headerlink" title="SurfaceView"></a>SurfaceView</h3><h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><ul>
+<li>可以在一个独立的线程中绘制，实现了多缓冲机制</li>
+<li>有独立的窗口管理，可以通过设置 Z 轴调整和宿主窗口的层级</li>
+</ul>
+<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><ul>
+<li>SurfaceView 在 7.0 以下，不支持平移，缩放等动画</li>
+<li>在低端机型上比较容易 ANR，因为 UI 状态变更时都会进行锁等待</li>
+</ul>
+<h3 id="TextureView"><a href="#TextureView" class="headerlink" title="TextureView"></a>TextureView</h3><h4 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h4><ul>
+<li>支持移动、旋转、缩放等动画</li>
+<li>能作为 View hierachy 的一个普通 View 调整层级和管理</li>
+</ul>
+<h4 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h4><ul>
+<li>必须在硬件加速的窗口中使用，占用内存比 SurfaceView 高（有内部缓冲队列）</li>
+</ul>
+<ul>
+<li>由于失效（invalidation）和缓冲的特性，TextureView 增加了额外 1~3  帧的延迟显示画面更新</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>知道是不会有人点的，但万一被感动了呢？</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/donate_wechat.png" alt="IvanFan 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    IvanFan
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lavnfan.github.io/2020/07/01/SurfaceView-TextureView/" title="核心揭秘：GLSurfaceView 和 GLTextureView">http://lavnfan.github.io/2020/07/01/SurfaceView-TextureView/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
+          
+            <a href="/tags/GLSurfaceView/" rel="tag"><i class="fa fa-tag"></i> GLSurfaceView</a>
+          
+            <a href="/tags/SurfaceView/" rel="tag"><i class="fa fa-tag"></i> SurfaceView</a>
+          
+            <a href="/tags/TextureView/" rel="tag"><i class="fa fa-tag"></i> TextureView</a>
+          
+            <a href="/tags/GLTextureView/" rel="tag"><i class="fa fa-tag"></i> GLTextureView</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/06/git/" rel="next" title="Git 工作原理及常用命令">
+                <i class="fa fa-chevron-left"></i> Git 工作原理及常用命令
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/07/17/uiwidget/" rel="prev" title="Unity与Flutter的碰撞 - UIWidgets">
+                Unity与Flutter的碰撞 - UIWidgets <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zODc4NS8xNTMxMw=="></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            关于作者
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image"
+              src="/images/avatar.jpg"
+              alt="IvanFan" />
+          
+            <p class="site-author-name" itemprop="name">IvanFan</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">47</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lavnFan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:lavnFan@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、GLSurfaceView"><span class="nav-number">1.</span> <span class="nav-text">一、GLSurfaceView</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、SurfaceView"><span class="nav-number">1.1.</span> <span class="nav-text">1、SurfaceView</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Surface"><span class="nav-number">1.1.1.</span> <span class="nav-text">Surface</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SurfaceHolder"><span class="nav-number">1.1.2.</span> <span class="nav-text">SurfaceHolder</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SurfaceView"><span class="nav-number">1.1.3.</span> <span class="nav-text">SurfaceView</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、GLSurfaceView"><span class="nav-number">1.2.</span> <span class="nav-text">2、GLSurfaceView</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#EGL"><span class="nav-number">1.2.0.1.</span> <span class="nav-text">EGL</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#渲染流程"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">渲染流程</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1、判断-EventQueue-是否有执行的-runnable"><span class="nav-number">1.2.0.2.1.</span> <span class="nav-text">1、判断 EventQueue 是否有执行的 runnable</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2、更新-UI-State-状态"><span class="nav-number">1.2.0.2.2.</span> <span class="nav-text">2、更新 UI State 状态</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3、判断是否初始化-opengl-es-环境"><span class="nav-number">1.2.0.2.3.</span> <span class="nav-text">3、判断是否初始化 opengl es 环境</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4、判断创建-Surface"><span class="nav-number">1.2.0.2.4.</span> <span class="nav-text">4、判断创建 Surface</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#5、判断创建-GL-环境"><span class="nav-number">1.2.0.2.5.</span> <span class="nav-text">5、判断创建 GL 环境</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#6、触发-SurfaceCreate-或-SurfaceChange-回调"><span class="nav-number">1.2.0.2.6.</span> <span class="nav-text">6、触发 SurfaceCreate 或 SurfaceChange 回调</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#7、触发-onDrawFrame-进行渲染"><span class="nav-number">1.2.0.2.7.</span> <span class="nav-text">7、触发 onDrawFrame 进行渲染</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#8、交换缓冲区"><span class="nav-number">1.2.0.2.8.</span> <span class="nav-text">8、交换缓冲区</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、GLTextureView"><span class="nav-number">2.</span> <span class="nav-text">二、GLTextureView</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、SurfaceTexture"><span class="nav-number">2.1.</span> <span class="nav-text">1、SurfaceTexture</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、TextureView"><span class="nav-number">2.2.</span> <span class="nav-text">2、TextureView</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、GLTextureView"><span class="nav-number">2.3.</span> <span class="nav-text">3、GLTextureView</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、比较"><span class="nav-number">3.</span> <span class="nav-text">三、比较</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SurfaceView-1"><span class="nav-number">3.1.</span> <span class="nav-text">SurfaceView</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#优点"><span class="nav-number">3.1.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缺点"><span class="nav-number">3.1.2.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TextureView"><span class="nav-number">3.2.</span> <span class="nav-text">TextureView</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#优点-1"><span class="nav-number">3.2.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缺点-1"><span class="nav-number">3.2.2.</span> <span class="nav-text">缺点</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div style="text-align: center;">
+<div class="copyright" >
+  
+  &copy;  2016 &mdash; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">IvanFan</span>
+
+  
+</div>
+
+<div style="text-align: center;">
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  访客数：<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<span class="post-meta-divider">|</span>
+
+<i class="fa fa-eye"></i><span id="busuanzi_container_site_pv">
+    访问量：<span id="busuanzi_value_site_pv"></span>
+</span>
+
+
+
+<!--  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+-->
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

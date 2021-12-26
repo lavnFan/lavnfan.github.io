@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Android,Java,算法,排序,TimSort,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="使用 Collections.sort() 对 ArrayList 数组进行排序时，偶现了 IllegalArgumentException 异常，于是追根溯源，对使用的排序算法-TimSort，出现异常的原因及其解决方案进行了如下的总结。  在灰度期间，上报了一个排序的 bug，如下所示： 1234567java.lang.IllegalArgumentException: Compariso">
+<meta name="keywords" content="Android,Java,算法,排序,TimSort">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Collections.sort() 出现 IllegalArgumentException？因为它：TimSort">
+<meta property="og:url" content="http://lavnfan.github.io/2017/12/16/Collections.sort() 出现 IllegalArgumentException？因为它：TimSort/index.html">
+<meta property="og:site_name" content="IvanFan">
+<meta property="og:description" content="使用 Collections.sort() 对 ArrayList 数组进行排序时，偶现了 IllegalArgumentException 异常，于是追根溯源，对使用的排序算法-TimSort，出现异常的原因及其解决方案进行了如下的总结。  在灰度期间，上报了一个排序的 bug，如下所示： 1234567java.lang.IllegalArgumentException: Compariso">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://qny.ivanfan.site/run.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BE%85%E6%8E%92%E5%BA%8F.png">
+<meta property="og:image" content="http://qny.ivanfan.site/run%E5%8C%BA%E9%97%B4.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6_1.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6_2.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_1.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_2.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_3.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_4.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_5.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_6.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_0.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_1.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_3.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_4.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_5.png">
+<meta property="og:image" content="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_6.png">
+<meta property="og:updated_time" content="2019-02-01T08:49:00.945Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Collections.sort() 出现 IllegalArgumentException？因为它：TimSort">
+<meta name="twitter:description" content="使用 Collections.sort() 对 ArrayList 数组进行排序时，偶现了 IllegalArgumentException 异常，于是追根溯源，对使用的排序算法-TimSort，出现异常的原因及其解决方案进行了如下的总结。  在灰度期间，上报了一个排序的 bug，如下所示： 1234567java.lang.IllegalArgumentException: Compariso">
+<meta name="twitter:image" content="http://qny.ivanfan.site/run.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://lavnfan.github.io/2017/12/16/Collections.sort() 出现 IllegalArgumentException？因为它：TimSort/">
+
+
+
+
+
+  <title>Collections.sort() 出现 IllegalArgumentException？因为它：TimSort | IvanFan</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">IvanFan</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lavnfan.github.io/2017/12/16/Collections.sort() 出现 IllegalArgumentException？因为它：TimSort/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="IvanFan">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="IvanFan">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Collections.sort() 出现 IllegalArgumentException？因为它：TimSort</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-16T12:00:00+08:00">
+                2017-12-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/算法/" itemprop="url" rel="index">
+                    <span itemprop="name">算法</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i> 阅读次数
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>使用 Collections.sort() 对 ArrayList 数组进行排序时，偶现了 IllegalArgumentException 异常，于是追根溯源，对使用的排序算法-TimSort，出现异常的原因及其解决方案进行了如下的总结。</p>
+</blockquote>
+<p>在灰度期间，上报了一个排序的 bug，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">java.lang.IllegalArgumentException: Comparison method violates its general contract!</span><br><span class="line">java.util.TimSort.mergeLo(TimSort.java:<span class="number">761</span>)</span><br><span class="line">java.util.TimSort.mergeAt(TimSort.java:<span class="number">497</span>)</span><br><span class="line">java.util.TimSort.mergeCollapse(TimSort.java:<span class="number">424</span>)</span><br><span class="line">java.util.TimSort.sort(TimSort.java:<span class="number">210</span>)</span><br><span class="line">java.util.Arrays.sort(Arrays.java:<span class="number">1998</span>)</span><br><span class="line">java.util.Collections.sort(Collections.java:<span class="number">1900</span>)</span><br></pre></td></tr></table></figure>
+<p>定位到业务代码，实现的比较器如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Collections.sort(list, <span class="keyword">new</span> Comparator&lt;Integer&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(Integer o1, Integer o2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> o1&gt;o2?<span class="number">1</span>:-<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>跟踪系统实现排序的地方，在 JDK 7 中，对比较器的实现做了比较严格的限制，当俩个值相等(o1 = o2)时，需要保证 <code>compare(o1, o2) = 0</code> ，而在  JDK 6 使用时是没问题的。为了一探究竟，就定位到了实现 sort 算法的位置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function"><span class="keyword">void</span> <span class="title">sort</span><span class="params">(T[] a, Comparator&lt;? <span class="keyword">super</span> T&gt; c)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (c == <span class="keyword">null</span>) &#123;</span><br><span class="line">        sort(a);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (LegacyMergeSort.userRequested)</span><br><span class="line">            legacyMergeSort(a, c);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            TimSort.sort(a, <span class="number">0</span>, a.length, c, <span class="keyword">null</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> JDK ≥ 7 在这里更新了排序算法，如果指定了 <code>LegacyMergeSort.userRequested</code> 值为 true，则使用老的 （ JDK &lt; 7）mergeSort；如果没有指定，则使用 TimSort。老的归并排序没有产生过这种异常，那为什么 Java 竟然会放弃兼容，替换成 TimSort 后会异常呢？接下来我们先深入 TimSort 的排序原理，再来看看出错的原因及其解决方案。</p>
+<h2 id="TimSort-原理"><a href="#TimSort-原理" class="headerlink" title="TimSort 原理"></a>TimSort 原理</h2><p>TimSort 结合了归并排序（merge sort）和插入排序（insertion sort），它基于一个简单的事实：大部分数据都是部分有序的。Youtube 上有一个很直观的 TimSort 排序视频：<a href="https://www.youtube.com/watch?v=NVIjHj-lrT4，可以通过这段视频对算法的过程有一个感性的了解。" target="_blank" rel="noopener">https://www.youtube.com/watch?v=NVIjHj-lrT4，可以通过这段视频对算法的过程有一个感性的了解。</a></p>
+<p>TimSort 算法定义数组中一个有序的片段为 run，每个 run 都要求严格升序或降序，来保证算法的稳定性，如下所示：</p>
+<p><img src="http://qny.ivanfan.site/run.png" alt="run"></p>
+<h3 id="划分-run"><a href="#划分-run" class="headerlink" title="划分 run"></a>划分 run</h3><p>TimSort 首先将待排序的数组，按照严格升序或降序（保证算法稳定性）划分一段一段的 run，如果为逆序则进行翻转，但是它的长度不能小于 minRun 这个阈值；如果长度小于 minRun，则把之后的数按照二分查找插入到该区间直到满足最小的长度要求。</p>
+<p>这里我们定义一组待排序的数列： </p>
+<p><img src="http://qny.ivanfan.site/%E5%BE%85%E6%8E%92%E5%BA%8F.png" alt="待排序"></p>
+<p>假设最小的 run 长度为 <code>minRun = 4</code> ，则上述待排序数组可以分为以下不同的 run 区间：</p>
+<p><img src="http://qny.ivanfan.site/run%E5%8C%BA%E9%97%B4.png" alt="run区间"></p>
+<ul>
+<li>如果该数组是一个完全正序或逆序的，则只需要划分一个 run，这时排序只需要 O(N) 的时间。</li>
+<li>划分过程中，如果长度小于 minRun，则会把后边的数按照二分查找算法插入补齐，如果是最后剩余的部分，则单独组成一个 run。</li>
+</ul>
+<h3 id="run-合并"><a href="#run-合并" class="headerlink" title="run 合并"></a>run 合并</h3><p>TimSort 第二步就是对划分的 run 进行压栈，对于在栈顶的 run[i]，必须同时满足以下条件：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>. runLen[i - <span class="number">2</span>] &gt; runLen[i - <span class="number">1</span>] + runLen[i]</span><br><span class="line"><span class="number">2</span>. runLen[i - <span class="number">1</span>] &gt; runLen[i]</span><br></pre></td></tr></table></figure>
+<p>如果有一个不满足，则会把最短的 2 个 run 进行归并成一个新的 run。接下来看看上述待排序的数组是如何把 run 进行合并的。</p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6_1.png" alt="归并_1"></p>
+<p>当把 run[1] 压栈时，可以看到 runLen[0] &lt; runLen[1] ，所以需要把俩个 run 进行归并，合成一个新的 run 再重新压入栈中。</p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6_2.png" alt="归并_2"></p>
+<p>之后我们一次把 run[1]（10 &gt; 5），run[2]（10&gt;5+4 &amp; 5&gt;4）入栈，因为在栈顶的 run 都满足约束条件。当把 run[3] 入栈时，发现 runLen[1]  &gt; runLen[2] + runLen[3] 不成立，所以需要把 run[3]  和 run[2] 合并。之后也仍然按照这样的规则进行，当栈空时，也就排好序了。</p>
+<h3 id="俩个-run-的归并排序"><a href="#俩个-run-的归并排序" class="headerlink" title="俩个 run 的归并排序"></a>俩个 run 的归并排序</h3><p>TimSort 把 run 压人栈顶，如果不满足俩个约束条件，会把较短的俩个 run 进行归并排序，这里的归并排序相对普通的归并做了俩个优化点，都是充分利用一个简单的事实：大部分数据都是部分有序的。</p>
+<h4 id="Galloping-Mode-减少参与归并的数据"><a href="#Galloping-Mode-减少参与归并的数据" class="headerlink" title="Galloping Mode 减少参与归并的数据"></a>Galloping Mode 减少参与归并的数据</h4><p>假若有以下俩个 run ，不满足约束条件需要进行合并。设 run[0] 别称为 A，首地址为 base1，长度为 len1；run[1] 别称为 B，首地址为 base2，长度为len2。</p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_1.png" alt="归并排序_1"></p>
+<p>在 Galloping Mode 下，会根据以下条件查找对应区间：</p>
+<ul>
+<li>取 B 片段的起始值 B[base2]，在 A 片段中使用二分查找，则 A 片段中小于等于 B[base2] 段就是最终排好序的起始部分。</li>
+<li>取 A 片段的终点值 A[base1 + len1 - 1]，在 B 片段中进行二分查找，则 B 片段中大于等于 A[base1 + len1 - 1] 的区间就是最终归并排序的结束部分。</li>
+</ul>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_2.png" alt="归并排序_2"></p>
+<p>这里充分利用了部分数据有序这个事实，形象的“掐头去尾”，这样最终需要归并的数据只有中间的俩段数据。</p>
+<h4 id="连续胜利-MIN-GALLOP-次继续触发-Galloping"><a href="#连续胜利-MIN-GALLOP-次继续触发-Galloping" class="headerlink" title="连续胜利 MIN_GALLOP 次继续触发 Galloping"></a>连续胜利 MIN_GALLOP 次继续触发 Galloping</h4><p>对 A 和 B 的俩个剩余片段，添加俩个指针，cursor1 指向 A 片段的末尾 <code>cursor1 = base1 + len1 - 1</code> ，dest 指向 B 的剩余片段的末尾  <code>dest = base2 + len2 - 1</code> 。</p>
+<p>因为在上一步骤中保证了 A [cursor1] &gt; B[dest]，所以会先把 A 片段的最后一个数据直接拷贝到 B 片段的末尾，同时 <code>cursor--,dest--</code> 。</p>
+<p>剩余的俩段区间，选择长度较小的一段复制到临时的 tmp 数组（节省内存开销），这里 B 片段的区间小一点，所以会放到临时数组的是 B 的剩余归并片段。</p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_3.png" alt="归并排序_3"></p>
+<p>接着对 A 片段和 tmp 片段做普通的归并，A[cursor1] 和 tmp[cursor2] 进行比较，把比较大数移到 A[dest]，同时 dest 和对应片段的指针减1。</p>
+<p>在俩个片段的比较过程中，会记录 A 片段和 tmp 片段比较胜利（大于对方）次数，比较失败会直接把胜利次数清零。当某个片段的胜利次数大于 <strong>minGallop</strong> ，会进一步触发 <strong>Galloping</strong> 。假设 <code>minGallop = 4</code> ，则 A 片段在胜利 4 次后会如下图所示，</p>
+<p> <img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_4.png" alt="归并排序_4"></p>
+<h5 id="触发-Galloping"><a href="#触发-Galloping" class="headerlink" title="触发 Galloping"></a>触发 Galloping</h5><p>取 tmp 片段的终点值 tmp[cursor2]，在 A 片段中二分查找到小于 tmp[cursor2] 的索引 k，则 A[k + 1, cursor1] 这个片段都大于 tmp[cursor2]，这时就可以直接把 A[k + 1, cursor1] 复制到 A[dest - len, dest]（len = cursor1 - k + 1）。如图找到的 <code>k = -1</code> ，把俩个 10 复制过去后，cursor1 就到了 k 的位置了。</p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_5.png" alt="归并排序_5"></p>
+<p>如果 <code>cursor1 &gt;= 0</code> ，俩个片段会继续进行归并比较，当连胜 minGallop 次才会又一次出发 Galloping。这里 <code>cursor1 = -1</code> ，所以接下来只要把tmp 剩余的数据拷贝到 A[base1, dest] 即可。</p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F_6.png" alt="归并排序_6"></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>TimSort 排序算法综合了折半插入（二分查找）排序和归并排序，侧重优化了部分数据有序的情况，减少了对升序部分的回溯和对降序部分的性能倒退（快速排序在有序的情况下会退化到O(N^²)）。其算法思路总结如下</p>
+<ul>
+<li>当待排序数组长度小于 MIN_MERGE(<code>MIN_MERGE = 32</code>)，会使用没有归并的 TimSort，也就是会先进行一次 Galloping 找到左边有序的一个片段，再对后边的数据进行二分查找（折半插入）排序。</li>
+<li>划分长度不小于 minRun 且严格升序（降序则翻转，不足则用后边数据二分查找插入）的 run 片段，并压人栈中，当不满足约束条件时，进行归并</li>
+<li>在归并过程中，会先进行 Galloping，“掐头去尾”，再进行中间俩个片段的归并</li>
+<li>俩个片段比较过程中，若某个片段连胜 MIN_GALLOP，则又会进行一次 Galloping，进行”掐头” 或“去尾”，否则就退化成普通的归并排序。</li>
+</ul>
+<p>TimSort 的时间和空间复杂度如下表：</p>
+<table>
+<thead>
+<tr>
+<th>Algorithm</th>
+<th>Average</th>
+<th>Best</th>
+<th>Worst</th>
+<th>extra space</th>
+<th>stable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TimSort</td>
+<td>O(NlogN)</td>
+<td>O(N)</td>
+<td>O(NlogN)</td>
+<td>O(N)</td>
+<td>稳定</td>
+</tr>
+</tbody>
+</table>
+<p>在完全正序或逆序的情况下，TimSort 只需要 O(N) 的时间和 O(1) 的空间，空间消耗主要来自于俩个片段归并过程中创建的临时数组。</p>
+<h2 id="出错原因"><a href="#出错原因" class="headerlink" title="出错原因"></a>出错原因</h2><p>回到在业务中使用 Collections.sort() 时，当 Comparator 没有实现俩个数据相等情况下返回 0 的情况下，会出现 IllegalArgumentException。假设这里实现的比较器如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Comparator&lt;Inteager&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(Inteager o1, Inteager o2)</span> </span>&#123;</span><br><span class="line">              <span class="keyword">return</span> o1 &gt; o2 ? <span class="number">1</span> : -<span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br></pre></td></tr></table></figure>
+<p>则当 o1 =  o2 时，有如下等式成立：</p>
+<ul>
+<li>compare(o1,o2) &lt; 0 </li>
+<li>compare(o2,o1) &lt; 0 </li>
+</ul>
+<p>这里我们假设现在有俩个 run 需要进行归并：</p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_0.png" alt="归并排序出错_0"></p>
+<p>1、在进行 Galloping “掐头” 过程中，执行 <strong>compare(B[base2], A[base1 + hint])</strong> 过程中，因为 <code>compare(o1,o2) &lt; 0 (o1 = o2)</code>，所以此时 B 片段中的 5 是比 A 片段中的俩个 5 都要小，所以 A 片段的 5 都会保留下来。</p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_1.png" alt="归并排序出错_1"></p>
+<p>之后中间俩个片段进行正常的归并，当连胜 minGallop(minGallop = 4)次后会又一次触发 Galloping。<img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_3.png" alt="归并排序出错_3"></p>
+<p>2、在这次 Galloping 中，会在 A 片段中查找比 tmp[cursor2] 还要小的位置 k，并把 A[K + 1, cursor1] 移到 A[dest - len, dest] 中，同时 cursor1 和 dest 左移俩位。</p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_4.png" alt="归并排序出错_4"></p>
+<p>3、接下来俩个片段在归并过程中，tmp[cursor2] 连续 4 次比 A[cursor1]  大，又一次触发 Galloping。</p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_5.png" alt="归并排序出错_5"></p>
+<p>4、在这次 Galloping过程中，取 A 片段的 A[cursor1] 的值，去 tmp 片段中查找大于 A[cursor1] 的区间。使用比较器 <strong>compare(A[cursor1]，tmp[k])</strong>，因为 <code>compare(o1,o2) &lt; 0 (o1 = o2)</code>，所以此时 A 片段中的 5 是小于 tmp 片段中的 5。tmp 的数据会依次拷贝到 A[dest] 后，cursor2的指针到-1了，且此时 tmp 数组的长度 len2 为 0。</p>
+<p><img src="http://qny.ivanfan.site/%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F%E5%87%BA%E9%94%99_6.png" alt="归并排序出错_6"></p>
+<p>5、因为 tmp 的长度（len2）为 0，会触发 <code>mergeHi</code> 中如下的异常</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (len2 == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(</span><br><span class="line">        <span class="string">"Comparison method violates its general contract!"</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br></pre></td></tr></table></figure>
+<p>我们再回顾一下上边的过程，在第 1 步“掐头去尾”中，我们保证 A[base1] &gt; B[base2]，在第 4 步中，cursor2 最终指到 -1 了，所以有 A[cursor1] &lt; tmp[0]，即：A[base1 + 1] &lt; B[base2]。综上可以列出以下等式：</p>
+<ul>
+<li>A[base1] &lt;= A[base1 + 1]</li>
+<li>A[base1] &gt; B[base2]</li>
+<li>A[base+1] &lt; B[base2]</li>
+</ul>
+<p>A[base1] &lt;= A[base1+1]&lt;B[base2]&lt;A[base1]，显然不合情理。</p>
+<p>从另一个角度来看：在 <code>mergeHi</code> 中把后边的 B 片段取出放到临时数组 tmp 里，B 片段的第一个数据 B[base2] 肯定是最后一个才会放进去的，因为把小于 B[base2] 的数据第一步就掐走了，在留下的 A 片段里肯定都是不小于 B[base2] 的数据。</p>
+<p>因为不满足比较器的自反性(<code>compare(o1, o2) ≠ compare(o2 , o1),if o1 = o2</code>)，当有相等的值，且俩个片段在进行 Galloping 时正好用了俩次 compare（一次 compare(o1, o2)，一次compare(o2, o1)），这时便有可能会触发这个异常。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>经过对 TimSort 源码及出错的原因分析，我们可以很快的得到如下俩种解决方案。</p>
+<h3 id="严格实现比较器"><a href="#严格实现比较器" class="headerlink" title="严格实现比较器"></a>严格实现比较器</h3><p>在创建比较器 Comparator 实现 <code>compare()</code> 方法中，当俩个值相等(o1 = o2)时，必须保证 <code>compare(o1, o2) = 0</code> 。</p>
+<h3 id="使用旧的排序算法"><a href="#使用旧的排序算法" class="headerlink" title="使用旧的排序算法"></a>使用旧的排序算法</h3><p> JDK 6 及以下的版本中，使用的排序算法是普通的归并排序，不需要 <code>compare(o1, o2) = 0(o1 = o2)</code> 这么严格的条件。所以第二种解决方法仍然使用老版本的归并排序算法，设置如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">System.setProperty(<span class="string">"java.util.Arrays.useLegacyMergeSort"</span>, <span class="string">"true"</span>);</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>知道是不会有人点的，但万一被感动了呢？</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/donate_wechat.png" alt="IvanFan 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    IvanFan
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lavnfan.github.io/2017/12/16/Collections.sort() 出现 IllegalArgumentException？因为它：TimSort/" title="Collections.sort() 出现 IllegalArgumentException？因为它：TimSort">http://lavnfan.github.io/2017/12/16/Collections.sort() 出现 IllegalArgumentException？因为它：TimSort/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
+          
+            <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+          
+            <a href="/tags/算法/" rel="tag"><i class="fa fa-tag"></i> 算法</a>
+          
+            <a href="/tags/排序/" rel="tag"><i class="fa fa-tag"></i> 排序</a>
+          
+            <a href="/tags/TimSort/" rel="tag"><i class="fa fa-tag"></i> TimSort</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/14/UML 及 StarUml/" rel="next" title="UML 及 StarUML">
+                <i class="fa fa-chevron-left"></i> UML 及 StarUML
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/13/Java crash 异常分析/" rel="prev" title="Java crash 异常分析">
+                Java crash 异常分析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zODc4NS8xNTMxMw=="></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            关于作者
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="IvanFan">
+          
+            <p class="site-author-name" itemprop="name">IvanFan</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">46</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lavnFan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:lavnFan@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#TimSort-原理"><span class="nav-number">1.</span> <span class="nav-text">TimSort 原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#划分-run"><span class="nav-number">1.1.</span> <span class="nav-text">划分 run</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#run-合并"><span class="nav-number">1.2.</span> <span class="nav-text">run 合并</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#俩个-run-的归并排序"><span class="nav-number">1.3.</span> <span class="nav-text">俩个 run 的归并排序</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Galloping-Mode-减少参与归并的数据"><span class="nav-number">1.3.1.</span> <span class="nav-text">Galloping Mode 减少参与归并的数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#连续胜利-MIN-GALLOP-次继续触发-Galloping"><span class="nav-number">1.3.2.</span> <span class="nav-text">连续胜利 MIN_GALLOP 次继续触发 Galloping</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#触发-Galloping"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">触发 Galloping</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.4.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#出错原因"><span class="nav-number">2.</span> <span class="nav-text">出错原因</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决方案"><span class="nav-number">3.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#严格实现比较器"><span class="nav-number">3.1.</span> <span class="nav-text">严格实现比较器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用旧的排序算法"><span class="nav-number">3.2.</span> <span class="nav-text">使用旧的排序算法</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div style="text-align: center;">
+<div class="copyright">
+  
+  &copy;  2016 &mdash; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">IvanFan</span>
+
+  
+</div>
+
+<div style="text-align: center;">
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  访客数：<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<span class="post-meta-divider">|</span>
+
+<i class="fa fa-eye"></i><span id="busuanzi_container_site_pv">
+    访问量：<span id="busuanzi_value_site_pv"></span>
+</span>
+
+
+
+<!--  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+-->
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </div></footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

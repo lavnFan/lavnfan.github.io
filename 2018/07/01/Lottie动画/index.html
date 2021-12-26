@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Android,Lottie,动画,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="Lottie 是什么Lottie 是 Airbnb 开源的一个动画渲染库，它可以解析 Adobe After Effects 使用 Bodymovin 插件把做的动画导出的 json 文件，并在 Android/iOS、React Native 和 web 端实现相同的动画效果。  简单来说，设计师可以使用 After Effects 制作动画，经由 Lottie 便可以很简单的在移动端/ web">
+<meta name="keywords" content="Android,Lottie,动画">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Lottie 动画原理剖析">
+<meta property="og:url" content="http://lavnfan.github.io/2018/07/01/Lottie动画/index.html">
+<meta property="og:site_name" content="IvanFan">
+<meta property="og:description" content="Lottie 是什么Lottie 是 Airbnb 开源的一个动画渲染库，它可以解析 Adobe After Effects 使用 Bodymovin 插件把做的动画导出的 json 文件，并在 Android/iOS、React Native 和 web 端实现相同的动画效果。  简单来说，设计师可以使用 After Effects 制作动画，经由 Lottie 便可以很简单的在移动端/ web">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://qny.ivanfan.site/Lottie%E4%BB%8B%E7%BB%8D.jpg">
+<meta property="og:image" content="http://qny.ivanfan.site/Introduction_00_sm.gif">
+<meta property="og:image" content="http://qny.ivanfan.site/Lottie%E4%BD%BF%E7%94%A8.png">
+<meta property="og:image" content="http://qny.ivanfan.site/Lottie%E6%80%BB%E8%A7%88.png">
+<meta property="og:image" content="http://qny.ivanfan.site/Lottie%E8%A7%A3%E6%9E%90Json.png">
+<meta property="og:image" content="http://qny.ivanfan.site/Lottie_%E5%8A%A0%E8%BD%BD.png">
+<meta property="og:image" content="http://qny.ivanfan.site/Lottie%E7%BB%84%E5%BB%BA%E5%9B%BE%E5%B1%82.png">
+<meta property="og:image" content="http://qny.ivanfan.site/Lottie_CompositionLayer.png">
+<meta property="og:image" content="http://qny.ivanfan.site/playAnimation%E6%97%B6%E5%BA%8F%E5%9B%BE.png">
+<meta property="og:image" content="http://qny.ivanfan.site/lottie_mask_1.png">
+<meta property="og:image" content="http://qny.ivanfan.site/lottie_mask_2.png">
+<meta property="og:updated_time" content="2019-02-01T08:49:00.947Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Lottie 动画原理剖析">
+<meta name="twitter:description" content="Lottie 是什么Lottie 是 Airbnb 开源的一个动画渲染库，它可以解析 Adobe After Effects 使用 Bodymovin 插件把做的动画导出的 json 文件，并在 Android/iOS、React Native 和 web 端实现相同的动画效果。  简单来说，设计师可以使用 After Effects 制作动画，经由 Lottie 便可以很简单的在移动端/ web">
+<meta name="twitter:image" content="http://qny.ivanfan.site/Lottie%E4%BB%8B%E7%BB%8D.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://lavnfan.github.io/2018/07/01/Lottie动画/">
+
+
+
+
+
+  <title>Lottie 动画原理剖析 | IvanFan</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">IvanFan</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lavnfan.github.io/2018/07/01/Lottie动画/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="IvanFan">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="IvanFan">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Lottie 动画原理剖析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-01T17:00:00+08:00">
+                2018-07-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i> 阅读次数
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="Lottie-是什么"><a href="#Lottie-是什么" class="headerlink" title="Lottie 是什么"></a>Lottie 是什么</h3><p>Lottie 是 Airbnb 开源的一个动画渲染库，它可以解析 Adobe After Effects 使用 Bodymovin 插件把做的动画导出的 json 文件，并在 Android/iOS、React Native 和 web 端实现相同的动画效果。</p>
+<p><img src="http://qny.ivanfan.site/Lottie%E4%BB%8B%E7%BB%8D.jpg" alt="Lottie介绍"></p>
+<p>简单来说，设计师可以使用 After Effects 制作动画，经由 Lottie 便可以很简单的在移动端/ web 端渲染，不再需要工程师进行大量的手动实现。俗话说“一图胜千言”，如下动画便是由 Lottie 渲染。</p>
+<p><img src="http://qny.ivanfan.site/Introduction_00_sm.gif" alt="Introduction_00_sm"></p>
+<h3 id="为什么要用-Lottie"><a href="#为什么要用-Lottie" class="headerlink" title="为什么要用 Lottie"></a>为什么要用 Lottie</h3><p>1、对设计：做的动画素材想一次设计，各个平台能直接运行，效果可由自己灵活掌控，减少于开发的调整沟通。</p>
+<p>2、对开发：针对设计越来越复杂的动画，比如上图所示，可以解决的方案有：</p>
+<ul>
+<li>png 序列帧：它需要大量的图片素材支持，在进行动画播放时会占用很多内存。</li>
+<li>视频：没有交互，只能等视频播放完毕才能交互。</li>
+</ul>
+<p>需要一种更好的解决方案，能够以比较低的成本，来实现这些复杂动画。</p>
+<p>3、对运营：动画实现可配置，不同时间想有不同的动画效果，而目前支持的动画都是需要跟版本的。</p>
+<p>使用 Lottie ，这一切问题就迎刃而解了。Lottie 只需要解析导出的 JSON 文件及所需要的图片，就能在各个平台上实现相同的动画效果，它实现成本低，上线后只需要动态替换对应的 JSON 文件就能实现可配置、可运营。</p>
+<h3 id="怎么使用-Lottie"><a href="#怎么使用-Lottie" class="headerlink" title="怎么使用 Lottie"></a>怎么使用 Lottie</h3><p>Lottie 在不同平台上分别实现了类库：</p>
+<ul>
+<li>Android ：<a href="https://github.com/airbnb/lottie-android" target="_blank" rel="noopener">lottie-android</a>，最低支持 API 14;</li>
+<li>iOS ：<a href="https://github.com/airbnb/lottie-ios" target="_blank" rel="noopener">lottie-ios</a>，最低支持 IOS 7;</li>
+<li>React Native：<a href="https://github.com/airbnb/lottie-react-native" target="_blank" rel="noopener">lottie-react-native</a>；</li>
+<li>Web 端：<a href="https://cdnjs.com/libraries/bodymovin。" target="_blank" rel="noopener">https://cdnjs.com/libraries/bodymovin。</a></li>
+</ul>
+<p>得益于 Lottie 封装的很好， Android 侧使用也是非常简单的，使用如下所示：</p>
+<p><img src="http://qny.ivanfan.site/Lottie%E4%BD%BF%E7%94%A8.png" alt="Lottie使用"></p>
+<h4 id="1、加载资源"><a href="#1、加载资源" class="headerlink" title="1、加载资源"></a>1、加载资源</h4><p>Adobe After Effects 导出的 JSON 文件，可以放在 /assets/，/raw/，或自定义的目录中，如下方式加载：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Raw 文件加载</span></span><br><span class="line">LottieComposition.Factory.fromRawFile(<span class="keyword">this</span>,R.raw.data, compositionListener);</span><br><span class="line"> <span class="comment">//asset 文件加载</span></span><br><span class="line"> LottieComposition.Factory.fromAssetFileName(<span class="keyword">this</span>, <span class="string">"data.json"</span>, compositionListener);</span><br><span class="line"> <span class="comment">//自定义文件目录加载</span></span><br><span class="line"> LottieComposition.Factory.fromInputStream(<span class="keyword">new</span> FileInputStream(<span class="string">"/sdcard/data/data.json"</span>), compositionListener);</span><br></pre></td></tr></table></figure>
+<h4 id="2、设置数据对象"><a href="#2、设置数据对象" class="headerlink" title="2、设置数据对象"></a>2、设置数据对象</h4><p>创建一个 OnCompositionLoadedListener，放入加载的监听中，等待加载完成后，会返回一个数据对象 LottieComposition，接下来只要为 LottieAnimationView 设置这个数据对象即可。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">OnCompositionLoadedListener compositionListener = <span class="keyword">new</span> OnCompositionLoadedListener() &#123;</span><br><span class="line">          <span class="meta">@Override</span></span><br><span class="line">          <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCompositionLoaded</span><span class="params">(@Nullable LottieComposition composition)</span> </span>&#123;</span><br><span class="line">              <span class="keyword">if</span> (composition == <span class="keyword">null</span>) &#123;</span><br><span class="line">                  <span class="keyword">return</span>;</span><br><span class="line">              &#125;</span><br><span class="line">              mLottieAnim.setComposition(composition);</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="3、播放动画"><a href="#3、播放动画" class="headerlink" title="3、播放动画"></a>3、播放动画</h4><p>接下来调用 <code>LottieAnimationView.playAnimation()</code> 就可以播放动画了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mLottieAnim.playAnimation();</span><br></pre></td></tr></table></figure>
+<h4 id="4、设置图片-字体代理"><a href="#4、设置图片-字体代理" class="headerlink" title="4、设置图片/字体代理"></a>4、设置图片/字体代理</h4><p>图片默认认为是在 <code>/assets/</code> 目录的，如果图片放在这个根目录，其子目录只需要调用<code>mLottieAnim.setImageAssetsFolder();</code> 就可以正确读取到，如果是自定义的图片，则可以设置个图片代理，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">mLottieAnim.setImageAssetDelegate(<span class="keyword">new</span> ImageAssetDelegate() &#123;</span><br><span class="line">          <span class="meta">@Override</span></span><br><span class="line">          <span class="function"><span class="keyword">public</span> Bitmap <span class="title">fetchBitmap</span><span class="params">(LottieImageAsset asset)</span> </span>&#123;</span><br><span class="line">              <span class="keyword">try</span> &#123;</span><br><span class="line">                    FileInputStream fileInputStream = <span class="keyword">new</span> FileInputStream(<span class="string">"/sdcard/data/images/"</span> + asset.getFileName());</span><br><span class="line">                  <span class="keyword">return</span> BitmapFactory.decodeStream(fileInputStream);</span><br><span class="line">              &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                  e.printStackTrace();</span><br><span class="line">              &#125;</span><br><span class="line">              <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;);</span><br></pre></td></tr></table></figure>
+<p><code>asset.getFileName</code> 是 JSON 中所需要图片的名称，这里可以直接拼接一个自定义路径，decode 获取 bitmap 返回。</p>
+<p>如果有涉及到字体，可以和图片一样，设置字体的 delegate，自定义获取。</p>
+<h3 id="Lottie-动画实现原理"><a href="#Lottie-动画实现原理" class="headerlink" title="Lottie 动画实现原理"></a>Lottie 动画实现原理</h3><p><img src="http://qny.ivanfan.site/Lottie%E6%80%BB%E8%A7%88.png" alt="Lottie总览"></p>
+<p>Lottie 先将动画 JSON 文件转换为 LottieComposition 数据对象，继承 ImageView 的 LottieAnimationView 将数据对象 LottieComposition 和渲染能力委托给 LottieDrawable 处理，在 LottieDrawable 中会将数据对象 LottieComposition 组建为具有 draw 能力的 BaseLayer，并在 LottieAnimationView 需要绘制时，调用自己和各个层级 BaseLayer 的渲染，从而达到动画效果。</p>
+<h4 id="从-Json-到-LottieCompisition-数据对象"><a href="#从-Json-到-LottieCompisition-数据对象" class="headerlink" title="从 Json 到 LottieCompisition 数据对象"></a>从 Json 到 LottieCompisition 数据对象</h4><p>Lottie 的第一步就是去解析 AE 动画文件导出的 Json ，转变为 Java 实体对象。以上便是解析过程中涉及的类图：</p>
+<p><img src="http://qny.ivanfan.site/Lottie%E8%A7%A3%E6%9E%90Json.png" alt="Lottie解析Json"></p>
+<h5 id="同步-异步加载-Json-数据"><a href="#同步-异步加载-Json-数据" class="headerlink" title="同步/异步加载 Json 数据"></a>同步/异步加载 Json 数据</h5><p><img src="http://qny.ivanfan.site/Lottie_%E5%8A%A0%E8%BD%BD.png" alt="Lottie_加载"></p>
+<p>在 LottieComposition.Factory 工厂类中，利用简单工厂模式，支持多种加载 Json 资源方式，最终都是通过 InputStream 流传入，再用 JsonReader 传入 LottieCompositionParser.parse 进行解析，返回完整的数据对象 LottieComposition。</p>
+<p>这里支持同步/异步俩种方式加载，对于异步，会使用 AsyncCompositionLoader 异步调用 fromJsonSync 解析。俩者均使用 JsonReader 从流中解析 json 数据，可以避免了因一次性将全部 json 数据加载到内存之中而带来的 OOM 问题。</p>
+<h5 id="Json-解析"><a href="#Json-解析" class="headerlink" title="Json 解析"></a>Json 解析</h5><p>对于 AE 通过 bodymovin 插件导出来的 Json，里边包含做动画的一切信息，包括帧率、动画形态、图层、字体等等，接下来介绍一下 Json 动画描述文件的一些属性。</p>
+<h6 id="解析外部资源"><a href="#解析外部资源" class="headerlink" title="解析外部资源"></a>解析外部资源</h6><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"v"</span>: <span class="string">"5.1.10"</span>,  <span class="comment">//bodymovin的版本</span></span><br><span class="line">  <span class="attr">"fr"</span>: <span class="number">24</span>,     <span class="comment">//帧率</span></span><br><span class="line">  <span class="attr">"ip"</span>: <span class="number">0</span>,      <span class="comment">//起始关键帧</span></span><br><span class="line">  <span class="attr">"op"</span>: <span class="number">277</span>,    <span class="comment">//结束关键帧</span></span><br><span class="line">  <span class="attr">"w"</span>: <span class="number">110</span>,     <span class="comment">//动画宽度</span></span><br><span class="line">  <span class="attr">"h"</span>: <span class="number">110</span>,     <span class="comment">//动画高度</span></span><br><span class="line">  <span class="attr">"nm"</span>: <span class="string">"合成 2"</span>,</span><br><span class="line">  <span class="attr">"ddd"</span>: <span class="number">0</span>,</span><br><span class="line">   <span class="attr">"assets"</span>: [...]   <span class="comment">//资源信息</span></span><br><span class="line">   <span class="string">"layers"</span>: [...]   <span class="comment">//图层信息</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在最外层中，可以获取插件 bodymovin 的版本号，起始关键帧，动画帧率及动画的宽高等属性。</p>
+<h6 id="解析图片资源"><a href="#解析图片资源" class="headerlink" title="解析图片资源"></a>解析图片资源</h6><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"id"</span>: <span class="string">"image_0"</span>,   <span class="comment">//图片id</span></span><br><span class="line">  <span class="attr">"w"</span>: <span class="number">750</span>,       <span class="comment">//图片宽度</span></span><br><span class="line">  <span class="attr">"h"</span>: <span class="number">1334</span>,      <span class="comment">//图片高度</span></span><br><span class="line">  <span class="attr">"u"</span>: <span class="string">"images/"</span>,      <span class="comment">//图片路径</span></span><br><span class="line">  <span class="attr">"p"</span>: <span class="string">"img_0.png"</span>     <span class="comment">//图片名称</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>图片资源是在 “asset” 里边的，可以有多张图片，每张图片数据解析后会转换为实体类 <code>LottieImageAsset</code></p>
+<p> 。</p>
+<h6 id="解析图层"><a href="#解析图层" class="headerlink" title="解析图层"></a>解析图层</h6><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">"layers": [</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="attr">"ddd"</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">"ind"</span>: <span class="number">1</span>,     <span class="comment">//图层 id</span></span><br><span class="line">    <span class="attr">"ty"</span>: <span class="number">2</span>,      <span class="comment">//图层类型</span></span><br><span class="line">    <span class="attr">"nm"</span>: <span class="string">"eye-right 2"</span>,</span><br><span class="line">    <span class="attr">"parent"</span>: <span class="number">3</span>,</span><br><span class="line">    <span class="attr">"refId"</span>: <span class="string">"image_0"</span>,  <span class="comment">//引用资源Id</span></span><br><span class="line">    <span class="attr">"sr"</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">"ks"</span>: &#123;       <span class="comment">//动画属性值  </span></span><br><span class="line">        <span class="attr">"s"</span>: &#123;   <span class="comment">//s：缩放的数据值</span></span><br><span class="line">        <span class="attr">"a"</span>: <span class="number">0</span>,</span><br><span class="line">        <span class="attr">"k"</span>: [</span><br><span class="line">          <span class="number">100</span>,</span><br><span class="line">          <span class="number">100</span>,</span><br><span class="line">          <span class="number">100</span></span><br><span class="line">        ],</span><br><span class="line">        <span class="attr">"ix"</span>: <span class="number">6</span></span><br><span class="line">      &#125;...&#125;,  </span><br><span class="line">    <span class="attr">"ip"</span>: <span class="number">0</span>,   <span class="comment">//inFrame 该图层起始关键帧</span></span><br><span class="line">    <span class="attr">"op"</span>: <span class="number">241</span>,   <span class="comment">//outFrame 该图层结束关键帧</span></span><br><span class="line">    <span class="attr">"st"</span>: <span class="number">0</span>,    <span class="comment">//startFrame 开始关键帧</span></span><br><span class="line">    <span class="attr">"bm"</span>: <span class="number">0</span></span><br><span class="line">  &#125;,</span><br></pre></td></tr></table></figure>
+<p>一张复杂的图片可以使用多个图层来表示，每个图层展示一部分内容，图层中的内容也可以拆分为多个元素。在 Lottie 解析的 Json 中，图层可以分为以下几种：PreComp，Solid，Image，Null，Shape，Text。在数据解析时，先会转换为数据实体类 Layer，根据 type 来区分是哪种图层。</p>
+<h4 id="从-LottieCompisition-到-CompositionLayer"><a href="#从-LottieCompisition-到-CompositionLayer" class="headerlink" title="从 LottieCompisition 到 CompositionLayer"></a>从 LottieCompisition 到 CompositionLayer</h4><p>使用 Lottie 第二步是设置数据对象 LottieComposition，把数据对象的数据转换为具有绘制能力的 BaseLayer，以下是转换的部分类图：</p>
+<p><img src="http://qny.ivanfan.site/Lottie%E7%BB%84%E5%BB%BA%E5%9B%BE%E5%B1%82.png" alt="Lottie组建图层"></p>
+<h5 id="setComposition"><a href="#setComposition" class="headerlink" title="setComposition"></a>setComposition</h5><p>在设置数据对象时，我们使用了 <code>mLottieAnim.setComposition(composition);</code> 可以看到源码这里是直接委托给了 LottieDrawable，把 LottieComposition 传了下去。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setComposition</span><span class="params">(@NonNull LottieComposition composition)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (L.DBG) &#123;</span><br><span class="line">    Log.v(TAG, <span class="string">"Set Composition \n"</span> + composition);</span><br><span class="line">  &#125;</span><br><span class="line">  lottieDrawable.setCallback(<span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">this</span>.composition = composition;</span><br><span class="line">  <span class="keyword">boolean</span> isNewComposition = lottieDrawable.setComposition(composition);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 LottieDrawable 中，可以看到调用 buildCompositionLayer 进行构造一个最外层的 CompositionLayer。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">setComposition</span><span class="params">(LottieComposition composition)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">this</span>.composition == composition) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  clearComposition();</span><br><span class="line">  <span class="keyword">this</span>.composition = composition;</span><br><span class="line">  buildCompositionLayer();</span><br><span class="line">  animator.setComposition(composition);</span><br><span class="line">  setProgress(animator.getAnimatedFraction());</span><br><span class="line">  setScale(scale);</span><br><span class="line">  updateBounds();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// We copy the tasks to a new ArrayList so that if this method is called from multiple threads,</span></span><br><span class="line">  <span class="comment">// then there won't be two iterators iterating and removing at the same time.</span></span><br><span class="line">  Iterator&lt;LazyCompositionTask&gt; it = <span class="keyword">new</span> ArrayList&lt;&gt;(lazyCompositionTasks).iterator();</span><br><span class="line">  <span class="keyword">while</span> (it.hasNext()) &#123;</span><br><span class="line">    LazyCompositionTask t = it.next();</span><br><span class="line">    t.run(composition);</span><br><span class="line">    it.remove();</span><br><span class="line">  &#125;</span><br><span class="line">  lazyCompositionTasks.clear();</span><br><span class="line"></span><br><span class="line">  composition.setPerformanceTrackingEnabled(performanceTrackingEnabled);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">buildCompositionLayer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  compositionLayer = <span class="keyword">new</span> CompositionLayer(</span><br><span class="line">      <span class="keyword">this</span>, LayerParser.parse(composition), composition.getLayers(), composition);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>构造 CompositionLayer 时，遍历了一下 LottieComposition 数据对象中包含的所有图层 Layer 数据，将 Layer 数据对象转换为图层对象 BaseLayer。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">CompositionLayer</span><span class="params">(LottieDrawable lottieDrawable, Layer layerModel, List&lt;Layer&gt; layerModels,</span></span></span><br><span class="line"><span class="function"><span class="params">    LottieComposition composition)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">super</span>(lottieDrawable, layerModel);</span><br><span class="line">    </span><br><span class="line">  LongSparseArray&lt;BaseLayer&gt; layerMap =</span><br><span class="line">      <span class="keyword">new</span> LongSparseArray&lt;&gt;(composition.getLayers().size());</span><br><span class="line"></span><br><span class="line">  BaseLayer mattedLayer = <span class="keyword">null</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = layerModels.size() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">    Layer lm = layerModels.get(i);</span><br><span class="line">    BaseLayer layer = BaseLayer.forModel(lm, lottieDrawable, composition);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>转换过程中，根据在 Json 中支持的图层类别：PreComp，Solid，Image，Null，Shape，Tex，分别创建继承 BaseLayer 的 CompositionLayer，SolidLayer，ImageLayer，NullLayer，ShpeLayer，TextLayer。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> BaseLayer <span class="title">forModel</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  Layer layerModel, LottieDrawable drawable, LottieComposition composition)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">switch</span> (layerModel.getLayerType()) &#123;</span><br><span class="line">    <span class="keyword">case</span> Shape:</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> ShapeLayer(drawable, layerModel);</span><br><span class="line">    <span class="keyword">case</span> PreComp:</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> CompositionLayer(drawable, layerModel,</span><br><span class="line">          composition.getPrecomps(layerModel.getRefId()), composition);</span><br><span class="line">    <span class="keyword">case</span> Solid:</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> SolidLayer(drawable, layerModel);</span><br><span class="line">    <span class="keyword">case</span> Image:</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> ImageLayer(drawable, layerModel);</span><br><span class="line">    <span class="keyword">case</span> Null:</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> NullLayer(drawable, layerModel);</span><br><span class="line">    <span class="keyword">case</span> Text:</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">new</span> TextLayer(drawable, layerModel);</span><br><span class="line">    <span class="keyword">case</span> Unknown:</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      <span class="comment">// Do nothing</span></span><br><span class="line">      L.warn(<span class="string">"Unknown layer type "</span> + layerModel.getLayerType());</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="图层的包含关系"><a href="#图层的包含关系" class="headerlink" title="图层的包含关系"></a>图层的包含关系</h5><p>CompositionLayer 与其他 BaseLayer 的关系可以用 ViewGroup 和 View 来比喻。</p>
+<p><img src="http://qny.ivanfan.site/Lottie_CompositionLayer.png" alt="Lottie_CompositionLayer"></p>
+<p>将数据对象 LottieComposition 转换为 BaseLayer 时，会创建一个顶级的 CompositionLayer，来容纳 Json 动画中描述的所有图层。当然，如果在转换复合图层 PreComp 到 CompositionLayer 时，如果这里边还包含其他图层，也会类似这样，把其子图层放入进来。</p>
+<h4 id="播放动画"><a href="#播放动画" class="headerlink" title="播放动画"></a>播放动画</h4><p>使用 Lottie 的第三步就是调用 <code>LottieAnimationView.playAnimation()</code>  播放动画了，它的调用时序图如下所示：</p>
+<p><img src="http://qny.ivanfan.site/playAnimation%E6%97%B6%E5%BA%8F%E5%9B%BE.png" alt="playAnimation时序图"></p>
+<h5 id="playAnimation"><a href="#playAnimation" class="headerlink" title="playAnimation"></a>playAnimation</h5><p>播放动画会直接委托给 LottieDrawable 中执行，这里有一个继承 <code>ValueAnimator</code> 的子类 <code>LottieValueAnimator</code>  变量 animator，它用来控制整个动画的进度和更新。在 <code>LottieValueAnimator</code>  中，执行动画如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">playAnimation</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  notifyStart(isReversed());</span><br><span class="line">  setFrame((<span class="keyword">int</span>) (isReversed() ? getMaxFrame() : getMinFrame()));</span><br><span class="line">  lastFrameTimeNs = System.nanoTime();</span><br><span class="line">  repeatCount = <span class="number">0</span>;</span><br><span class="line">  postFrameCallback();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的代码逻辑是：</p>
+<ul>
+<li>notifyStart 去通知为 LottieAnimationView 设置的监听器，动画开始</li>
+<li>setFrame 设置当前帧数据</li>
+<li>postFrameCallback 抛一个 callback 去计算下一帧的数据，最终回调到 <code>Choreographer.FrameCallback.doFrame()</code> ，在 doFrame() 中又会继续抛出下一帧的计算，并且设置当前帧和通知动画的进度，这样整个动画会持续地动起来。</li>
+</ul>
+<h5 id="setProgress"><a href="#setProgress" class="headerlink" title="setProgress"></a>setProgress</h5><p>在 <code>setFrame()</code> 或 <code>doFrame()</code> 中，进行设置关键帧的数据，然后调用 <code>notifyUpdate()</code>  通知当前动画进度改变，回调到 LottieDrawable 的 animator 添加的监听器中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">LottieDrawable</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  animator.addUpdateListener(<span class="keyword">new</span> ValueAnimator.AnimatorUpdateListener() &#123;</span><br><span class="line">    <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAnimationUpdate</span><span class="params">(ValueAnimator animation)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (compositionLayer != <span class="keyword">null</span>) &#123;</span><br><span class="line">        compositionLayer.setProgress(animator.getAnimatedValueAbsolute());</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>animator.getAnimatedValueAbsolute()</code>，这个会把当前 frame 和起始帧、结束帧计算 一个0～1 的插值，再通知顶层的 CompositionLayer 进度改变。</p>
+<h5 id="传递到各个图层，设置关键帧及属性值的进度"><a href="#传递到各个图层，设置关键帧及属性值的进度" class="headerlink" title="传递到各个图层，设置关键帧及属性值的进度"></a>传递到各个图层，设置关键帧及属性值的进度</h5><p>在 CompositionLayer 中，会遍历包含的 BaseLyaer，设置当前进度值，传递到各个图层：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setProgress</span><span class="params">(@FloatRange(from = <span class="number">0</span>f, to = <span class="number">1</span>f)</span> <span class="keyword">float</span> progress) </span>&#123;</span><br><span class="line">  <span class="keyword">super</span>.setProgress(progress);</span><br><span class="line">  <span class="keyword">if</span> (timeRemapping != <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">float</span> duration = lottieDrawable.getComposition().getDuration();</span><br><span class="line">    <span class="keyword">long</span> remappedTime = (<span class="keyword">long</span>) (timeRemapping.getValue() * <span class="number">1000</span>);</span><br><span class="line">    progress = remappedTime / duration;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (layerModel.getTimeStretch() != <span class="number">0</span>) &#123;</span><br><span class="line">    progress /= layerModel.getTimeStretch();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  progress -= layerModel.getStartProgress();</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = layers.size() - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">    layers.get(i).setProgress(progress);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 BaseLayer 里，setProgress 时，先改变当前动画的属性值，再设置有蒙层的 mask 或 matter 和当前关键帧的进度：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setProgress</span><span class="params">(@FloatRange(from = <span class="number">0</span>f, to = <span class="number">1</span>f)</span> <span class="keyword">float</span> progress) </span>&#123;</span><br><span class="line">  <span class="comment">// Time stretch should not be applied to the layer transform.</span></span><br><span class="line">  transform.setProgress(progress);</span><br><span class="line">  <span class="keyword">if</span> (layerModel.getTimeStretch() != <span class="number">0</span>) &#123;</span><br><span class="line">    progress /= layerModel.getTimeStretch();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (matteLayer != <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="comment">// The matte layer's time stretch is pre-calculated.</span></span><br><span class="line">    <span class="keyword">float</span> matteTimeStretch = matteLayer.layerModel.getTimeStretch();</span><br><span class="line">    matteLayer.setProgress(progress * matteTimeStretch);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; animations.size(); i++) &#123;</span><br><span class="line">    animations.get(i).setProgress(progress);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个 animations 是 BaseKeyframeAnimation 的列表，BaseKeyframeAnimation 是 Lottie 中定义的一套动画包括位移、缩放、旋转、透明度变化等。</p>
+<h5 id="回调通知动画变化"><a href="#回调通知动画变化" class="headerlink" title="回调通知动画变化"></a>回调通知动画变化</h5><p>在关键帧 BaseKeyframeAnimation 中设置进度完后会通知动画数值变化：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setProgress</span><span class="params">(@FloatRange(from = <span class="number">0</span>f, to = <span class="number">1</span>f)</span> <span class="keyword">float</span> progress) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (progress &lt; getStartDelayProgress()) &#123;</span><br><span class="line">    progress = getStartDelayProgress();</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (progress &gt; getEndProgress()) &#123;</span><br><span class="line">    progress = getEndProgress();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (progress == <span class="keyword">this</span>.progress) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">this</span>.progress = progress;</span><br><span class="line"></span><br><span class="line">  notifyListeners();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">notifyListeners</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; listeners.size(); i++) &#123;</span><br><span class="line">      listeners.get(i).onValueChanged();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>这个会回调到 BaseLayer 里，触发重绘：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onValueChanged</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  invalidateSelf();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="触发重绘"><a href="#触发重绘" class="headerlink" title="触发重绘"></a>触发重绘</h5><p>在 BaseLayer 里重绘会调用 LottieDrawable 进行重绘：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">invalidateSelf</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  lottieDrawable.invalidateSelf();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最终会让 LottieDrawable 调用 draw 进行绘制：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">draw</span><span class="params">(@NonNull Canvas canvas)</span> </span>&#123;</span><br><span class="line">  L.beginSection(<span class="string">"Drawable#draw"</span>);</span><br><span class="line">  <span class="keyword">if</span> (compositionLayer == <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">float</span> scale = <span class="keyword">this</span>.scale;</span><br><span class="line">  <span class="keyword">float</span> extraScale = <span class="number">1f</span>;</span><br><span class="line">  <span class="keyword">float</span> maxScale = getMaxScale(canvas);</span><br><span class="line">  <span class="keyword">if</span> (scale &gt; maxScale) &#123;</span><br><span class="line">    scale = maxScale;</span><br><span class="line">    extraScale = <span class="keyword">this</span>.scale / scale;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (extraScale &gt; <span class="number">1</span>) &#123;</span><br><span class="line">    canvas.save();</span><br><span class="line">    <span class="keyword">float</span> halfWidth = composition.getBounds().width() / <span class="number">2f</span>;</span><br><span class="line">    <span class="keyword">float</span> halfHeight = composition.getBounds().height() / <span class="number">2f</span>;</span><br><span class="line">    <span class="keyword">float</span> scaledHalfWidth = halfWidth * scale;</span><br><span class="line">    <span class="keyword">float</span> scaledHalfHeight = halfHeight * scale;</span><br><span class="line"></span><br><span class="line">    canvas.translate(</span><br><span class="line">        getScale() * halfWidth - scaledHalfWidth,</span><br><span class="line">        getScale() * halfHeight - scaledHalfHeight);</span><br><span class="line">    canvas.scale(extraScale, extraScale, scaledHalfWidth, scaledHalfHeight);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  matrix.reset();</span><br><span class="line">  matrix.preScale(scale, scale);</span><br><span class="line">  compositionLayer.draw(canvas, matrix, alpha);</span><br><span class="line">  L.endSection(<span class="string">"Drawable#draw"</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (extraScale &gt; <span class="number">1</span>) &#123;</span><br><span class="line">    canvas.restore();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里是把画布 canvas 和 drawable 的矩阵 matrix 传入到 CompositionLayer，通知所有图层绘制。</p>
+<h5 id="各个图层进行绘制"><a href="#各个图层进行绘制" class="headerlink" title="各个图层进行绘制"></a>各个图层进行绘制</h5><p>在 BaseLayer 的 draw 绘制过程中，会调用抽象方法 drawLayer，各个继承的子类会具体实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SuppressLint</span>(<span class="string">"WrongConstant"</span>) <span class="meta">@Override</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">draw</span><span class="params">(Canvas canvas, Matrix parentMatrix, <span class="keyword">int</span> parentAlpha)</span> </span>&#123;</span><br><span class="line">   <span class="keyword">if</span> (!hasMatteOnThisLayer() &amp;&amp; !hasMasksOnThisLayer()) &#123;</span><br><span class="line">     matrix.preConcat(transform.getMatrix());</span><br><span class="line">     L.beginSection(<span class="string">"Layer#drawLayer"</span>);</span><br><span class="line">     drawLayer(canvas, matrix, alpha);</span><br><span class="line">     L.endSection(<span class="string">"Layer#drawLayer"</span>);</span><br><span class="line">     recordRenderTime(L.endSection(drawTraceName));</span><br><span class="line">     <span class="keyword">return</span>;</span><br><span class="line">   &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>其中在 CompositionLayer 里，它可能包含多个子图层的，所以这里会遍历所包含的子图层进行 draw。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span> <span class="function"><span class="keyword">void</span> <span class="title">drawLayer</span><span class="params">(Canvas canvas, Matrix parentMatrix, <span class="keyword">int</span> parentAlpha)</span> </span>&#123;</span><br><span class="line">  L.beginSection(<span class="string">"CompositionLayer#draw"</span>);</span><br><span class="line">  canvas.save();</span><br><span class="line">  newClipRect.set(<span class="number">0</span>, <span class="number">0</span>, layerModel.getPreCompWidth(), layerModel.getPreCompHeight());</span><br><span class="line">  parentMatrix.mapRect(newClipRect);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = layers.size() - <span class="number">1</span>; i &gt;= <span class="number">0</span> ; i--) &#123;</span><br><span class="line">    <span class="keyword">boolean</span> nonEmptyClip = <span class="keyword">true</span>;</span><br><span class="line">    <span class="keyword">if</span> (!newClipRect.isEmpty()) &#123;</span><br><span class="line">      nonEmptyClip = canvas.clipRect(newClipRect);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (nonEmptyClip) &#123;</span><br><span class="line">      BaseLayer layer = layers.get(i);</span><br><span class="line">      layer.draw(canvas, parentMatrix, parentAlpha);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  canvas.restore();</span><br><span class="line">  L.endSection(<span class="string">"CompositionLayer#draw"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于基本图层 SolidLayer，ImageLayer，NullLayer，ShpeLayer，TextLayer，会实现基类的 drawLayer 方法，完成该图层的具体绘制工作，比如在 ImageLayer 里，就是需要绘制图片：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">drawLayer</span><span class="params">(@NonNull Canvas canvas, Matrix parentMatrix, <span class="keyword">int</span> parentAlpha)</span> </span>&#123;</span><br><span class="line">  Bitmap bitmap = getBitmap();</span><br><span class="line">  <span class="keyword">if</span> (bitmap == <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">float</span> density = Utils.dpScale();</span><br><span class="line"></span><br><span class="line">  paint.setAlpha(parentAlpha);</span><br><span class="line">  <span class="keyword">if</span> (colorFilterAnimation != <span class="keyword">null</span>) &#123;</span><br><span class="line">    paint.setColorFilter(colorFilterAnimation.getValue());</span><br><span class="line">  &#125;</span><br><span class="line">  canvas.save();</span><br><span class="line">  canvas.concat(parentMatrix);</span><br><span class="line">  src.set(<span class="number">0</span>, <span class="number">0</span>, bitmap.getWidth(), bitmap.getHeight());</span><br><span class="line">  dst.set(<span class="number">0</span>, <span class="number">0</span>, (<span class="keyword">int</span>) (bitmap.getWidth() * density), (<span class="keyword">int</span>) (bitmap.getHeight() * density));</span><br><span class="line">  canvas.drawBitmap(bitmap, src, dst , paint);</span><br><span class="line">  canvas.restore();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>各个图层根据当前改变的属性值和进度，绘制当前图层的效果，最终改变 drawable ，至此完成动画的改变。</p>
+<h3 id="Lottie-小结"><a href="#Lottie-小结" class="headerlink" title="Lottie 小结"></a>Lottie 小结</h3><h4 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h4><ul>
+<li>设计师只用导出一份动画 Json，就能运行各个平台上，无需跟开发反复调试，非常灵活</li>
+<li>运营可配置，一次开发，后边可动态配置，实时替换动画效果</li>
+<li>可实现复杂动画效果，开发效率高，易于调试和维护</li>
+</ul>
+<h4 id="不足"><a href="#不足" class="headerlink" title="不足"></a>不足</h4><h5 id="有-mask、matters-时，有很大的性能影响"><a href="#有-mask、matters-时，有很大的性能影响" class="headerlink" title="有 mask、matters 时，有很大的性能影响"></a>有 mask、matters 时，有很大的性能影响</h5><p>可以查看源码在 BaseLayer，是如何对有 mask 或 matte 进行计算的：</p>
+<p><img src="http://qny.ivanfan.site/lottie_mask_1.png" alt="lottie_mask_1"></p>
+<p>如果不含 mask 或 matte，这里直接调用 drawLayer 就返回了，但是对于 mask 或 matte 会先进行 saveLayer，再去绘制 drawLayer。</p>
+<p>在 saveLayer 中，可以看到这是个非常耗时的操作，需要分配和绘制一个 offscreen 的缓冲区，渲染的成本增加了一倍以上。</p>
+<p><img src="http://qny.ivanfan.site/lottie_mask_2.png" alt="lottie_mask_2"></p>
+<p>所以这里 mask 或 matte 的边界越小，性能损耗也会越小。 </p>
+<h5 id="解码图片在主线程"><a href="#解码图片在主线程" class="headerlink" title="解码图片在主线程"></a>解码图片在主线程</h5><p>查看 Lottie 获取图片的 <code>ImageAssetManager</code> 源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Nullable</span> <span class="function"><span class="keyword">public</span> Bitmap <span class="title">bitmapForId</span><span class="params">(String id)</span> </span>&#123;</span><br><span class="line">  Bitmap bitmap = bitmaps.get(id);</span><br><span class="line">  <span class="keyword">if</span> (bitmap == <span class="keyword">null</span>) &#123;</span><br><span class="line">    LottieImageAsset imageAsset = imageAssets.get(id);</span><br><span class="line">    <span class="keyword">if</span> (imageAsset == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (delegate != <span class="keyword">null</span>) &#123;</span><br><span class="line">      bitmap = delegate.fetchBitmap(imageAsset);</span><br><span class="line">      <span class="keyword">if</span> (bitmap != <span class="keyword">null</span>) &#123;</span><br><span class="line">        bitmaps.put(id, bitmap);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span> bitmap;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    InputStream is;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (TextUtils.isEmpty(imagesFolder)) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"You must set an images folder before loading an image."</span> +</span><br><span class="line">            <span class="string">" Set it with LottieComposition#setImagesFolder or LottieDrawable#setImagesFolder"</span>);</span><br><span class="line">      &#125;</span><br><span class="line">      is = context.getAssets().open(imagesFolder + imageAsset.getFileName());</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">      Log.w(L.TAG, <span class="string">"Unable to open asset."</span>, e);</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    BitmapFactory.Options opts = <span class="keyword">new</span> BitmapFactory.Options();</span><br><span class="line">    opts.inScaled = <span class="keyword">true</span>;</span><br><span class="line">    opts.inDensity = <span class="number">160</span>;</span><br><span class="line">    bitmap = BitmapFactory.decodeStream(is, <span class="keyword">null</span>, opts);</span><br><span class="line">    bitmaps.put(id, bitmap);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> bitmap;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里如果没有设置图片代理，则直接解码图片。如果有设置图片代理，则在代理监听里获取图片。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">mLottieAnim.setImageAssetDelegate(<span class="keyword">new</span> ImageAssetDelegate() &#123;</span><br><span class="line">          <span class="meta">@Override</span></span><br><span class="line">          <span class="function"><span class="keyword">public</span> Bitmap <span class="title">fetchBitmap</span><span class="params">(LottieImageAsset asset)</span> </span>&#123;</span><br><span class="line">              <span class="keyword">try</span> &#123;</span><br><span class="line">                    FileInputStream fileInputStream = <span class="keyword">new</span> FileInputStream(<span class="string">"/sdcard/data/images/"</span> + asset.getFileName());</span><br><span class="line">                  <span class="keyword">return</span> BitmapFactory.decodeStream(fileInputStream);</span><br><span class="line">              &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                  e.printStackTrace();</span><br><span class="line">              &#125;</span><br><span class="line">              <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;);</span><br></pre></td></tr></table></figure>
+<p>这俩种方式，都将在主线程中调用，第一次都会从文件中解码，之后会直接从缓存中获取。对于一些 Android 低端机可能无法播放动画，甚至引发 ANR；可能 Lottie 更多考虑的是没有图片或图片很少的情况，比如一些矢量动画，这种性能会很好。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>知道是不会有人点的，但万一被感动了呢？</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/donate_wechat.png" alt="IvanFan 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    IvanFan
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lavnfan.github.io/2018/07/01/Lottie动画/" title="Lottie 动画原理剖析">http://lavnfan.github.io/2018/07/01/Lottie动画/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
+          
+            <a href="/tags/Lottie/" rel="tag"><i class="fa fa-tag"></i> Lottie</a>
+          
+            <a href="/tags/动画/" rel="tag"><i class="fa fa-tag"></i> 动画</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/18/内存泄漏/" rel="next" title="内存泄漏">
+                <i class="fa fa-chevron-left"></i> 内存泄漏
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/03/weex源码剖析/" rel="prev" title="Weex 源码分析和实践总结">
+                Weex 源码分析和实践总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zODc4NS8xNTMxMw=="></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            关于作者
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="IvanFan">
+          
+            <p class="site-author-name" itemprop="name">IvanFan</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">46</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lavnFan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:lavnFan@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Lottie-是什么"><span class="nav-number">1.</span> <span class="nav-text">Lottie 是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要用-Lottie"><span class="nav-number">2.</span> <span class="nav-text">为什么要用 Lottie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#怎么使用-Lottie"><span class="nav-number">3.</span> <span class="nav-text">怎么使用 Lottie</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、加载资源"><span class="nav-number">3.1.</span> <span class="nav-text">1、加载资源</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2、设置数据对象"><span class="nav-number">3.2.</span> <span class="nav-text">2、设置数据对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3、播放动画"><span class="nav-number">3.3.</span> <span class="nav-text">3、播放动画</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4、设置图片-字体代理"><span class="nav-number">3.4.</span> <span class="nav-text">4、设置图片/字体代理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Lottie-动画实现原理"><span class="nav-number">4.</span> <span class="nav-text">Lottie 动画实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#从-Json-到-LottieCompisition-数据对象"><span class="nav-number">4.1.</span> <span class="nav-text">从 Json 到 LottieCompisition 数据对象</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#同步-异步加载-Json-数据"><span class="nav-number">4.1.1.</span> <span class="nav-text">同步/异步加载 Json 数据</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Json-解析"><span class="nav-number">4.1.2.</span> <span class="nav-text">Json 解析</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#解析外部资源"><span class="nav-number">4.1.2.1.</span> <span class="nav-text">解析外部资源</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#解析图片资源"><span class="nav-number">4.1.2.2.</span> <span class="nav-text">解析图片资源</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#解析图层"><span class="nav-number">4.1.2.3.</span> <span class="nav-text">解析图层</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#从-LottieCompisition-到-CompositionLayer"><span class="nav-number">4.2.</span> <span class="nav-text">从 LottieCompisition 到 CompositionLayer</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#setComposition"><span class="nav-number">4.2.1.</span> <span class="nav-text">setComposition</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#图层的包含关系"><span class="nav-number">4.2.2.</span> <span class="nav-text">图层的包含关系</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#播放动画"><span class="nav-number">4.3.</span> <span class="nav-text">播放动画</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#playAnimation"><span class="nav-number">4.3.1.</span> <span class="nav-text">playAnimation</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#setProgress"><span class="nav-number">4.3.2.</span> <span class="nav-text">setProgress</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#传递到各个图层，设置关键帧及属性值的进度"><span class="nav-number">4.3.3.</span> <span class="nav-text">传递到各个图层，设置关键帧及属性值的进度</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#回调通知动画变化"><span class="nav-number">4.3.4.</span> <span class="nav-text">回调通知动画变化</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#触发重绘"><span class="nav-number">4.3.5.</span> <span class="nav-text">触发重绘</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#各个图层进行绘制"><span class="nav-number">4.3.6.</span> <span class="nav-text">各个图层进行绘制</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Lottie-小结"><span class="nav-number">5.</span> <span class="nav-text">Lottie 小结</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#优势"><span class="nav-number">5.1.</span> <span class="nav-text">优势</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#不足"><span class="nav-number">5.2.</span> <span class="nav-text">不足</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#有-mask、matters-时，有很大的性能影响"><span class="nav-number">5.2.1.</span> <span class="nav-text">有 mask、matters 时，有很大的性能影响</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#解码图片在主线程"><span class="nav-number">5.2.2.</span> <span class="nav-text">解码图片在主线程</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div style="text-align: center;">
+<div class="copyright">
+  
+  &copy;  2016 &mdash; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">IvanFan</span>
+
+  
+</div>
+
+<div style="text-align: center;">
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  访客数：<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<span class="post-meta-divider">|</span>
+
+<i class="fa fa-eye"></i><span id="busuanzi_container_site_pv">
+    访问量：<span id="busuanzi_value_site_pv"></span>
+</span>
+
+
+
+<!--  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+-->
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </div></footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

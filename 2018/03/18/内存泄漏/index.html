@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Android,性能优化,内存泄漏,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="内存泄漏是 Android 开发常见的一类痛点问题，使用不当会有严重的性能影响，所以本文主要分析在开发过程中如何简单的进行内存泄漏检测，以及经常遇见的内存泄漏案例，最后借助手 q 的 LeakCanary 来分析内存泄漏检测的原理。  内存泄漏在 Android（Java）平台上，对象是通过 GC（Garbage Collection，垃圾收集器）来回收内存的，而判断一个对象是否需要回收则采用的">
+<meta name="keywords" content="Android,性能优化,内存泄漏">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内存泄漏">
+<meta property="og:url" content="http://lavnfan.github.io/2018/03/18/内存泄漏/index.html">
+<meta property="og:site_name" content="IvanFan">
+<meta property="og:description" content="内存泄漏是 Android 开发常见的一类痛点问题，使用不当会有严重的性能影响，所以本文主要分析在开发过程中如何简单的进行内存泄漏检测，以及经常遇见的内存泄漏案例，最后借助手 q 的 LeakCanary 来分析内存泄漏检测的原理。  内存泄漏在 Android（Java）平台上，对象是通过 GC（Garbage Collection，垃圾收集器）来回收内存的，而判断一个对象是否需要回收则采用的">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://qny.ivanfan.site/GC-ROOT.jpg">
+<meta property="og:image" content="http://qny.ivanfan.site/java_heap.png">
+<meta property="og:image" content="http://qny.ivanfan.site/analyzer_tasks.png">
+<meta property="og:image" content="http://qny.ivanfan.site/captures.png">
+<meta property="og:image" content="http://qny.ivanfan.site/histogram.png">
+<meta property="og:image" content="http://qny.ivanfan.site/exclude_gcroots.png">
+<meta property="og:image" content="http://qny.ivanfan.site/leak_analysis.png">
+<meta property="og:image" content="http://qny.ivanfan.site/android_studio_3.0.png">
+<meta property="og:image" content="http://qny.ivanfan.site/static.png">
+<meta property="og:image" content="http://qny.ivanfan.site/leak_analysis.png">
+<meta property="og:image" content="http://qny.ivanfan.site/view_post_runnable.png">
+<meta property="og:image" content="http://qny.ivanfan.site/view_dispatch.png">
+<meta property="og:image" content="http://qny.ivanfan.site/view_removeCallbacks.png">
+<meta property="og:updated_time" content="2019-02-01T08:49:00.950Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="内存泄漏">
+<meta name="twitter:description" content="内存泄漏是 Android 开发常见的一类痛点问题，使用不当会有严重的性能影响，所以本文主要分析在开发过程中如何简单的进行内存泄漏检测，以及经常遇见的内存泄漏案例，最后借助手 q 的 LeakCanary 来分析内存泄漏检测的原理。  内存泄漏在 Android（Java）平台上，对象是通过 GC（Garbage Collection，垃圾收集器）来回收内存的，而判断一个对象是否需要回收则采用的">
+<meta name="twitter:image" content="http://qny.ivanfan.site/GC-ROOT.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://lavnfan.github.io/2018/03/18/内存泄漏/">
+
+
+
+
+
+  <title>内存泄漏 | IvanFan</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">IvanFan</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lavnfan.github.io/2018/03/18/内存泄漏/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="IvanFan">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="IvanFan">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">内存泄漏</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-18T20:00:00+08:00">
+                2018-03-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/性能优化/" itemprop="url" rel="index">
+                    <span itemprop="name">性能优化</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i> 阅读次数
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>内存泄漏是 Android 开发常见的一类痛点问题，使用不当会有严重的性能影响，所以本文主要分析在开发过程中如何简单的进行内存泄漏检测，以及经常遇见的内存泄漏案例，最后借助手 q 的 LeakCanary 来分析内存泄漏检测的原理。</p>
+</blockquote>
+<h2 id="内存泄漏"><a href="#内存泄漏" class="headerlink" title="内存泄漏"></a>内存泄漏</h2><p>在 Android（Java）平台上，对象是通过 GC（Garbage Collection，垃圾收集器）来回收内存的，而判断一个对象是否需要回收则采用的是 GC-Roots 的标记回收算法，如下图所示：</p>
+<p><img src="http://qny.ivanfan.site/GC-ROOT.jpg" alt="GC-ROOT"></p>
+<p>以 GC Roots 为起点遍历堆中的所有对象，对于没有直接或间接引用到 GC-Roots 的对象将会被标记为不可达状态，如图中的蓝色节点，在系统虚拟机 GC 过程中可能会被回收掉。可作为 GC-Roots 对象有：</p>
+<ul>
+<li>虚拟机栈(栈桢中的本地变量表)中的引用对象 </li>
+<li>本地方法栈中 JNI 的引用对象 </li>
+<li>方法区中的类静态属性引用对象 </li>
+<li>方法区中的常量引用对象  </li>
+</ul>
+<p>Android（Java）平台的内存泄漏就是指本该销毁的对象资源仍然与 GC-Roots 保持引用关系，导致系统无法进行回收。</p>
+<h2 id="Android-Studio-及-MAT-分析"><a href="#Android-Studio-及-MAT-分析" class="headerlink" title="Android Studio 及 MAT 分析"></a>Android Studio 及 MAT 分析</h2><p>在 Android 开发过程中难免会遇到内存泄漏的问题，但我们可以凭借强大的 Android Studio 和 MAT 工具进行快速定位。</p>
+<h3 id="生成-Java-Heap-文件"><a href="#生成-Java-Heap-文件" class="headerlink" title="生成 Java Heap 文件"></a>生成 Java Heap 文件</h3><p>在 Android Studio 中，我们可以借助 <code>Android Monitors</code> 工具帮助我们进行强制GC，再获取 <code>Java Heap</code> 文件。点击 <code>Initate GC</code> (1) 按钮，可以进行多次，充分 GC 。然后点击 <code>Dump Java Heap</code>(2) 按钮，生成的 Java Heap 文件会在新的窗口打开。</p>
+<p><img src="http://qny.ivanfan.site/java_heap.png" alt="java_heap"></p>
+<h3 id="分析内存泄漏的-Activity"><a href="#分析内存泄漏的-Activity" class="headerlink" title="分析内存泄漏的 Activity"></a>分析内存泄漏的 Activity</h3><p>点击 <code>Analyzer Tasks</code> 的 <code>Perform Analysis</code> (1) 按钮，即可找出内存泄漏的 Activity (2)。</p>
+<p><img src="http://qny.ivanfan.site/analyzer_tasks.png" alt="analyzer_tasks"></p>
+<p>这个例子比较简单，到这里就可以很直观的看到问题所在。但比较复杂的问题 Android Studio 并不够直观，也不够 MAT 方便，这时我们可以使用 MAT 来进一步分析。</p>
+<h3 id="转换成标准的-hprof-文件"><a href="#转换成标准的-hprof-文件" class="headerlink" title="转换成标准的 hprof 文件"></a>转换成标准的 hprof 文件</h3><p>Java Heap 是在一个特定时间点的 Java 进程的内存快照，在 MAT 中需要转储为一个 hprof 格式的二进制文件供分析，一个普通的 hprof 文件内，包含下面的信息：</p>
+<ul>
+<li>所有的对象</li>
+<li>所有的类</li>
+<li>GC Roots</li>
+</ul>
+<p>在 Android Studio 中选中 <code>Captures</code> ，右击选中的 <code>hprof</code> ，<code>Export to standard .hprof</code> 选择保存的位置，就能生成一个标准的 hprof 文件。</p>
+<p><img src="http://qny.ivanfan.site/captures.png" alt="captures"></p>
+<h3 id="MAT-打开-hprof文件"><a href="#MAT-打开-hprof文件" class="headerlink" title="MAT 打开 hprof文件"></a>MAT 打开 hprof文件</h3><p>MAT 的 <a href="http://www.eclipse.org/mat/downloads.php" target="_blank" rel="noopener">下载地址</a>，使用 MAT 打开刚才生成的 hprof 文件。点击 (1) 按钮打开 Histogram。在 (2) 的地方搜索可能产生内存泄漏的 Activity 名称。</p>
+<p><img src="http://qny.ivanfan.site/histogram.png" alt="histogram"></p>
+<ul>
+<li>Shadow Heap：对象自身占用的内存大小，不包括它引用的对象。 </li>
+</ul>
+<ul>
+<li>Retained Heap：当前对象大小+当前对象可直接或间接引用到的对象的大小总和。</li>
+</ul>
+<h3 id="查看引用链"><a href="#查看引用链" class="headerlink" title="查看引用链"></a>查看引用链</h3><p>右击搜索出来的类名，选择 <code>Merge Shortest Paths to GC Roots</code>的<code>exclude all phantom/weak/soft etc. references</code> ，排除弱引用和软引用，因为弱引用和软引用是会被GC回收的引用，不会产生内存泄露，所以分析内存问题时把这两种引用关系排除掉。</p>
+<p><img src="http://qny.ivanfan.site/exclude_gcroots.png" alt="exclude_gcroots"></p>
+<h3 id="分析泄漏原因"><a href="#分析泄漏原因" class="headerlink" title="分析泄漏原因"></a>分析泄漏原因</h3><p>排除平台/弱/软引用后，根据引用链可以看到，LeakActivity 被 <code>this$1</code> 所引用的，它实际上是匿名类对当前类的引用。<code>this$1</code> 又被callback所引用，接着它又被Message中一串的next所引用。到这里，我们已经找到了内存泄漏的原因了，接下来对定位到的问题代码进行改善即可。</p>
+<p><img src="http://qny.ivanfan.site/leak_analysis.png" alt="leak_analysis"></p>
+<p>以下是测试内存泄漏的代码，不断重进退出 Activity 时，原先的 Message 一直保持对原有的 Activity 的引用，且没有及时 remove 掉，所以在消息队列中积累的 Activity 引用越来越多。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(@Nullable Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    setContentView(R.layout.activity_leak);</span><br><span class="line">    mHelloTv = (TextView) findViewById(R.id.hello_tv);</span><br><span class="line">    mHandler.postDelayed(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            mHandler.sendEmptyMessage(<span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, <span class="number">10000</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> Handler mHandler = <span class="keyword">new</span> Handler() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleMessage</span><span class="params">(Message msg)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.handleMessage(msg);</span><br><span class="line">        <span class="keyword">switch</span> (msg.what) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">if</span> (mHelloTv != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    mHelloTv.setText(<span class="string">"hello leak"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="Android-studio-3-0-的-Profiler"><a href="#Android-studio-3-0-的-Profiler" class="headerlink" title="Android studio 3.0 的 Profiler"></a>Android studio 3.0 的 Profiler</h3><p>在 Android studio 3.0 上 Android profiler 更加强大，cpu、memory 和 network 的页面都有很大的变化。以下是上述 handler 泄漏的例子，不断的进入和退出 LeakActivity。</p>
+<p><img src="http://qny.ivanfan.site/android_studio_3.0.png" alt="android_studio_3.0"></p>
+<ul>
+<li>选择 gc 后进行一次 dump java heap</li>
+<li>可以选择根据包名查看当前内存的堆栈情况</li>
+<li>找到可能产生内存泄漏的 Activity，可以在右上方看到进行 gc 后还未释放的实例</li>
+<li>选择其中一个实例，可以找到其引用的 gc 链。在右下方可以看到 Message 一直保持对原有的 Activity 的引用，由此可以大概确定是使用 handler 不当造成的内存泄漏。</li>
+</ul>
+<h2 id="内存泄漏经典案例"><a href="#内存泄漏经典案例" class="headerlink" title="内存泄漏经典案例"></a>内存泄漏经典案例</h2><h3 id="Static-泄漏"><a href="#Static-泄漏" class="headerlink" title="Static 泄漏"></a>Static 泄漏</h3><p>Static 变量存储在方法区中，是 Android 判断对象回收的 GC-ROOTS 起点，它贯穿着应用的整个生命周期。如果 Static 对象对其他对象的引用超过了该对象的生命周期，则会造成内存泄漏。</p>
+<p>例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LeakActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Context mContext;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        mContext = <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果在 <code>onDestroy()</code> 中没有及时取出静态变量 mContext 的引用，则会产生泄漏，其内存泄漏引用链：</p>
+<p><img src="http://qny.ivanfan.site/static.png" alt="static"></p>
+<p>解决方案：在引用对象的生命周期结束时，去除 Static 变量的引用。</p>
+<h3 id="监听-回调泄漏"><a href="#监听-回调泄漏" class="headerlink" title="监听/回调泄漏"></a>监听/回调泄漏</h3><p>很多情况下，为了进行数据通信，我们为此设置了监听器或回调。但在使用过程中往往忽略了在结束时销毁监听器/回调，从而导致了内存泄漏。</p>
+<p>例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addUpdateListener</span><span class="params">(AnimatorUpdateListener listener)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mUpdateListeners == <span class="keyword">null</span>) &#123;</span><br><span class="line">            mUpdateListeners = <span class="keyword">new</span> ArrayList&lt;AnimatorUpdateListener&gt;();</span><br><span class="line">        &#125;</span><br><span class="line">        mUpdateListeners.add(listener);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>如果没有在销毁时及时去掉监听器/回调，则会造成引用的内存泄漏。</p>
+<p>解决方案</p>
+<ul>
+<li>在 引用对象的生命周期结束时，去掉回调/监听器</li>
+</ul>
+<ul>
+<li>对于一些监听器，如果需要持有的是 Context，则可以用 ApplicationContext 代替 ActivityContext，使得引用对象的生命周期和应用的生命周期保持一致。</li>
+</ul>
+<h3 id="匿名内部类-非静态内部类和异步线程"><a href="#匿名内部类-非静态内部类和异步线程" class="headerlink" title="匿名内部类/非静态内部类和异步线程"></a>匿名内部类/非静态内部类和异步线程</h3><p>在 Java 中，非静态内部类和匿名类都会潜在的引用它们所属的外部类，但是静态内部类却不会。如果非静态内部类实例做了一些耗时的操作，在外部类本该销毁时还没有完成耗时任务，就会使得外部对象回收不了，从而导致了内存泄漏。</p>
+<p>解决方案：</p>
+<ul>
+<li>将内部类变成静态内部类</li>
+<li>如果对外部类有强引用，则改为弱引用</li>
+<li>在外部对象销毁时，结束耗时任务</li>
+</ul>
+<p>例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(@Nullable Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    setContentView(R.layout.activity_leak);</span><br><span class="line">    mHelloTv = (TextView) findViewById(R.id.hello_tv);</span><br><span class="line">    mHandler.postDelayed(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            mHandler.sendEmptyMessage(<span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, <span class="number">10000</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> Handler mHandler = <span class="keyword">new</span> Handler() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleMessage</span><span class="params">(Message msg)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.handleMessage(msg);</span><br><span class="line">        <span class="keyword">switch</span> (msg.what) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">if</span> (mHelloTv != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    mHelloTv.setText(<span class="string">"hello leak"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>这里把 handler 理解为一个非静态的内部类，由于 handler 对 Activity 持有引用，间隔 10 秒发送一条消息给 MessageQueue，这时如果 Activity 想要销毁，则会造成内存泄漏，因为那条消息对 Activity 持有一个引用，而消息还在队列中没有清除。他们的引用链如下所示：</p>
+<p><img src="http://qny.ivanfan.site/leak_analysis.png" alt="leak_analysis"></p>
+<p>解决方案：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"> 	<span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyHandler</span> <span class="keyword">extends</span> <span class="title">Handler</span> </span>&#123;</span><br><span class="line">   	<span class="keyword">private</span> <span class="keyword">final</span> WeakReference&lt;Activity&gt; mActivityReference;	</span><br><span class="line">       MyHandler(Activity activity) &#123;</span><br><span class="line">           <span class="keyword">this</span>.mActivityReference = <span class="keyword">new</span> WeakReference&lt;Activity&gt;(activity);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleMessage</span><span class="params">(Message msg)</span> </span>&#123;</span><br><span class="line">           <span class="keyword">super</span>.handleMessage(msg);</span><br><span class="line">           MainActivity activity = (MainActivity) mActivityReference.get();  </span><br><span class="line">           <span class="keyword">switch</span> (msg.what) &#123;   </span><br><span class="line">               <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">               <span class="keyword">if</span>(activity.mHelloTv != <span class="keyword">null</span>)&#123;</span><br><span class="line">                   activity.mHelloTv.setText(<span class="string">"hello leak"</span>);   </span><br><span class="line">               &#125;</span><br><span class="line">               <span class="keyword">break</span>;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDestroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onDestroy();</span><br><span class="line">    handler.removeMessage(<span class="number">0</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>使用静态内部类</li>
+<li>使用弱引用持有 Activity</li>
+<li><code>onDestroy</code> 时去除 callback 或 message</li>
+</ul>
+<h3 id="非UI线程使用-View-post"><a href="#非UI线程使用-View-post" class="headerlink" title="非UI线程使用 View.post()"></a>非UI线程使用 View.post()</h3><p>在 API 低于 24 的版本上，非 UI 线程使用 View.post，可能会导致内存泄漏。</p>
+<p>例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">           view.post(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">     	 		<span class="meta">@Override</span></span><br><span class="line">      			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       				<span class="comment">//</span></span><br><span class="line">      			&#125;</span><br><span class="line">   			 &#125;);</span><br><span class="line">        &#125;);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;).start();</span><br></pre></td></tr></table></figure>
+<p>接下来我们根据不同的 API 版本，来分析这段代码为什么会有引发内存泄漏。</p>
+<h4 id="低于-API-24-的版本"><a href="#低于-API-24-的版本" class="headerlink" title="低于 API 24 的版本"></a>低于 API 24 的版本</h4><p>追踪 View.post 的源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//View.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">post</span><span class="params">(Runnable action)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> AttachInfo attachInfo = mAttachInfo;</span><br><span class="line">    <span class="keyword">if</span> (attachInfo != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> attachInfo.mHandler.post(action);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Assume that post will succeed later  </span></span><br><span class="line">    ViewRootImpl.getRunQueue().post(action);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里如果有 attach，则直接使用 handler 抛到消息队列中等待执行。但当 attachInfo 为空时，使用了ViewRootImpl 的 runQueue 进行 post，假设 runnable 会在 attach 后执行，就把它放到了 mRunQueue 的 <code>mActions</code> 的队列中。那这里会不会就有可能一直在这个队列里，得不到执行呢？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ViewRootImpl.java</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;RunQueue&gt; sRunQueues = <span class="keyword">new</span> ThreadLocal&lt;RunQueue&gt;();  </span><br><span class="line">  </span><br><span class="line"><span class="function"><span class="keyword">static</span> RunQueue <span class="title">getRunQueue</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">     RunQueue rq = sRunQueues.get();  </span><br><span class="line">     <span class="keyword">if</span> (rq != <span class="keyword">null</span>) &#123;  </span><br><span class="line">         <span class="keyword">return</span> rq;  </span><br><span class="line">     &#125;  </span><br><span class="line">     rq = <span class="keyword">new</span> RunQueue();  </span><br><span class="line">     sRunQueues.set(rq);  </span><br><span class="line">     <span class="keyword">return</span> rq;  </span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到 sRunQueues 是 ThreadLocal 类型，而 ThreadLocal 这是一个线程私有变量，所以每个线程拥有的RunQueue 都是独立的。 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">RunQueue</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ArrayList&lt;HandlerAction&gt; mActions = <span class="keyword">new</span> ArrayList&lt;HandlerAction&gt;();  </span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">post</span><span class="params">(Runnable action)</span> </span>&#123;  </span><br><span class="line">        postDelayed(action, <span class="number">0</span>);  </span><br><span class="line">    &#125;  </span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">postDelayed</span><span class="params">(Runnable action, <span class="keyword">long</span> delayMillis)</span> </span>&#123;  </span><br><span class="line">        HandlerAction handlerAction = <span class="keyword">new</span> HandlerAction();  </span><br><span class="line">        handlerAction.action = action;  </span><br><span class="line">        handlerAction.delay = delayMillis;  </span><br><span class="line"> </span><br><span class="line">        <span class="keyword">synchronized</span> (mActions) &#123;  </span><br><span class="line">            mActions.add(handlerAction);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">       </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">executeActions</span><span class="params">(Handler handler)</span> </span>&#123;  </span><br><span class="line">        <span class="keyword">synchronized</span> (mActions) &#123;  </span><br><span class="line">            <span class="keyword">final</span> ArrayList&lt;handleraction&gt; actions = mActions;  </span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">int</span> count = actions.size();  </span><br><span class="line"> </span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; count; i++) &#123;  </span><br><span class="line">                <span class="keyword">final</span> HandlerAction handlerAction = actions.get(i);  </span><br><span class="line">                handler.postDelayed(handlerAction.action, handlerAction.delay);  </span><br><span class="line">            &#125;  </span><br><span class="line"> </span><br><span class="line">            actions.clear();  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>RunQueue 是一个 mActions 的集合，每个 actions 包含了等待执行的 runnable 和 delay。那什么时候这些 runnable 会被执行呢？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">performTraversals</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">       ……  </span><br><span class="line">        <span class="keyword">if</span> (mLayoutRequested &amp;&amp; !mStopped) &#123;  </span><br><span class="line">            <span class="comment">// Execute enqueued actions on every layout in case a view that was detached  </span></span><br><span class="line">            <span class="comment">// enqueued an action after being detached  </span></span><br><span class="line">            getRunQueue().executeActions(attachInfo.mHandler);  </span><br><span class="line">            ……  </span><br><span class="line">        &#125;  </span><br><span class="line">  </span><br><span class="line">    ……  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>查看调用关系，是在该 RunQueue 所在的线程执行  <code>performTraversals</code> 时调用，可 <code>performTraversals</code> 只会在UI 线程才会被调用。这也就意味着在异步线程调用 <code>View.post()</code>，如果 view 属于 detach 状态，那么，这个 runnable 将永远不会执行。</p>
+<p>所以在非 UI 线程调用 <code>View.post</code> 时，如果 View 处于 detach 状态，那就会发生内存泄漏。 </p>
+<h4 id="API-24-及以上"><a href="#API-24-及以上" class="headerlink" title="API 24 及以上"></a>API 24 及以上</h4><p>View.post 这个接口在 API 24 上有所修改，我们可以看看有什么不一样的地方：</p>
+<p><img src="http://qny.ivanfan.site/view_post_runnable.png" alt="view_post_runnable"></p>
+<p>很显然，这里不再使用 ViewRootImpl，而是直接用 View 本身的 getRunQueue 接口抛出这个 action。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Queue of pending runnables. Used to postpone calls to post() until this</span></span><br><span class="line"><span class="comment"> * view is attached and has a handler.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> HandlerActionQueue mRunQueue;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> HandlerActionQueue <span class="title">getRunQueue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (mRunQueue == <span class="keyword">null</span>) &#123;</span><br><span class="line">        mRunQueue = <span class="keyword">new</span> HandlerActionQueue();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> mRunQueue;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p>而 mRunQueue 也只是 View 的一个私有变量，再看调用 <code>HandlerActionQueue.executeActions</code>  的地方：</p>
+<p><img src="http://qny.ivanfan.site/view_dispatch.png" alt="view_dispatch"></p>
+<p>发现在 View 被 dispatch 时，就会依次取出 mActions，再一个一个投递到 handler 的消息队列里。</p>
+<p>再看下在在什么时机会执行 <code>HandlerActionQueue.removeCallbacks</code> 来销毁：</p>
+<p><img src="http://qny.ivanfan.site/view_removeCallbacks.png" alt="view_removeCallbacks"></p>
+<p>由此可见，只要在引用对象销毁时调用 view.removeCallbacks 就可以避免内存泄漏了。</p>
+<h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><ul>
+<li>要保持兼容 API 24 以下的版本，最好不要在非 UI 线程使用 <code>View.post</code> ，而采用 Handler 来 post runnable。</li>
+<li>当然在 API 24 及以上，如果不能保证 View 一定会被 attach，那可以在引用对象销毁时，使用 View.removeCallbacks 。</li>
+</ul>
+<h2 id="泄漏检测原理"><a href="#泄漏检测原理" class="headerlink" title="泄漏检测原理"></a>泄漏检测原理</h2><p>为了及时发现内存泄漏问题，我们会通常会使用弱引用进行一些内存泄漏的检测，其原理一般如下：</p>
+<ul>
+<li>弱引用不会影响系统 GC 对该对象的回收</li>
+<li>获取 <code>onDestroy</code> 回调，并添加弱引用探针</li>
+<li>在子线程循环检测是否可以通过该探针获取到该对象的实例</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>知道是不会有人点的，但万一被感动了呢？</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/donate_wechat.png" alt="IvanFan 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    IvanFan
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lavnfan.github.io/2018/03/18/内存泄漏/" title="内存泄漏">http://lavnfan.github.io/2018/03/18/内存泄漏/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
+          
+            <a href="/tags/性能优化/" rel="tag"><i class="fa fa-tag"></i> 性能优化</a>
+          
+            <a href="/tags/内存泄漏/" rel="tag"><i class="fa fa-tag"></i> 内存泄漏</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/13/Java crash 异常分析/" rel="next" title="Java crash 异常分析">
+                <i class="fa fa-chevron-left"></i> Java crash 异常分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/07/01/Lottie动画/" rel="prev" title="Lottie 动画原理剖析">
+                Lottie 动画原理剖析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zODc4NS8xNTMxMw=="></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            关于作者
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="IvanFan">
+          
+            <p class="site-author-name" itemprop="name">IvanFan</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">25</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">46</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lavnFan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:lavnFan@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#内存泄漏"><span class="nav-number">1.</span> <span class="nav-text">内存泄漏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Android-Studio-及-MAT-分析"><span class="nav-number">2.</span> <span class="nav-text">Android Studio 及 MAT 分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#生成-Java-Heap-文件"><span class="nav-number">2.1.</span> <span class="nav-text">生成 Java Heap 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析内存泄漏的-Activity"><span class="nav-number">2.2.</span> <span class="nav-text">分析内存泄漏的 Activity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#转换成标准的-hprof-文件"><span class="nav-number">2.3.</span> <span class="nav-text">转换成标准的 hprof 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MAT-打开-hprof文件"><span class="nav-number">2.4.</span> <span class="nav-text">MAT 打开 hprof文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看引用链"><span class="nav-number">2.5.</span> <span class="nav-text">查看引用链</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析泄漏原因"><span class="nav-number">2.6.</span> <span class="nav-text">分析泄漏原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Android-studio-3-0-的-Profiler"><span class="nav-number">2.7.</span> <span class="nav-text">Android studio 3.0 的 Profiler</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内存泄漏经典案例"><span class="nav-number">3.</span> <span class="nav-text">内存泄漏经典案例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Static-泄漏"><span class="nav-number">3.1.</span> <span class="nav-text">Static 泄漏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#监听-回调泄漏"><span class="nav-number">3.2.</span> <span class="nav-text">监听/回调泄漏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#匿名内部类-非静态内部类和异步线程"><span class="nav-number">3.3.</span> <span class="nav-text">匿名内部类/非静态内部类和异步线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非UI线程使用-View-post"><span class="nav-number">3.4.</span> <span class="nav-text">非UI线程使用 View.post()</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#低于-API-24-的版本"><span class="nav-number">3.4.1.</span> <span class="nav-text">低于 API 24 的版本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#API-24-及以上"><span class="nav-number">3.4.2.</span> <span class="nav-text">API 24 及以上</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解决方案"><span class="nav-number">3.4.3.</span> <span class="nav-text">解决方案</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#泄漏检测原理"><span class="nav-number">4.</span> <span class="nav-text">泄漏检测原理</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div style="text-align: center;">
+<div class="copyright">
+  
+  &copy;  2016 &mdash; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">IvanFan</span>
+
+  
+</div>
+
+<div style="text-align: center;">
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  访客数：<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<span class="post-meta-divider">|</span>
+
+<i class="fa fa-eye"></i><span id="busuanzi_container_site_pv">
+    访问量：<span id="busuanzi_value_site_pv"></span>
+</span>
+
+
+
+<!--  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+-->
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </div></footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

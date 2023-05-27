@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Android,kotlin,java,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="2019 年 Google I/O 大会宣布优先采用 kotlin 进行 Android 开发后，新项目的示例、组件也越来越多使用 kotlin 而非 java，目前正超过 60% 的专业 Android 开发者在使用，所以掌握 koltin 是 Android 开发者必备的能力之一。  一、为什么要会 kotlin2011 年 7 月，JetBrains 推出面向 JVM 的语言 – Kotl">
+<meta name="keywords" content="Android,kotlin,java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kotlin 分享入门">
+<meta property="og:url" content="http://lavnfan.github.io/2021/06/15/Android/kotlin分享/index.html">
+<meta property="og:site_name" content="IvanFanWu">
+<meta property="og:description" content="2019 年 Google I/O 大会宣布优先采用 kotlin 进行 Android 开发后，新项目的示例、组件也越来越多使用 kotlin 而非 java，目前正超过 60% 的专业 Android 开发者在使用，所以掌握 koltin 是 Android 开发者必备的能力之一。  一、为什么要会 kotlin2011 年 7 月，JetBrains 推出面向 JVM 的语言 – Kotl">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://qny.ivanfan.site/kotlin_future.png">
+<meta property="og:updated_time" content="2022-04-30T07:50:49.729Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="kotlin 分享入门">
+<meta name="twitter:description" content="2019 年 Google I/O 大会宣布优先采用 kotlin 进行 Android 开发后，新项目的示例、组件也越来越多使用 kotlin 而非 java，目前正超过 60% 的专业 Android 开发者在使用，所以掌握 koltin 是 Android 开发者必备的能力之一。  一、为什么要会 kotlin2011 年 7 月，JetBrains 推出面向 JVM 的语言 – Kotl">
+<meta name="twitter:image" content="https://qny.ivanfan.site/kotlin_future.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://lavnfan.github.io/2021/06/15/Android/kotlin分享/">
+
+
+
+
+
+  <title>kotlin 分享入门 | IvanFanWu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">IvanFanWu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lavnfan.github.io/2021/06/15/Android/kotlin分享/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="IvanFanWu">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="IvanFanWu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">kotlin 分享入门</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-06-15T11:00:00+08:00">
+                2021-06-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i> 阅读次数
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>2019 年 Google I/O 大会宣布优先采用 kotlin 进行 Android 开发后，新项目的示例、组件也越来越多使用 kotlin 而非 java，目前正超过 60% 的专业 Android 开发者在使用，所以掌握 koltin 是 Android 开发者必备的能力之一。</p>
+</blockquote>
+<h2 id="一、为什么要会-kotlin"><a href="#一、为什么要会-kotlin" class="headerlink" title="一、为什么要会 kotlin"></a>一、为什么要会 kotlin</h2><p>2011 年 7 月，JetBrains 推出面向 JVM 的语言 – Kotlin，2017年，Google I/O 大会宣布 Kotlin 成为 Android 开发的官方语言，2019 年宣布 kotlin 优先。 kotlin 语言的特点有：</p>
+<ul>
+<li>kotlin 兼容 java，支持 Android 无缝切换 kotlin</li>
+<li>比 java 更安全，能够静态检测常见问题，如 NPE 等</li>
+<li>比 java 更简洁，可以用更少的代码来实现更多的功能</li>
+</ul>
+<p>Google Home 将新功能开发工作迁移到 Kotlin 后，代码库大小减少了 33%，NPE 崩溃次数减少了 30%。</p>
+<p>关于 java 切换 kotlin 的原因，可能还有 java 的版权和专利问题，2010 年 Oracle 收购 Sun（含有 java 版权和专利）后，对 Google 提起了 java 专利的诉讼，经过常达十年多的官司，最终在 2021 年 Google 胜诉，对 java 代码的使用是 “合理使用”，其次 Google 对 jdk 的依赖也从 oracle jdk 切换到了开源的 open jdk。</p>
+<h2 id="二、kotlin-的基本语法"><a href="#二、kotlin-的基本语法" class="headerlink" title="二、kotlin 的基本语法"></a>二、kotlin 的基本语法</h2><h3 id="1、基本语法"><a href="#1、基本语法" class="headerlink" title="1、基本语法"></a>1、基本语法</h3><h4 id="1）基本类型"><a href="#1）基本类型" class="headerlink" title="1）基本类型"></a>1）基本类型</h4><p> java 定义变量需要指定具体类型，并把类型放在变量之前：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String str = <span class="string">"nullableStr"</span>;</span><br><span class="line"><span class="keyword">final</span> String finalStr = <span class="string">"notnullFinalStr"</span>;</span><br></pre></td></tr></table></figure>
+<p>kotlin 定义变量用 val 和 var 声明，具体变量类型可放在变量名后用 <code>: 类型</code> 定义，甚至可不指定由赋值推导类型。<code>val</code> 只允许赋值一次，用 <code>var</code> 可重新赋值，其次代码结尾去除 <code>;</code> 。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// var 可变，val 不可变</span></span><br><span class="line"><span class="comment">// 先声明变量，再声明类型，用冒号分隔，类型可缺省由赋值推导</span></span><br><span class="line"><span class="comment">// 结尾不用加分号</span></span><br><span class="line"><span class="keyword">var</span> nullableStr: String? = <span class="string">"nullableStr"</span></span><br><span class="line"><span class="keyword">var</span> notnullStr: String = <span class="string">"notnullStr"</span></span><br><span class="line"><span class="keyword">val</span> notnullFinalStr = <span class="string">"notnullFinalStr"</span>  <span class="comment">// val 相当于 finnal var</span></span><br></pre></td></tr></table></figure>
+<h4 id="2）-字符串模版"><a href="#2）-字符串模版" class="headerlink" title="2） 字符串模版"></a>2） 字符串模版</h4><p>java 字符串拼接需要用 <code>+</code> 或 <code>String.format</code> 占位符拼接：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Log.log(TAG + <span class="string">", testBasic:"</span> + <span class="string">",nullable:"</span> + (str == <span class="keyword">null</span> ? <span class="string">""</span> : str.substring(<span class="number">1</span>, str.length())) + <span class="string">", notnull:"</span> + finalStr.substring(<span class="number">1</span>, finalStr.length()));</span><br></pre></td></tr></table></figure>
+<p>kotlin 在字符串内直接编写表达式，使用 <code>$</code> 拼接变量或用 <code>{}</code> 拼接表达式，提高代码可读性：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Log.log(<span class="string">"<span class="variable">$TAG</span> testBasic: nullable: <span class="subst">$&#123;nullableStr!!.substring(<span class="number">1</span>,nullableStr.length)&#125;</span>, notnull:<span class="subst">$&#123;notnullFinalStr.substring(<span class="number">1</span>, notnullFinalStr.length)&#125;</span>"</span></span><br></pre></td></tr></table></figure>
+<h4 id="3）NPE-问题解决"><a href="#3）NPE-问题解决" class="headerlink" title="3）NPE 问题解决"></a>3）NPE 问题解决</h4><p>在 java 语言中，空指针是最常见的问题之一，无法确定外部调用的值，即使返回非空也只能通过注解的方式让调用方知悉：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Nullable</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getTestNameNullable</span><span class="params">(@Nullable TestData testData)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (testData != <span class="keyword">null</span>) &#123;</span><br><span class="line">        TestEntity testEntity = testData.getEntity();</span><br><span class="line">        <span class="keyword">if</span> (testEntity != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> testEntity.getName();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@NotNull</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getTestName</span><span class="params">(@Nullable TestData testData)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (testData != <span class="keyword">null</span>) &#123;</span><br><span class="line">        TestEntity testEntity = testData.getEntity();</span><br><span class="line">        <span class="keyword">if</span> (testEntity != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> testEntity.getName();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于注解传值是不影响调用方编译阶段的，而运行阶段出现的空指针不一定在必现的场景，因此把空指针控制在静态编译期间将非常有效减少空指针的产生。</p>
+<p>kotlin 对于可空的值必须用 <code>?</code> 来表示，否则传的一定是非空值，不然静态编译会提示错误。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getTestNameNullable</span><span class="params">(testData: <span class="type">TestData</span>?)</span></span>: String? &#123;</span><br><span class="line">    <span class="keyword">return</span> testData?.entity?.name</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getTestName</span><span class="params">(testData: <span class="type">TestData</span>?)</span></span>: String &#123;</span><br><span class="line">    <span class="keyword">return</span> testData?.entity?.name ?: <span class="string">""</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>?.操作符：代替.操作符，对 nullable 类型做安全的解引用，如果 receiver 为 null 则直接返回 null，什么也不做。</p>
+</li>
+<li><p>?:操作符：相当于常用的三元操作符，nullable ?: other 等价于 nullable != null ？ nullable : other。</p>
+</li>
+</ul>
+<h4 id="4）懒加载"><a href="#4）懒加载" class="headerlink" title="4）懒加载"></a>4）懒加载</h4><p>对于一些变量的声明时，如果它是可空的，后续想使用时，可以使用 <code>?.</code> 进行调用，如果确定它是非空的，可以用 <code>!!</code> 忽略编译检查，但调用处处弥漫着 <code>!!</code> 让代码非常丑陋。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">var</span> testVar: String? = <span class="literal">null</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">testBasic</span><span class="params">()</span></span> &#123;</span><br><span class="line">    testVar = <span class="string">"testVar"</span></span><br><span class="line">    testVar!!.substring(<span class="number">1</span>, testVar!!.length)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果我们<strong>非常明确它是非空的</strong>，但需要在之后的初始化方法里才能赋值，此时又不想声明可空的 <code>?</code> 和 <code>!!</code> 调用，那我们可以在声明时加上<strong>懒加载</strong>标志，让它在编译期间被忽略，当成非空处理。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">lateinit</span> <span class="keyword">var</span> testLazyVar: String  <span class="comment">// 忽略编译检查，由开发者决定</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">val</span> testLazyVal <span class="keyword">by</span> lazy &#123;</span><br><span class="line">    <span class="comment">// 第一次调用时初始化赋值，后续只是get该值</span></span><br><span class="line">    Log.log(<span class="string">"testLazyVal"</span>)</span><br><span class="line">    <span class="string">"testLazyVal"</span></span><br><span class="line">&#125;</span><br><span class="line">	  </span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">testBasic</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// var lazy init</span></span><br><span class="line">    testLazyVar = <span class="string">"testLazyVar"</span></span><br><span class="line">    testLazyVar.substring(<span class="number">1</span>, testLazyVar.length)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// val lazy init</span></span><br><span class="line">    testLazyVal.subSequence(<span class="number">1</span>, testLazyVal.length)</span><br><span class="line">    testLazyVal.subSequence(<span class="number">1</span>, testLazyVal.length)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>懒加载对声明两种变量的使用：</p>
+<ul>
+<li><p>var：=&gt; lateinit var</p>
+</li>
+<li><p>val：=&gt; val by lazy {}，表达式内的只会在第一次调用时执行，之后只是调用变量的 <code>get</code> 获取</p>
+</li>
+</ul>
+<h4 id="5）控制流"><a href="#5）控制流" class="headerlink" title="5）控制流"></a>5）控制流</h4><p>java switch 支持基本数据类型、枚举、字符串，但只允许常量，不允许变量判断：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">String type = <span class="string">"1"</span>;</span><br><span class="line"><span class="keyword">switch</span> (type) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">"1"</span>:</span><br><span class="line">        Log.log(TAG + <span class="string">", testControlStatement:"</span> + type);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">"2"</span>:</span><br><span class="line">        Log.log(TAG + <span class="string">", testControlStatement:"</span> + type);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        Log.log(TAG + <span class="string">", testControlStatement:"</span> + type);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>kotlin 没有 <code>switch</code>，但新增了 <code>when else</code>， 它可以覆盖任意类型的分支判断：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// when else 任意类型判断</span></span><br><span class="line"><span class="keyword">val</span> type = <span class="string">"1"</span></span><br><span class="line"><span class="keyword">when</span> (type) &#123;</span><br><span class="line">    <span class="string">"1"</span> -&gt; Log.log(<span class="string">"<span class="variable">$TAG</span> testControlStatement:<span class="variable">$type</span>"</span>)</span><br><span class="line">    <span class="string">"2"</span> -&gt; Log.log(<span class="string">"<span class="variable">$TAG</span> testControlStatement:<span class="variable">$type</span>"</span>)</span><br><span class="line">    <span class="keyword">else</span> -&gt; Log.log(<span class="string">"<span class="variable">$TAG</span> testControlStatement:<span class="variable">$type</span>"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 表达式判断，不需要一定是常量</span></span><br><span class="line"><span class="keyword">val</span> typeInt = <span class="number">1</span></span><br><span class="line"><span class="keyword">when</span> (typeInt) &#123;</span><br><span class="line">    parseType1(typeInt) -&gt; &#123;</span><br><span class="line">        Log.log(<span class="string">"<span class="variable">$TAG</span> testControlStatement:<span class="variable">$type</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">in</span> <span class="number">2</span>..<span class="number">10</span> -&gt; Log.log(<span class="string">"<span class="variable">$TAG</span> testControlStatement:<span class="variable">$type</span>"</span>)</span><br><span class="line">    <span class="keyword">else</span> -&gt; Log.log(<span class="string">"<span class="variable">$TAG</span> testControlStatement:<span class="variable">$type</span>"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>if else</code> 也可作为表达式返回赋值给变量：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> maxExpression = <span class="keyword">if</span> (isTrue()) <span class="number">1</span> <span class="keyword">else</span> <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<h3 id="2、集合"><a href="#2、集合" class="headerlink" title="2、集合"></a>2、集合</h3><p>对于集合的使用上，kotlin 提供了 stream 链式调用和一系列的高阶扩展函数极大的简化操作，我们以 List 举例：</p>
+<p>1）遍历 <code>List&lt;TestData&gt;</code> 获取每个 <code>TestData</code> 属性 <code>TestEntity</code> 的属性 <code>name</code> </p>
+<p>2）获取  <code>List&lt;TestData&gt;</code>  中每个  <code>TestData</code> 属性 <code>id</code> 并组成新的 <code>list</code></p>
+<p>3）获取 <code>List&lt;TestData&gt;</code>  中每个  <code>TestData</code> 属性 <code>id</code> 大于 2 的列表部分</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">List&lt;TestData&gt; list = Arrays.asList(<span class="keyword">new</span> TestData(<span class="keyword">new</span> TestEntity(<span class="string">"1-1"</span>), <span class="number">1</span>), <span class="keyword">new</span> TestData(<span class="keyword">new</span> TestEntity(<span class="string">"2-2"</span>), <span class="number">2</span>), <span class="keyword">new</span> TestData(<span class="keyword">new</span> TestEntity(<span class="string">"3-3"</span>), <span class="number">3</span>));</span><br><span class="line"><span class="keyword">for</span> (TestData data : list) &#123;</span><br><span class="line">    <span class="keyword">if</span> (data.getEntity() != <span class="keyword">null</span> &amp;&amp; data.getEntity().getName() != <span class="keyword">null</span>) &#123;</span><br><span class="line">        Log.log(data.getEntity().getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">List&lt;Integer&gt; idList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"><span class="keyword">for</span> (TestData data : list) &#123;</span><br><span class="line">    idList.add(data.getId());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">List&lt;TestEntity&gt; nameUp2EntityList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"><span class="keyword">for</span> (TestData data : list) &#123;</span><br><span class="line">    <span class="keyword">if</span> (data.getId() &gt;= <span class="number">2</span> &amp;&amp; data.getEntity() != <span class="keyword">null</span>) &#123;</span><br><span class="line">        nameUp2EntityList.add(data.getEntity());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到 java 遍历中需要手动一个一个的遍历获取，在 java8 引入了 stream 后，对 <code>forEach</code>、<code>filter</code>、<code>map</code> 也变得更简洁。</p>
+<p>在 kotlin 中，流式调用可以如下所示：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// stream api 调用</span></span><br><span class="line"><span class="keyword">val</span> list = listOf&lt;TestData&gt;(</span><br><span class="line">    TestData(TestEntity(<span class="string">"1-1"</span>), <span class="number">1</span>),</span><br><span class="line">    TestData(TestEntity(<span class="string">"2-2"</span>), <span class="number">2</span>),</span><br><span class="line">    TestData(TestEntity(<span class="string">"3-3"</span>), <span class="number">3</span>)</span><br><span class="line">)</span><br><span class="line"><span class="comment">// 遍历</span></span><br><span class="line">list.forEach &#123; Log.log(it.entity?.name ?: <span class="string">""</span>) &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// list 转换</span></span><br><span class="line"><span class="keyword">val</span> idList = list.map &#123; it.id &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// list 按值转换取出</span></span><br><span class="line"><span class="keyword">val</span> nameUp2EntityList = list.filter &#123; it.id &gt;= <span class="number">2</span> &#125;.map &#123; it.entity &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3、函数"><a href="#3、函数" class="headerlink" title="3、函数"></a>3、函数</h3><p>kotlin 函数相比 java，需要使用 <code>fun</code> 声明，并增加了默认参数，<code>?</code> 的属性在调用时可缺省，当然非缺省的必须放在缺省的前边：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">testShowDialog</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    title: <span class="type">String</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">    content: <span class="type">String</span>? = <span class="literal">null</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">    leftText: <span class="type">String</span>? = <span class="literal">null</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">    rightText: <span class="type">String</span>? = <span class="literal">null</span></span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span> &#123;</span><br><span class="line">    Log.log(<span class="string">"title:<span class="variable">$title</span>, content:<span class="variable">$content</span>, leftText:<span class="variable">$leftText</span>, rightText:<span class="variable">$rightText</span>"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">testFunction</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 函数重载</span></span><br><span class="line">    <span class="comment">// 1、默认参数</span></span><br><span class="line">    <span class="comment">// 2、具名参数</span></span><br><span class="line">    testShowDialog(<span class="string">"titles"</span>)</span><br><span class="line">    testShowDialog(<span class="string">"titles"</span>, <span class="string">"contents"</span>)</span><br><span class="line">    testShowDialog(<span class="string">"titles"</span>, leftText = <span class="string">"leftTexts"</span>)</span><br><span class="line">    testShowDialog(<span class="string">"titles"</span>, rightText = <span class="string">"leftTexts"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>java 声明时需要使用多个重载调用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">testShowDialog</span><span class="params">(String title)</span> </span>&#123;</span><br><span class="line">    testShowDialog(title, <span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">testShowDialog</span><span class="params">(String title, String content)</span> </span>&#123;</span><br><span class="line">    testShowDialog(title, content, <span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">testShowDialog</span><span class="params">(String title, String content, String leftText)</span> </span>&#123;</span><br><span class="line">    testShowDialog(title, content, leftText, <span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">testShowDialog</span><span class="params">(String title, String content, String leftText, String rightText)</span> </span>&#123;</span><br><span class="line">    Log.log(<span class="string">"title:"</span> + title + <span class="string">", content:"</span> + content + <span class="string">", leftText:"</span> + leftText + <span class="string">", rightText:"</span> + rightText);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可见 kotlin 带缺省的函数，可有效减少函数重载多的问题。</p>
+<h3 id="4、类"><a href="#4、类" class="headerlink" title="4、类"></a>4、类</h3><h4 id="1）类声明"><a href="#1）类声明" class="headerlink" title="1）类声明"></a>1）类声明</h4><p>java 类的静态变量一般直接声明和调用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestJava</span> <span class="keyword">implements</span> <span class="title">ITest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG = <span class="string">"TestJava"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TestJava</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> TestJava <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Helper.instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Helper</span> </span>&#123;</span><br><span class="line">        <span class="keyword">static</span> TestJava instance = <span class="keyword">new</span> TestJava();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>kotlin 使用 <code>companion</code> 伴生对象来表示用类名作为限定符调用 <code>TestKotlin.TAG</code>， 如果想成为真正的静态方法和字段，需添加 <code>@JvmStatic</code> 等价：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestKotlin</span> : <span class="type">ITest &#123;</span></span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">companion</span> <span class="keyword">object</span> &#123;</span><br><span class="line">        <span class="keyword">val</span> TAG = <span class="string">"TestKotlin"</span></span><br><span class="line"></span><br><span class="line">        <span class="meta">@JvmStatic</span></span><br><span class="line">        <span class="function"><span class="keyword">fun</span> <span class="title">getInstance</span><span class="params">()</span></span>: TestKotlin = Helper.instance</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">object</span> Helper &#123;</span><br><span class="line">        <span class="keyword">val</span> instance = TestKotlin()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可见性修饰，相比 java 多了 internal，表示模块内可见，非导出的 library 则不可访问，非常方便 sdk 用于访问符限制。</p>
+<h4 id="2）数据类"><a href="#2）数据类" class="headerlink" title="2）数据类"></a>2）数据类</h4><p>在存储操作时，经常会使用数据类，但为了减少外部修改用提供的 <code>get</code> 和 <code>set</code>， 会让类代码变得繁琐。同时对于类的一些方法 <code>equal</code>、<code>hashCode</code>， <code>toString</code> 都需要开发者重写，否则表现会不太符合预期：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TestData</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> id;</span><br><span class="line">    <span class="keyword">private</span> TestEntity entity;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> TestEntity <span class="title">getEntity</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> entity;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setEntity</span><span class="params">(TestEntity entity)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.entity = entity;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object o)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span> == o) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (o == <span class="keyword">null</span> || getClass() != o.getClass()) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        TestData testData = (TestData) o;</span><br><span class="line">        <span class="keyword">return</span> id == testData.id &amp;&amp;</span><br><span class="line">                Objects.equals(entity, testData.entity);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Objects.hash(id, entity);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"TestData&#123;"</span> +</span><br><span class="line">                <span class="string">"id="</span> + id +</span><br><span class="line">                <span class="string">", entity="</span> + entity +</span><br><span class="line">                <span class="string">'&#125;'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于 kotln 有专门的数据类表示，用 <code>data</code> 修饰，所有属性都默认提供了 <code>setter</code>、<code>getter</code>：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">TestData</span></span>(</span><br><span class="line">    <span class="keyword">val</span> entity: TestEntity?,</span><br><span class="line">    <span class="keyword">val</span> id: <span class="built_in">Int</span> = <span class="number">0</span></span><br><span class="line">) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> name = <span class="string">"Mike"</span></span><br><span class="line">        <span class="keyword">get</span>() &#123;</span><br><span class="line">            <span class="keyword">return</span> field + <span class="string">"_nb"</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">set</span>(value) &#123;</span><br><span class="line">            field = value + <span class="string">"_text"</span></span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同时对数据类的主构造函数提供了 <code>toString</code> 、<code>equlas/hasCode</code> 的实现：</p>
+<ul>
+<li><code>toString()</code> 格式是 TestData(entity=TestEntity(name=ivan), id=1) </li>
+<li><p><code>equals()/hashCode()</code> 实现了 <code>entitiy</code> 和 <code>id</code> 属性的比较和映射</p>
+</li>
+<li><p>提供了 <code>componentN()</code> 的解构声明，可以直接从类中获取解构的属性，如 <code>val(entity, id) = testData</code></p>
+</li>
+</ul>
+<h4 id="3）扩展类"><a href="#3）扩展类" class="headerlink" title="3）扩展类"></a>3）扩展类</h4><p>扩展使得 kotlin 在类使用时变得非常灵活，在 Java 中想扩展一个类的新功能时，一般使用继承或者装饰等方式。但如果想为一个第三方类或系统类增加新的函数，就像调用原始类一样调用该方法，就可以使用 kotlin 的扩展属性：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">TestData</span></span>(</span><br><span class="line">    <span class="keyword">val</span> entity: TestEntity?,</span><br><span class="line">    <span class="keyword">val</span> id: <span class="built_in">Int</span> = <span class="number">0</span></span><br><span class="line">) &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">fun</span> TestData.<span class="title">getMapId</span><span class="params">()</span></span>: String &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"<span class="subst">$&#123;<span class="number">1000</span> + id&#125;</span>"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>经过外部声明 <code>TestData</code> 的扩展函数 <code>getMapId</code> 后，像普通函数调用方式使用：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 类扩展函数</span></span><br><span class="line"><span class="keyword">val</span> <span class="keyword">data</span> = TestData(TestEntity(<span class="string">""</span>), <span class="number">1</span>)</span><br><span class="line"><span class="keyword">val</span> mapId = <span class="keyword">data</span>.getMapId()</span><br><span class="line">Log.log(<span class="string">"testClass id:<span class="subst">$&#123;data.id&#125;</span> mapId:<span class="variable">$mapId</span>"</span>)</span><br></pre></td></tr></table></figure>
+<p>扩展的方法并不会破坏现有的类方法，它是静态分发的，通过该类型的变量用点的表达式去调用这个新函数。</p>
+<h2 id="三、kotlin-的高阶用法"><a href="#三、kotlin-的高阶用法" class="headerlink" title="三、kotlin 的高阶用法"></a>三、kotlin 的高阶用法</h2><h3 id="1、高阶函数"><a href="#1、高阶函数" class="headerlink" title="1、高阶函数"></a>1、高阶函数</h3><p>kotlin 的高阶函数是将函数用作参数或返回值的函数，可以用高数里的高阶导数类比：</p>
+<p>高阶导数：y=f(x) ，求导后的 y=f’(x)，仍然是x的函数，则二阶函数。把≥2阶的导数认为是高阶导数。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ViewKotlin</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">setOnClickListener</span><span class="params">(onClick: (<span class="type">v</span>: <span class="type">ViewKotlin</span>) -&gt; <span class="type">Unit</span>)</span></span> &#123;</span><br><span class="line">        onClick(<span class="keyword">this</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 高阶函数：函数的参数或返回值为函数</span></span><br><span class="line">        <span class="comment">// A -&gt; B ，在 B 执行某个方法后，给 A 一个回调</span></span><br><span class="line">        <span class="keyword">val</span> viewKotlin = ViewKotlin()</span><br><span class="line">        viewKotlin.setOnClickListener(&#123; v: ViewKotlin -&gt;</span><br><span class="line"></span><br><span class="line">        &#125;)</span><br><span class="line">        <span class="comment">// 匿名函数是一个函数式对象，传参或赋值</span></span><br><span class="line">        viewKotlin.setOnClickListener(click)</span><br></pre></td></tr></table></figure>
+<p>比如示例，把 <code>onClick</code> 函数作为 <code>setOnClickListener</code> 的返回值，则认为它是高阶函数。但其实函数并不能传递，传递的是函数式的对象（匿名函数/lambda）。</p>
+<h3 id="2、lambda-用法"><a href="#2、lambda-用法" class="headerlink" title="2、lambda 用法"></a>2、lambda 用法</h3><p>lambda 表达式总是括在花括号中， 完整语法是参数声明放在花括号内，并有可选的类型标注， 函数体跟在 <code>-&gt;</code> 符号之后：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// lambda 表达式</span></span><br><span class="line"><span class="keyword">val</span> sum = &#123; x: <span class="built_in">Int</span>, y: <span class="built_in">Int</span> -&gt;</span><br><span class="line">    x + y</span><br><span class="line">&#125;</span><br><span class="line">Log.log(<span class="string">"testLambda: <span class="subst">$&#123;sum(<span class="number">1</span>, <span class="number">2</span>)&#125;</span>"</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> view = View()</span><br><span class="line">view.setOnClickListener(<span class="literal">null</span>, &#123; views -&gt;</span><br><span class="line">&#125;)</span><br><span class="line"><span class="comment">// 拖尾 lambda 表达式: 如果函数的最后一个参数是函数，那么作为相应参数传入的 lambda 表达式可以放在圆括号之外</span></span><br><span class="line">view.setOnClickListener(<span class="literal">null</span>) &#123; views -&gt;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 也可直接忽略，用 it 代值</span></span><br><span class="line">view.setOnClickListener(<span class="literal">null</span>) &#123;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 当只有一个参数，且该参数是函数时，可以直接忽略括号</span></span><br><span class="line">view.setOnClickListener &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>lambda 表示式的变形：</p>
+<ul>
+<li>拖尾 lambda 表达式: 如果函数的最后一个参数是函数，那么作为相应参数传入的 lambda 表达式可以放在圆括号之外</li>
+</ul>
+<h3 id="3、协程"><a href="#3、协程" class="headerlink" title="3、协程"></a>3、协程</h3><p><strong>协程：</strong>一种编程思想，解决的是并发问题，让协作式任务实现起来更方便，<code>Kotlin-JVM</code> 的协程：是基于 Java Thread API 实现的一种更上层的工具。</p>
+<p>我们以一个异步请求任务举例，java 需要通过异步回调来进行，如果有多个依赖关系的回调，最终代码的嵌套会非常深：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 做一个网络请求，一般需要 callback 方式或阻塞式IO的同步调用</span></span><br><span class="line"><span class="comment">// 主线程做一个网络请求</span></span><br><span class="line">sendRequest(<span class="keyword">new</span> Callback&lt;String&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onSuccess</span><span class="params">(String data)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 还需要切回主线程</span></span><br><span class="line">        refreshUI(data);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFail</span><span class="params">(<span class="keyword">int</span> errCode, String errMsg)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>在 kotlin 中，则使用同步代码的方式来执行异步请求，对于依赖关系的几个异步回调也变得非常简单：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> coroutineScope = CoroutineScope(Dispatchers.Main + Job())</span><br><span class="line">coroutineScope.launch(Dispatchers.Main) &#123;  <span class="comment">// launch: 创建一个新的协程，并在指定的线程上运行它</span></span><br><span class="line"></span><br><span class="line">    launch (Dispatchers.IO)&#123;</span><br><span class="line">        <span class="keyword">val</span> result = sendRequestFor(<span class="string">"1-coroutineScope"</span>)</span><br><span class="line">        launch (Dispatchers.IO)&#123;</span><br><span class="line">            <span class="keyword">val</span> result2 = sendRequestForTwo(<span class="string">"1-coroutineScope"</span>)</span><br><span class="line">            refreshUI(result + result2)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>此时可以用 withContext 简化切换线程的操作，它切换到指定的线程，在代码块执行完后把结果带回：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 子线程网络请求</span></span><br><span class="line"><span class="comment">// 协程在执行到有 suspend 标记的函数的时候，会被挂起，就是切个线程，稍后会被自动切回来的线程调度操作</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">suspend</span> <span class="function"><span class="keyword">fun</span> <span class="title">sendRequestFor</span><span class="params">(work: <span class="type">String</span>)</span></span>: String = withContext(Dispatchers.IO) </span><br><span class="line">&#123;</span><br><span class="line">    delay(<span class="number">1000L</span>)</span><br><span class="line">    Log.log(<span class="string">"testCoroutines <span class="variable">$work</span> sendRequestFor: <span class="subst">$&#123;Thread.currentThread().id&#125;</span>"</span>)</span><br><span class="line">    <span class="string">"success work"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">val</span> resultWith = withContext(Dispatchers.IO) &#123;</span><br><span class="line">            sendRequestFor(<span class="string">"2-coroutineScope"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">val</span> resultWith2 = withContext(Dispatchers.IO) &#123;</span><br><span class="line">            sendRequestForTwo(<span class="string">"2-coroutineScope"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        refreshUI(resultWith + resultWith2)</span><br></pre></td></tr></table></figure>
+<p>对于一些没有依赖关系的任务1和任务2，允许他们并行执行时，可以使用关键字 <code>async</code> 标志，在需要串行等待时使用 <code>await</code> 进行等待：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> coroutineScope = CoroutineScope(Dispatchers.Main + Job())</span><br><span class="line">coroutineScope.launch(Dispatchers.Main) &#123;  <span class="comment">// launch: 创建一个新的协程，并在指定的线程上运行它</span></span><br><span class="line">    <span class="keyword">val</span> result = sendRequestFor(<span class="string">"3-coroutineScope"</span>)  <span class="comment">// 网络请求：IO 线程</span></span><br><span class="line">    <span class="keyword">val</span> result2 = sendRequestForTwo(<span class="string">"3-coroutineScope"</span>)  <span class="comment">// 网络请求：IO 线程</span></span><br><span class="line">    refreshUI(result + result2)                     <span class="comment">// 更新 UI：主线程</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> one = async &#123;sendRequestFor(<span class="string">"4-coroutineScope"</span>)&#125;  <span class="comment">// 网络请求：IO 线程</span></span><br><span class="line">    <span class="keyword">val</span> two = async &#123; sendRequestForTwo(<span class="string">"4-coroutineScope"</span>)&#125;  <span class="comment">// 网络请求：IO 线程</span></span><br><span class="line">    <span class="keyword">val</span> result4 = one.await() + two.await()</span><br><span class="line">    refreshUI(result4)                     <span class="comment">// 更新 UI：主线程</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到协程让并发协作式的任务变得非常简洁，达到了顺序式编程，消灭了回调。</p>
+<h2 id="四、对比展望"><a href="#四、对比展望" class="headerlink" title="四、对比展望"></a>四、对比展望</h2><h3 id="1、kotlin-amp-java-对比"><a href="#1、kotlin-amp-java-对比" class="headerlink" title="1、kotlin &amp; java 对比"></a>1、kotlin &amp; java 对比</h3><p>kotiln 在 Android 中使用，只需要引入 kotlin-android 扩展库，几个对比如下：</p>
+<ul>
+<li><p><strong>体积增长</strong>：kotin 标准库 600K，但是大部分代码是对 java 的扩展，以及 inline function，而且可以混淆。在 proguard strip 之后，几乎没有增长。</p>
+</li>
+<li><p><strong>性能影响</strong>：Kotlin是静态强类型语言，性能不弱于 Java，考虑到 inline function/lambda 的影响（将 lambda 本该生成匿名类的地方用 inline 方式将代码块放在调用的地方），Kotlin的性能稍微比 java 更好。</p>
+</li>
+<li><p><strong>编译速度</strong>：Google一直在优化编译器，使生成的字节码质量更高。</p>
+</li>
+</ul>
+<h3 id="2、kotlin-的未来"><a href="#2、kotlin-的未来" class="headerlink" title="2、kotlin 的未来"></a>2、kotlin 的未来</h3><p>kotlin 将是 Android 开发的必备技能之一，同时作为 JVM 平台上的跨平台语言，它还存在很多可能性：</p>
+<p><img src="https://qny.ivanfan.site/kotlin_future.png" alt="kotlin_future"></p>
+<p>kotlin 不仅用于 jvm 平台的 Android 和服务器上，也可以用于iOS、macOS、Windows、Linux、web 等平台上。</p>
+<p>参考链接：</p>
+<p>1、kotlin 官网：<a href="https://www.kotlincn.net/docs/reference/" target="_blank" rel="noopener">https://www.kotlincn.net/docs/reference/</a></p>
+<p>2、扔物线博客：<a href="https://rengwuxian.com/kotlin-coroutines-1/" target="_blank" rel="noopener">https://rengwuxian.com/kotlin-coroutines-1/</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>知道是不会有人点的，但万一被感动了呢？</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/donate_wechat.png" alt="IvanFanWu 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    IvanFanWu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lavnfan.github.io/2021/06/15/Android/kotlin分享/" title="kotlin 分享入门">http://lavnfan.github.io/2021/06/15/Android/kotlin分享/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
+          
+            <a href="/tags/kotlin/" rel="tag"><i class="fa fa-tag"></i> kotlin</a>
+          
+            <a href="/tags/java/" rel="tag"><i class="fa fa-tag"></i> java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/07/17/uiwidget/" rel="next" title="Unity与Flutter的碰撞 - UIWidgets">
+                <i class="fa fa-chevron-left"></i> Unity与Flutter的碰撞 - UIWidgets
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/10/20/深圳楼市-如何打新/" rel="prev" title="深圳楼市-如何打新">
+                深圳楼市-如何打新 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zODc4NS8xNTMxMw=="></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            关于作者
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="IvanFanWu">
+          
+            <p class="site-author-name" itemprop="name">IvanFanWu</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lavnFan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:lavnFan@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、为什么要会-kotlin"><span class="nav-number">1.</span> <span class="nav-text">一、为什么要会 kotlin</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、kotlin-的基本语法"><span class="nav-number">2.</span> <span class="nav-text">二、kotlin 的基本语法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、基本语法"><span class="nav-number">2.1.</span> <span class="nav-text">1、基本语法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1）基本类型"><span class="nav-number">2.1.1.</span> <span class="nav-text">1）基本类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2）-字符串模版"><span class="nav-number">2.1.2.</span> <span class="nav-text">2） 字符串模版</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3）NPE-问题解决"><span class="nav-number">2.1.3.</span> <span class="nav-text">3）NPE 问题解决</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4）懒加载"><span class="nav-number">2.1.4.</span> <span class="nav-text">4）懒加载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5）控制流"><span class="nav-number">2.1.5.</span> <span class="nav-text">5）控制流</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、集合"><span class="nav-number">2.2.</span> <span class="nav-text">2、集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、函数"><span class="nav-number">2.3.</span> <span class="nav-text">3、函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、类"><span class="nav-number">2.4.</span> <span class="nav-text">4、类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1）类声明"><span class="nav-number">2.4.1.</span> <span class="nav-text">1）类声明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2）数据类"><span class="nav-number">2.4.2.</span> <span class="nav-text">2）数据类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3）扩展类"><span class="nav-number">2.4.3.</span> <span class="nav-text">3）扩展类</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、kotlin-的高阶用法"><span class="nav-number">3.</span> <span class="nav-text">三、kotlin 的高阶用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、高阶函数"><span class="nav-number">3.1.</span> <span class="nav-text">1、高阶函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、lambda-用法"><span class="nav-number">3.2.</span> <span class="nav-text">2、lambda 用法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、协程"><span class="nav-number">3.3.</span> <span class="nav-text">3、协程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、对比展望"><span class="nav-number">4.</span> <span class="nav-text">四、对比展望</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、kotlin-amp-java-对比"><span class="nav-number">4.1.</span> <span class="nav-text">1、kotlin &amp; java 对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、kotlin-的未来"><span class="nav-number">4.2.</span> <span class="nav-text">2、kotlin 的未来</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div style="text-align: center;">
+<div class="copyright">
+  
+  &copy;  2016 &mdash; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">IvanFanWu</span>
+
+  
+</div>
+
+<div style="text-align: center;">
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  访客数：<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<span class="post-meta-divider">|</span>
+
+<i class="fa fa-eye"></i><span id="busuanzi_container_site_pv">
+    访问量：<span id="busuanzi_value_site_pv"></span>
+</span>
+
+  <div class="beian">
+    <img src="/images/beian.png" style="display:inline-block;text-decoration:none;height:13px;">
+    <a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备18126196号</a>
+  </div>
+
+
+
+<!--  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+-->
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </div></footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

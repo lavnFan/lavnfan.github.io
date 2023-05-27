@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Git,版本控制,代码管理,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="1、git的工作空间  workspace：工作区，文件改动的区域。 staging area：暂存区，执行 git add 命令后，保存修改的区域，存放在 .git 目录下的 index 文件中。 local repository：本地仓库，存放在 .git 目录下，管理本地仓库。 remote repository：远程仓库。  2、git中文件的几种状态　　  untracked：在 wok">
+<meta name="keywords" content="Git,版本控制,代码管理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git 工作原理及常用命令">
+<meta property="og:url" content="http://lavnfan.github.io/2019/01/06/git/index.html">
+<meta property="og:site_name" content="IvanFanWu">
+<meta property="og:description" content="1、git的工作空间  workspace：工作区，文件改动的区域。 staging area：暂存区，执行 git add 命令后，保存修改的区域，存放在 .git 目录下的 index 文件中。 local repository：本地仓库，存放在 .git 目录下，管理本地仓库。 remote repository：远程仓库。  2、git中文件的几种状态　　  untracked：在 wok">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://qny.ivanfan.site/git%E7%8A%B6%E6%80%81%E6%B5%81%E8%BD%AC.png">
+<meta property="og:image" content="http://qny.ivanfan.site/Git%E4%B8%AD%E6%96%87%E4%BB%B6%E7%9A%84%E5%87%A0%E7%A7%8D%E7%8A%B6%E6%80%81.png">
+<meta property="og:image" content="http://qny.ivanfan.site/objects-example.png">
+<meta property="og:image" content="http://qny.ivanfan.site/git_merge_2.png">
+<meta property="og:image" content="http://qny.ivanfan.site/git_merge_1.png">
+<meta property="og:image" content="http://qny.ivanfan.site/git_merge_3.png">
+<meta property="og:updated_time" content="2019-02-01T08:49:00.948Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Git 工作原理及常用命令">
+<meta name="twitter:description" content="1、git的工作空间  workspace：工作区，文件改动的区域。 staging area：暂存区，执行 git add 命令后，保存修改的区域，存放在 .git 目录下的 index 文件中。 local repository：本地仓库，存放在 .git 目录下，管理本地仓库。 remote repository：远程仓库。  2、git中文件的几种状态　　  untracked：在 wok">
+<meta name="twitter:image" content="http://qny.ivanfan.site/git%E7%8A%B6%E6%80%81%E6%B5%81%E8%BD%AC.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://lavnfan.github.io/2019/01/06/git/">
+
+
+
+
+
+  <title>Git 工作原理及常用命令 | IvanFanWu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">IvanFanWu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lavnfan.github.io/2019/01/06/git/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="IvanFanWu">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="IvanFanWu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Git 工作原理及常用命令</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-06T20:00:00+08:00">
+                2019-01-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Git/" itemprop="url" rel="index">
+                    <span itemprop="name">Git</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i> 阅读次数
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1、git的工作空间"><a href="#1、git的工作空间" class="headerlink" title="1、git的工作空间"></a>1、git的工作空间</h3><p><img src="http://qny.ivanfan.site/git%E7%8A%B6%E6%80%81%E6%B5%81%E8%BD%AC.png" alt="git状态流转"></p>
+<ul>
+<li>workspace：工作区，文件改动的区域。</li>
+<li>staging area：暂存区，执行 git add 命令后，保存修改的区域，存放在 .git 目录下的 index 文件中。</li>
+<li>local repository：本地仓库，存放在 .git 目录下，管理本地仓库。</li>
+<li>remote repository：远程仓库。</li>
+</ul>
+<h3 id="2、git中文件的几种状态"><a href="#2、git中文件的几种状态" class="headerlink" title="2、git中文件的几种状态"></a>2、git中文件的几种状态</h3><p>　　<img src="http://qny.ivanfan.site/Git%E4%B8%AD%E6%96%87%E4%BB%B6%E7%9A%84%E5%87%A0%E7%A7%8D%E7%8A%B6%E6%80%81.png" alt></p>
+<ul>
+<li>untracked：在 woking directory 中新创建了一个文件，这个文件的状态就是untracked。</li>
+<li>tracked：git 库上已存在的文件，就是 tracked，对于此类文件又可以做如下区分<ul>
+<li>unmodifed：从远程库下载了此文件，但是还没有修改。</li>
+<li>modifed：修改了，还没有执行 git add 命令。</li>
+<li>staged：执行了git add命令后，此文件的修改已经被缓存到 staged area。</li>
+<li>committed：执行了 git commit 命令，此文件的修改被保存到本地库。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3、git-工作原理"><a href="#3、git-工作原理" class="headerlink" title="3、git 工作原理"></a>3、git 工作原理</h3><h4 id="记录快照，非差异比较"><a href="#记录快照，非差异比较" class="headerlink" title="记录快照，非差异比较"></a>记录快照，非差异比较</h4><p>git 只关心文件数据的整体是否发生变化，而不关注文件的具体内容差异，它会把每次提交的文件全部内容都会记录下来，若文件没有变化，则不会再次保存，只会对上次保存的快照做一个索引链接。每个用来表示项目历史信息的文件，都是对其包含的内容做一个 sha-1 hash 的 40 个字符来索引的。</p>
+<p>以某一次提交以下内容为例：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">|-- README</span><br><span class="line">`-- lib</span><br><span class="line">    |-- inc</span><br><span class="line">    |   `-- tricks.rb</span><br><span class="line">    `-- mylib.rb</span><br><span class="line">2 directories, 3 files</span><br></pre></td></tr></table></figure>
+<p>在 git 仓库中保存的结构如下所示：</p>
+<p><img src="http://qny.ivanfan.site/objects-example.png" alt="objects-example"></p>
+<p>每个目录都创建了 <strong>tree对象</strong> (包括根目录)，每个文件都创建了一个对应的 <strong>blob对象</strong> 。最后有一个 <strong>commit对象</strong> 来指向根 tree 对象， 这样我们就可以追踪项目每一项提交内容.</p>
+<ul>
+<li>一个 blob 用来存储文件的内容，它只是一块二进制数据，文件名是对内容做的 sha-1 hash，如果一个目录下有多个相同内容的文件，则他们会指向同一个 blob 对象。</li>
+<li>一个 tree 对象有一串指向 blob 对象或是其它 tree 对象的指针，它用来表示内容之间的目录层次关系，tree 对象也是以其内容的 sha-1 hash 来命名的。</li>
+<li>“commit对象” 指向一个 “tree对象”，并且带有相关的描述信息。它的修改信息都是通过与父提交的内容比较得出。值得一提的是,，尽管 git 可以检测到文件内容不变而路径改变的情况， 但是它不会去显式的记录文件的更名操作，所以肯定不存在 svn 的树冲突。</li>
+</ul>
+<h4 id="分布式管理"><a href="#分布式管理" class="headerlink" title="分布式管理"></a>分布式管理</h4><p>1、分布式版本控制系统没有“中央服务器”，每个人的电脑上都有一个完整的版本库。因此工作的时候，可以不需要联网就可以提交本地仓库。</p>
+<p>2、分布式版本控制系统的安全性要高很多，因为每个人电脑里都有完整的版本库，某一个人的电脑坏掉了可以直接从其他人那里复制一个。而集中式版本控制系统的中央服务器要是出了问题，所有人都没法提交和继续工作。</p>
+<h4 id="增加暂存区"><a href="#增加暂存区" class="headerlink" title="增加暂存区"></a>增加暂存区</h4><ul>
+<li>实现部分提交</li>
+<li>无需在工作区中创建状态文件，不会污染工作区。</li>
+<li>暂存区记录文件的修改时间等信息，提高文件比较的效率</li>
+</ul>
+<h3 id="4、git操作流程"><a href="#4、git操作流程" class="headerlink" title="4、git操作流程"></a>4、git操作流程</h3><h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><h5 id="添加远程仓库"><a href="#添加远程仓库" class="headerlink" title="添加远程仓库"></a>添加远程仓库</h5><p>如果是一个空的工程，得先 git init，再用以下方式进行添加：</p>
+<ul>
+<li>$ git remote add origin <a href="mailto:git@github.com" target="_blank" rel="noopener">git@github.com</a>://yourName/yourRpo.git</li>
+<li>$ git remote add origin <a href="https://github.com/yourName/yourRepo.git" target="_blank" rel="noopener">https://github.com/yourName/yourRepo.git</a></li>
+</ul>
+<h5 id="删除远程仓库"><a href="#删除远程仓库" class="headerlink" title="删除远程仓库"></a>删除远程仓库</h5><p>如果想更在同一个目录下，更换另一个仓库，则可以先删除再添加，也可以直接更换远程仓库，如下三种方式：</p>
+<ul>
+<li>删除：git remote rm origin</li>
+<li>更换：git remote set-url origin url</li>
+<li>配置中手动修改：.git/config 的 url</li>
+</ul>
+<h4 id="拉取"><a href="#拉取" class="headerlink" title="拉取"></a>拉取</h4><h5 id="git-pull"><a href="#git-pull" class="headerlink" title="git pull"></a>git pull</h5><p>拉取远程库上的最新代码更新合并到本地当前分支。</p>
+<h5 id="git-fetch"><a href="#git-fetch" class="headerlink" title="git fetch"></a>git fetch</h5><p>只是将远程的数据拉到本地仓库，并不自动合并到当前分支，需要手动合并。</p>
+<h4 id="提交"><a href="#提交" class="headerlink" title="提交"></a>提交</h4><h5 id="git-add"><a href="#git-add" class="headerlink" title="git add"></a>git add</h5><ul>
+<li>git add -A：添加所有的修改到 staged area</li>
+<li>git add .：添加 untracked file 和 tracked file 文件的修改到缓存区，注意会忽略掉文件的删除操作，比如你删除了文件Android.mk，执行这个命令并不会把把删除操作提交到 staged area。</li>
+<li>git add -u：添加 tracked file 的修改到缓存区，注意会忽略掉 untracked file，也就是新增的文件。比如编译过程中产生了很多新的中间文件，使用此命令可以忽略掉这些中间文件。</li>
+</ul>
+<h5 id="git-commit"><a href="#git-commit" class="headerlink" title="git commit"></a>git commit</h5><p>git commit -m “BugID:XXX:Description”  常用的一种格式。注意 commit message 格式错误可能会导致入库失败。<br>还有一种方式是直接执行 git commit 命令，再打开的新窗口中输入 commit message。</p>
+<table>
+<thead>
+<tr>
+<th><strong>git commit -m “message”</strong></th>
+<th><strong>提交暂存区到本地仓库，message代表说明信息</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>git commit file1 -m “message”</strong></td>
+<td><strong>提交暂存区的指定文件到本地仓库</strong></td>
+</tr>
+<tr>
+<td><strong>git commit -a</strong></td>
+<td><strong>提交本地暂存区和工作区的文件到本地仓库</strong></td>
+</tr>
+<tr>
+<td><strong>git commit –amend -m “message”</strong></td>
+<td><strong>使用一次新的commit，替代上一次提交</strong></td>
+</tr>
+</tbody>
+</table>
+<h5 id="git-push"><a href="#git-push" class="headerlink" title="git push"></a>git push</h5><p>git push remote_repository loacl_branch:remote_branch    </p>
+<p>例如：git push orgin master:refs/for/master  提交本地的master分支的修改到远程库 origin 的 refs/for/master 分支</p>
+<p><strong>常用的格式如下</strong> </p>
+<table>
+<thead>
+<tr>
+<th>git push remote branch</th>
+<th>上传本地指定分支到远程仓库</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>git push remote –force</strong></td>
+<td><strong>强行推送当前分支到远程仓库，即使有冲突</strong></td>
+</tr>
+<tr>
+<td><strong>git push remote –all</strong></td>
+<td><strong>推送所有分支到远程仓库</strong></td>
+</tr>
+</tbody>
+</table>
+<h4 id="查看"><a href="#查看" class="headerlink" title="查看"></a>查看</h4><h5 id="git-log"><a href="#git-log" class="headerlink" title="git log"></a>git log</h5><p>常用的几种组合是：</p>
+<ul>
+<li>git log 查看提交记录。</li>
+<li>git log -p   查看每次提交的详细修改。</li>
+<li>git log –pretty=oneline 每个 commit 只显示一行，这个命令在处理代码冲突 conflict 时非常有用。</li>
+<li>git log –name-status 查看每次提交修改的文件。</li>
+</ul>
+<h5 id="git-blame"><a href="#git-blame" class="headerlink" title="git blame"></a>git blame</h5><p>查看修改记录：</p>
+<ul>
+<li>git blame “filename”：查看文件的每一行修改记录。</li>
+<li>git blame -L 开始,结束行  “filename”：查看文件从开始行到结束行的修改记录。</li>
+</ul>
+<h5 id="git-status"><a href="#git-status" class="headerlink" title="git status"></a>git status</h5><p>查看文件处于什么状态，会显示 untracked，和 tracked 中的文件。</p>
+<p>git 命令时带上目录，比如git status ./build 只查看build目录下的代码状态</p>
+<h4 id="回退"><a href="#回退" class="headerlink" title="回退"></a>回退</h4><h5 id="git-checkout"><a href="#git-checkout" class="headerlink" title="git checkout"></a>git checkout</h5><p>回退在工作区中修改的文件，比如修改了文件a.txt，还没有执行git add命令，这时候要丢弃这些修改，可使用命令：git checkout – a.txt。</p>
+<h5 id="git-reset"><a href="#git-reset" class="headerlink" title="git reset"></a>git reset</h5><p>回退暂存区或仓库中的提交记录。常用的几种组合有：</p>
+<ul>
+<li>git reset –soft “commit”：回退到某个版本，只回退 local repository。</li>
+<li><p>git reset –hard HEAD：回退暂存区的 add，让工作区回到上次提交时的状态</p>
+</li>
+<li><p>git reset –mixed “commit”：此为默认方式，同不带参数的 git reset，只保留 woking directory 的修改，回退 staging area 和 local repository的修改</p>
+</li>
+<li>git reset –hard “commit”：彻底回退到某个版本，本地的源码也会变为上一个版本的内容，比如 git reset –hard HEADgit reset –hard HEAD</li>
+</ul>
+<h5 id="git-revert"><a href="#git-revert" class="headerlink" title="git revert"></a>git revert</h5><p>撤销提交，是用一次新的 commit 来回滚之前的 commit，HEAD 继续前进。而 git reset 是直接删除指定的 commit，并把 HEAD 向后移动了一下。</p>
+<h4 id="暂存"><a href="#暂存" class="headerlink" title="暂存"></a>暂存</h4><h5 id="git-stash"><a href="#git-stash" class="headerlink" title="git stash"></a>git stash</h5><ul>
+<li>git stash save ‘message’：保存当前工作进度，即保存在工作区，还未提交的</li>
+<li>git stash list：显示保存进度的列表</li>
+<li>git stash apply “stash_id”：恢复进度列表，不删除</li>
+<li>git stash drop “stash_id”：删除某个进度</li>
+<li>git stash pop “stash_id”：恢复进度列表，并删除</li>
+<li>git stash clear：删除所有存储进度</li>
+</ul>
+<h4 id="分支操作"><a href="#分支操作" class="headerlink" title="分支操作"></a>分支操作</h4><p>多人合作或有一些新需求时，往往需要开辟一些新功能的分支，此时若想把功能分支合并到主干上，如下所示，想把 feature 分支上的 C4 和 C6 提交合并到 master 分支上：</p>
+<p><img src="http://qny.ivanfan.site/git_merge_2.png" alt="git_merge_1"></p>
+<p>常用的有俩种方法：git merge 和 git rebase。</p>
+<h5 id="git-merge"><a href="#git-merge" class="headerlink" title="git merge"></a>git merge</h5><p>使用 git merge 把 feature 分支合并到 master 分支后，记录如下所示：</p>
+<p><img src="http://qny.ivanfan.site/git_merge_1.png" alt="git_merge_2"></p>
+<p>merge 时，会根据 mater 和 feature 的最新节点和共同的祖先节点进行合并，并生成一个新的提交。</p>
+<ul>
+<li>merge 分支的提交历史也被原样保存</li>
+<li>会生成一个额外的合并提交</li>
+<li>历史提交不是线性的</li>
+</ul>
+<h5 id="git-rebase"><a href="#git-rebase" class="headerlink" title="git rebase"></a>git rebase</h5><p>在 master 使用 git rebase feature 后，记录如下所示：</p>
+<p><img src="http://qny.ivanfan.site/git_merge_3.png" alt="git_merge_3"></p>
+<p>在 master 上，把 rebase feature 分支的提交 C4，C6 移到共同祖先的起点 C2，但丢弃原本的，而是创建一个新的提交 C4’， C6’，重写了提交历史。</p>
+<ul>
+<li>把 rebase 分支上的提交历史重写了</li>
+<li>不会生成额外的提交</li>
+<li>历史的提交记录是线性的</li>
+</ul>
+<p>当改写了公有的 commit history，当 git push 时，本地和远程的 commit history 不一致时，commit 会被拒绝，尽量不要使用 -f 强制 commit，这会造导致别人工作成果的丢失。比较好的习惯是约定：拉取 git fetch 后，再用 git rebase origin/maste 修改本地自己的 commit ，而不影响别人的提交历史，最后再 git push 提交。</p>
+<p>rebase 常用命令：</p>
+<ul>
+<li>git rebase –continue：当 rebase 出现冲突时，解决完冲突后 git add 添加暂存，就可以使用 git rebase 继续执行。</li>
+<li>git rebase –abort：放弃此次 rebase。</li>
+<li>git rebase -i HEAD~n：将几次提交合并为一次，再使用 squash 将几次提交合并到前一次。</li>
+</ul>
+<h5 id="git-cherry-pick"><a href="#git-cherry-pick" class="headerlink" title="git cherry-pick"></a>git cherry-pick</h5><p>选择某一个分支的一个或多个 commit 合并：</p>
+<ul>
+<li>git cherry-pick “commit id”：单独合并一个提交。</li>
+<li>git cherry-pick  -x “commit id”：同上，但保留原提交者信息。</li>
+<li>git cherry-pick “start-commit-id”..”end-commit-id”：左开右闭，不包含 start-commit-id的提交cherry-pick到当前分支。</li>
+<li>git cherry-pick [start-commit-id]^..[end-commit-id]：闭区间，包含 start-commit-id 的提交 cherry-pick 到当前分支。</li>
+</ul>
+<h5 id="git-branch"><a href="#git-branch" class="headerlink" title="git branch"></a>git branch</h5><table>
+<thead>
+<tr>
+<th><strong>git branch</strong></th>
+<th><strong>列出所有本地分支</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>git branch -r</strong></td>
+<td><strong>列出所有远程分支</strong></td>
+</tr>
+<tr>
+<td><strong>git branch -a</strong></td>
+<td><strong>列出所有本地分支和远程分支</strong></td>
+</tr>
+<tr>
+<td><strong>git branch “branch-name”</strong></td>
+<td><strong>新建一个分支，但依然停留在当前分支</strong></td>
+</tr>
+<tr>
+<td><strong>git checkout -b “branch-name”</strong></td>
+<td><strong>新建一个分支，并切换到该分支</strong></td>
+</tr>
+<tr>
+<td><strong>git branch –track “branch” remote-branch</strong></td>
+<td><strong>新建一个分支，与指定的远程分支建立追踪关系</strong></td>
+</tr>
+<tr>
+<td><strong>git checkout “branch-name”</strong></td>
+<td><strong>切换到指定分支，并更新工作区</strong></td>
+</tr>
+<tr>
+<td><strong>git branch -d “branch-name”</strong></td>
+<td><strong>删除分支</strong></td>
+</tr>
+<tr>
+<td><strong>git push origin –delete “branch-name”</strong></td>
+<td><strong>删除远程分支</strong></td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>知道是不会有人点的，但万一被感动了呢？</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/donate_wechat.png" alt="IvanFanWu 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    IvanFanWu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lavnfan.github.io/2019/01/06/git/" title="Git 工作原理及常用命令">http://lavnfan.github.io/2019/01/06/git/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Git/" rel="tag"><i class="fa fa-tag"></i> Git</a>
+          
+            <a href="/tags/版本控制/" rel="tag"><i class="fa fa-tag"></i> 版本控制</a>
+          
+            <a href="/tags/代码管理/" rel="tag"><i class="fa fa-tag"></i> 代码管理</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/14/把时间当做朋友/" rel="next" title="把时间当做朋友 - 笔记感悟">
+                <i class="fa fa-chevron-left"></i> 把时间当做朋友 - 笔记感悟
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/07/17/uiwidget/" rel="prev" title="Unity与Flutter的碰撞 - UIWidgets">
+                Unity与Flutter的碰撞 - UIWidgets <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zODc4NS8xNTMxMw=="></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            关于作者
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="IvanFanWu">
+          
+            <p class="site-author-name" itemprop="name">IvanFanWu</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lavnFan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:lavnFan@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、git的工作空间"><span class="nav-number">1.</span> <span class="nav-text">1、git的工作空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、git中文件的几种状态"><span class="nav-number">2.</span> <span class="nav-text">2、git中文件的几种状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、git-工作原理"><span class="nav-number">3.</span> <span class="nav-text">3、git 工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#记录快照，非差异比较"><span class="nav-number">3.1.</span> <span class="nav-text">记录快照，非差异比较</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分布式管理"><span class="nav-number">3.2.</span> <span class="nav-text">分布式管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#增加暂存区"><span class="nav-number">3.3.</span> <span class="nav-text">增加暂存区</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、git操作流程"><span class="nav-number">4.</span> <span class="nav-text">4、git操作流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#初始化"><span class="nav-number">4.1.</span> <span class="nav-text">初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#添加远程仓库"><span class="nav-number">4.1.1.</span> <span class="nav-text">添加远程仓库</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#删除远程仓库"><span class="nav-number">4.1.2.</span> <span class="nav-text">删除远程仓库</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#拉取"><span class="nav-number">4.2.</span> <span class="nav-text">拉取</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#git-pull"><span class="nav-number">4.2.1.</span> <span class="nav-text">git pull</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#git-fetch"><span class="nav-number">4.2.2.</span> <span class="nav-text">git fetch</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#提交"><span class="nav-number">4.3.</span> <span class="nav-text">提交</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#git-add"><span class="nav-number">4.3.1.</span> <span class="nav-text">git add</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#git-commit"><span class="nav-number">4.3.2.</span> <span class="nav-text">git commit</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#git-push"><span class="nav-number">4.3.3.</span> <span class="nav-text">git push</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查看"><span class="nav-number">4.4.</span> <span class="nav-text">查看</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#git-log"><span class="nav-number">4.4.1.</span> <span class="nav-text">git log</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#git-blame"><span class="nav-number">4.4.2.</span> <span class="nav-text">git blame</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#git-status"><span class="nav-number">4.4.3.</span> <span class="nav-text">git status</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#回退"><span class="nav-number">4.5.</span> <span class="nav-text">回退</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#git-checkout"><span class="nav-number">4.5.1.</span> <span class="nav-text">git checkout</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#git-reset"><span class="nav-number">4.5.2.</span> <span class="nav-text">git reset</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#git-revert"><span class="nav-number">4.5.3.</span> <span class="nav-text">git revert</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#暂存"><span class="nav-number">4.6.</span> <span class="nav-text">暂存</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#git-stash"><span class="nav-number">4.6.1.</span> <span class="nav-text">git stash</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分支操作"><span class="nav-number">4.7.</span> <span class="nav-text">分支操作</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#git-merge"><span class="nav-number">4.7.1.</span> <span class="nav-text">git merge</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#git-rebase"><span class="nav-number">4.7.2.</span> <span class="nav-text">git rebase</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#git-cherry-pick"><span class="nav-number">4.7.3.</span> <span class="nav-text">git cherry-pick</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#git-branch"><span class="nav-number">4.7.4.</span> <span class="nav-text">git branch</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div style="text-align: center;">
+<div class="copyright">
+  
+  &copy;  2016 &mdash; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">IvanFanWu</span>
+
+  
+</div>
+
+<div style="text-align: center;">
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  访客数：<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<span class="post-meta-divider">|</span>
+
+<i class="fa fa-eye"></i><span id="busuanzi_container_site_pv">
+    访问量：<span id="busuanzi_value_site_pv"></span>
+</span>
+
+  <div class="beian">
+    <img src="/images/beian.png" style="display:inline-block;text-decoration:none;height:13px;">
+    <a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备18126196号</a>
+  </div>
+
+
+
+<!--  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+-->
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </div></footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

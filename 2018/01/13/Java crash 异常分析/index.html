@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Android,Java,Crash,异常,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="Java 异常异常是指阻止当前方法或作用域继续执行的问题。当异常发生时，它会强制终止程序运行，记录异常信息并进行反馈。Java 为我们提供了非常完善的异常机制来保证程序的正常运行，其异常类层次结构如下图所示：  Throwable 是 Java 中所有异常的基类。它分为俩大类：Error（错误）和 Exception（异常）。 Error（错误）：是程序无法处理的错误，大多数错误表示 JVM（Ja">
+<meta name="keywords" content="Android,Java,Crash,异常">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java crash 异常分析">
+<meta property="og:url" content="http://lavnfan.github.io/2018/01/13/Java crash 异常分析/index.html">
+<meta property="og:site_name" content="IvanFanWu">
+<meta property="og:description" content="Java 异常异常是指阻止当前方法或作用域继续执行的问题。当异常发生时，它会强制终止程序运行，记录异常信息并进行反馈。Java 为我们提供了非常完善的异常机制来保证程序的正常运行，其异常类层次结构如下图所示：  Throwable 是 Java 中所有异常的基类。它分为俩大类：Error（错误）和 Exception（异常）。 Error（错误）：是程序无法处理的错误，大多数错误表示 JVM（Ja">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://qny.ivanfan.site/throwable.png">
+<meta property="og:updated_time" content="2019-02-01T08:49:00.946Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java crash 异常分析">
+<meta name="twitter:description" content="Java 异常异常是指阻止当前方法或作用域继续执行的问题。当异常发生时，它会强制终止程序运行，记录异常信息并进行反馈。Java 为我们提供了非常完善的异常机制来保证程序的正常运行，其异常类层次结构如下图所示：  Throwable 是 Java 中所有异常的基类。它分为俩大类：Error（错误）和 Exception（异常）。 Error（错误）：是程序无法处理的错误，大多数错误表示 JVM（Ja">
+<meta name="twitter:image" content="http://qny.ivanfan.site/throwable.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://lavnfan.github.io/2018/01/13/Java crash 异常分析/">
+
+
+
+
+
+  <title>Java crash 异常分析 | IvanFanWu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">IvanFanWu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lavnfan.github.io/2018/01/13/Java crash 异常分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="IvanFanWu">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="IvanFanWu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java crash 异常分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-13T20:00:00+08:00">
+                2018-01-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i> 阅读次数
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Java-异常"><a href="#Java-异常" class="headerlink" title="Java 异常"></a>Java 异常</h2><p>异常是指阻止当前方法或作用域继续执行的问题。当异常发生时，它会强制终止程序运行，记录异常信息并进行反馈。Java 为我们提供了非常完善的异常机制来保证程序的正常运行，其异常类层次结构如下图所示：</p>
+<p><img src="http://qny.ivanfan.site/throwable.png" alt="throwable"></p>
+<p>Throwable 是 Java 中所有异常的基类。它分为俩大类：Error（错误）和 Exception（异常）。</p>
+<p><strong>Error（错误）：</strong>是程序无法处理的错误，大多数错误表示 JVM（Java 虚拟机）出现的问题，如 Java 虚拟机运行错误（Virtual MachineError）、类定义错误（NoClassDefFoundError）等。</p>
+<p><strong>Exception（异常）：</strong>是程序本身可以处理的异常。例如 NullPointerException、IndexOutOfBoundException 等。</p>
+<p>Java 的异常可以根据编译期间是否需要检查，分为受检异常和未受检异常：</p>
+<ul>
+<li>受检异常：是 RuntimeException 以外的 Exception 异常，类型上都属于 Exception 类及其子类。这些异常在编译期间就必须进行处理，否则会编译不通过。通过抛出受检的异常，强迫调用者在一个 catch 中处理该异常或传播出去，期望调用者能适当地恢复。</li>
+<li>未受检异常：不需要也不应该被捕获的可抛出结构，包含 Error 和 RuntimeException 异常。<ul>
+<li>运行时异常：表明编程错误，是 RuntimeException 的子类，运行时检查。</li>
+<li>错误：表示资源不足，约束失败，或其他使程序无法继续执行的条件。</li>
+</ul>
+</li>
+</ul>
+<p>需要注意的是：异常是为了在异常情况下使用而设计的，不要将他们用于普通的控制流。其次，基于异常的循环模式不仅模糊了代码的意图，降低了性能（ JVM 不会对异常的代码块进行优化），而且还不能保证正常工作。</p>
+<h3 id="处理异常"><a href="#处理异常" class="headerlink" title="处理异常"></a>处理异常</h3><p>在 Java 中若出现可受检异常，则可以选择使用 try-catch-finally 捕捉异常，或重新抛出异常扔给上一级处理，不处理将会导致编译错误。对于未受检异常，一般由系统在运行时抛出，不需要去捕获或处理。</p>
+<h4 id="try-catch-finally-捕捉异常"><a href="#try-catch-finally-捕捉异常" class="headerlink" title="try-catch-finally 捕捉异常"></a>try-catch-finally 捕捉异常</h4><ul>
+<li>try：捕获异常的代码块，监控可能产生异常的代码。其后可以接零个或多个 catch 块，如果没有 catch 块，则必须跟一个 finally 块。</li>
+<li>catch：处于 try 捕获到的异常。</li>
+<li>finally：无论是否捕获到异常，finally 块都会被执行。一般把除内存之外的资源恢复到他们的初始状态。</li>
+</ul>
+<h4 id="抛出异常"><a href="#抛出异常" class="headerlink" title="抛出异常"></a>抛出异常</h4><h5 id="throws"><a href="#throws" class="headerlink" title="throws"></a>throws</h5><p>throws 总是出现在一个函数头中，用来表明该成员函数可能抛出的各种异常。由调用这个方法的上一级处理。</p>
+<h5 id="throw"><a href="#throw" class="headerlink" title="throw"></a>throw</h5><p>throw 总是出现在函数体，用来抛出一个异常实例。程序会在 throw 语句后立即终止，它后面的语句执行不到。然后在包含它的所有 try 块中从里向外寻找含有其匹配的 catch 处理。</p>
+<h2 id="常见异常"><a href="#常见异常" class="headerlink" title="常见异常"></a>常见异常</h2><h3 id="NullPointException"><a href="#NullPointException" class="headerlink" title="NullPointException"></a>NullPointException</h3><h4 id="接口传入空值"><a href="#接口传入空值" class="headerlink" title="接口传入空值"></a>接口传入空值</h4><ul>
+<li>在使用后台接口或调用外部 API 时，不要轻易相信别人做的空指针保护，null 很有可能是返回的结果之一。</li>
+<li>json 解析的空值，使用 get 解析时会有 null 的情况。</li>
+</ul>
+<h4 id="在其他地方置空"><a href="#在其他地方置空" class="headerlink" title="在其他地方置空"></a>在其他地方置空</h4><p>如果使用的变量会在某些地方置空，这时需要注意在某些条件下，如延迟执行的任务里，可能会产生该变量的空指针异常。</p>
+<h3 id="IndexOutOfBoundsException"><a href="#IndexOutOfBoundsException" class="headerlink" title="IndexOutOfBoundsException"></a>IndexOutOfBoundsException</h3><ul>
+<li>单线程时，注意是否为空，长度是否大于0，是否有预判那么长</li>
+<li>多线程时，操作同一个对象，在未同步的情况下，clear时会导致另一个线程使用时越界</li>
+</ul>
+<h3 id="ConcurrentModificationException"><a href="#ConcurrentModificationException" class="headerlink" title="ConcurrentModificationException"></a>ConcurrentModificationException</h3><p>多线程情况下，不同线程一边访问一边修改会造成并发访问异常。</p>
+<p>案例：</p>
+<ul>
+<li>多线程情况下，直接返回成员变量，而不是一份新的赋值拷贝，很有可能在获取返回值后进行读取或修改时，其他地方也在操作这个成员变量，此时会造成并发访问的异常。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>知道是不会有人点的，但万一被感动了呢？</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/donate_wechat.png" alt="IvanFanWu 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    IvanFanWu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lavnfan.github.io/2018/01/13/Java crash 异常分析/" title="Java crash 异常分析">http://lavnfan.github.io/2018/01/13/Java crash 异常分析/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
+          
+            <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+          
+            <a href="/tags/Crash/" rel="tag"><i class="fa fa-tag"></i> Crash</a>
+          
+            <a href="/tags/异常/" rel="tag"><i class="fa fa-tag"></i> 异常</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/16/Collections.sort() 出现 IllegalArgumentException？因为它：TimSort/" rel="next" title="Collections.sort() 出现 IllegalArgumentException？因为它：TimSort">
+                <i class="fa fa-chevron-left"></i> Collections.sort() 出现 IllegalArgumentException？因为它：TimSort
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/18/内存泄漏/" rel="prev" title="内存泄漏">
+                内存泄漏 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zODc4NS8xNTMxMw=="></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            关于作者
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="IvanFanWu">
+          
+            <p class="site-author-name" itemprop="name">IvanFanWu</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lavnFan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:lavnFan@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-异常"><span class="nav-number">1.</span> <span class="nav-text">Java 异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#处理异常"><span class="nav-number">1.1.</span> <span class="nav-text">处理异常</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#try-catch-finally-捕捉异常"><span class="nav-number">1.1.1.</span> <span class="nav-text">try-catch-finally 捕捉异常</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#抛出异常"><span class="nav-number">1.1.2.</span> <span class="nav-text">抛出异常</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#throws"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">throws</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#throw"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">throw</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见异常"><span class="nav-number">2.</span> <span class="nav-text">常见异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#NullPointException"><span class="nav-number">2.1.</span> <span class="nav-text">NullPointException</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#接口传入空值"><span class="nav-number">2.1.1.</span> <span class="nav-text">接口传入空值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#在其他地方置空"><span class="nav-number">2.1.2.</span> <span class="nav-text">在其他地方置空</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IndexOutOfBoundsException"><span class="nav-number">2.2.</span> <span class="nav-text">IndexOutOfBoundsException</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ConcurrentModificationException"><span class="nav-number">2.3.</span> <span class="nav-text">ConcurrentModificationException</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div style="text-align: center;">
+<div class="copyright">
+  
+  &copy;  2016 &mdash; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">IvanFanWu</span>
+
+  
+</div>
+
+<div style="text-align: center;">
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  访客数：<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<span class="post-meta-divider">|</span>
+
+<i class="fa fa-eye"></i><span id="busuanzi_container_site_pv">
+    访问量：<span id="busuanzi_value_site_pv"></span>
+</span>
+
+  <div class="beian">
+    <img src="/images/beian.png" style="display:inline-block;text-decoration:none;height:13px;">
+    <a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备18126196号</a>
+  </div>
+
+
+
+<!--  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+-->
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </div></footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

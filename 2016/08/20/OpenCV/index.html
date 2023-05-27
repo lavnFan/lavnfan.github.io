@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Android,OpenCV,Linux,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="Android 中写的 JNI 如何调用 OpenCV ？ OpenCV 如何配置到 Linux 服务器上？  OpenCV for Android如果想实现图片的高斯模糊，图片比较，人脸识别等算法，OpenCV 可能是现成库里比较好的选择。使用 OpenCV 的优缺点：    现成库 C++ 调用，封装很好，实现较为简单，上层 JNI 调用性能较好 失去 Java 的跨平台特性  下边我们来看">
+<meta name="keywords" content="Android,OpenCV,Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenCV for Andorid 的总结">
+<meta property="og:url" content="http://lavnfan.github.io/2016/08/20/OpenCV/index.html">
+<meta property="og:site_name" content="IvanFanWu">
+<meta property="og:description" content="Android 中写的 JNI 如何调用 OpenCV ？ OpenCV 如何配置到 Linux 服务器上？  OpenCV for Android如果想实现图片的高斯模糊，图片比较，人脸识别等算法，OpenCV 可能是现成库里比较好的选择。使用 OpenCV 的优缺点：    现成库 C++ 调用，封装很好，实现较为简单，上层 JNI 调用性能较好 失去 Java 的跨平台特性  下边我们来看">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://qny.ivanfan.site/native_jni_directory.PNG">
+<meta property="og:image" content="http://qny.ivanfan.site/shared_warning.PNG">
+<meta property="og:image" content="http://qny.ivanfan.site/TARGET_ARCH_ABI.PNG">
+<meta property="og:updated_time" content="2019-02-01T08:49:00.947Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenCV for Andorid 的总结">
+<meta name="twitter:description" content="Android 中写的 JNI 如何调用 OpenCV ？ OpenCV 如何配置到 Linux 服务器上？  OpenCV for Android如果想实现图片的高斯模糊，图片比较，人脸识别等算法，OpenCV 可能是现成库里比较好的选择。使用 OpenCV 的优缺点：    现成库 C++ 调用，封装很好，实现较为简单，上层 JNI 调用性能较好 失去 Java 的跨平台特性  下边我们来看">
+<meta name="twitter:image" content="http://qny.ivanfan.site/native_jni_directory.PNG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://lavnfan.github.io/2016/08/20/OpenCV/">
+
+
+
+
+
+  <title>OpenCV for Andorid 的总结 | IvanFanWu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">IvanFanWu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lavnfan.github.io/2016/08/20/OpenCV/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="IvanFanWu">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="IvanFanWu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OpenCV for Andorid 的总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-08-20T20:00:00+08:00">
+                2016-08-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/OpenCV/" itemprop="url" rel="index">
+                    <span itemprop="name">OpenCV</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i> 阅读次数
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <ul>
+<li>Android 中写的 JNI 如何调用 OpenCV ？</li>
+<li>OpenCV 如何配置到 Linux 服务器上？</li>
+</ul>
+<h2 id="OpenCV-for-Android"><a href="#OpenCV-for-Android" class="headerlink" title="OpenCV for Android"></a>OpenCV for Android</h2><p>如果想实现图片的高斯模糊，图片比较，人脸识别等算法，OpenCV 可能是现成库里比较好的选择。<br>使用 OpenCV 的优缺点：  </p>
+<ul>
+<li>现成库 C++ 调用，封装很好，实现较为简单，上层 JNI 调用性能较好</li>
+<li>失去 Java 的跨平台特性</li>
+</ul>
+<p>下边我们来看看在 Android 的 JNI 中如何使用 OpenCV ？   </p>
+<h3 id="1、下载-OpenCV-for-Android-的-SDK"><a href="#1、下载-OpenCV-for-Android-的-SDK" class="headerlink" title="1、下载 OpenCV for Android 的 SDK"></a>1、下载 OpenCV for Android 的 SDK</h3><p><a href="https://sourceforge.net/projects/opencvlibrary/files/opencv-android/" target="_blank" rel="noopener">OpenCV for Android SDK</a></p>
+<h4 id="解压后有："><a href="#解压后有：" class="headerlink" title="解压后有："></a>解压后有：</h4><ul>
+<li>apk：manger 的 apk，这种方法不需要导入 OpenCV 的 sdk ，但需要在安装自己的apk外，还需安装 这里边的 manager 的 apk，体验不好,不建议使用。</li>
+<li>samples：样例代码</li>
+<li>sdk：需要用到的 java 层 或 jni 层的代码</li>
+</ul>
+<h4 id="具体的-IDE-配置方法"><a href="#具体的-IDE-配置方法" class="headerlink" title="具体的 IDE 配置方法"></a>具体的 IDE 配置方法</h4><ul>
+<li>Eclipse：<a href="http://docs.opencv.org/2.4/doc/tutorials/introduction/android_binary_package/dev_with_OCV_on_Android.html" target="_blank" rel="noopener">http://docs.opencv.org/2.4/doc/tutorials/introduction/android_binary_package/dev_with_OCV_on_Android.html</a></li>
+<li>Android Studio：以下重点来讲</li>
+</ul>
+<h3 id="2、Android-studio-配置"><a href="#2、Android-studio-配置" class="headerlink" title="2、Android studio 配置"></a>2、Android studio 配置</h3><h4 id="2-1、拷贝-native"><a href="#2-1、拷贝-native" class="headerlink" title="2.1、拷贝 native"></a>2.1、拷贝 native</h4><ul>
+<li>将 OpenCV 中 sdk 目录下的 native 全拷到项目根目录下</li>
+<li>新建 JNI Folder，并在目录下创建俩个文件：Android.mk 和 Application.mk</li>
+</ul>
+<p>建立在Project展开如下：</p>
+<p><img src="http://qny.ivanfan.site/native_jni_directory.PNG" alt></p>
+<h4 id="2-2、-文件配置"><a href="#2-2、-文件配置" class="headerlink" title="2.2、 文件配置"></a>2.2、 文件配置</h4><ul>
+<li><p>Android.mk</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">LOCAL_PATH := $(call my-dir)</span><br><span class="line"></span><br><span class="line">include $(CLEAR_VARS)</span><br></pre></td></tr></table></figure>
+<p>  OpenCV_INSTALL_MODULES := on<br>  OpenCV_CAMERA_MODULES := off</p>
+<p>  OPENCV_LIB_TYPE :=STATIC</p>
+<p>  ifeq (“$(wildcard $(OPENCV_MK_PATH))”,””)<br>  include ........\native\jni\OpenCV.mk<br>  else<br>  include $(OPENCV_MK_PATH)<br>  endif</p>
+<p>  LOCAL_MODULE := OpenCV</p>
+<p>  LOCAL_SRC_FILES :=</p>
+<p>  LOCAL_LDLIBS +=  -lm -llog</p>
+<p>  include $(BUILD_SHARED_LIBRARY)</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">	这里是以静态链接导入 OpenCV 库，然后编译成 共享的 so 库，所以会导致最终的 so 库体积比较大。 </span><br><span class="line">	  </span><br><span class="line">	**注意：`include ..\..\..\..\native\jni\OpenCV.mk` 的路径一定要对！！！**</span><br><span class="line"></span><br><span class="line">* Application.mk</span><br></pre></td></tr></table></figure>
+<p>  APP_STL := gnustl_static<br>  APP_CPPFLAGS := -frtti -fexceptions<br>  APP_ABI := armeabi armeabi-v7a<br>  APP_PLATFORM := android-8</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">	这里配置了 OpenCV 需要用到的 **STL** 库，以及编译的硬件平台等。</span><br><span class="line"></span><br><span class="line">* build.gradle</span><br></pre></td></tr></table></figure>
+<p>  sourceSets.main.jni.srcDirs = []<br>  //禁止自带的ndk功能<br>  sourceSets.main.jniLibs.srcDirs = [‘src/main/libs’,’src/main/jniLibs’]<br>  //重定向so目录为src/main/libs，原来为src/main/jniLibs</p>
+<p>  task ndkBuild(type: Exec, description: ‘Compile JNI source with NDK’) {</p>
+<pre><code>Properties properties = new Properties()
+properties.load(project.rootProject.file(&apos;local.properties&apos;).newDataInputStream())
+def ndkDir = properties.getProperty(&apos;ndk.dir&apos;)
+
+if (org.apache.tools.ant.taskdefs.condition.Os.isFamily(org.apache.tools.ant.taskdefs.condition.Os.FAMILY_WINDOWS)) {
+    commandLine &quot;$ndkDir/ndk-build.cmd&quot;, &apos;-C&apos;, file(&apos;src/main/jni&apos;).absolutePath
+} else {
+    commandLine &quot;$ndkDir/ndk-build&quot;, &apos;-C&apos;, file(&apos;src/main/jni&apos;).absolutePath
+}
+</code></pre><p>  }</p>
+<p>  tasks.withType(JavaCompile) {</p>
+<pre><code>compileTask -&gt; compileTask.dependsOn ndkBuild
+</code></pre><p>  }</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">* local.properties</span><br></pre></td></tr></table></figure>
+<p>  ndk.dir=D\:\program\Android\sdk\ndk-bundle</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">	这里配置 NDK 的路径</span><br><span class="line"></span><br><span class="line">#### 2.3、JNI 调用</span><br><span class="line">* 声明 java 层的 native 方法</span><br></pre></td></tr></table></figure>
+<p> public class OpenCVHelper {</p>
+<pre><code>static {
+    System.loadLibrary(&quot;OpenCV&quot;);
+}
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"> 	   public static native double compareImages(String old_image, String new_image,int type);</span><br><span class="line">​	&#125;</span><br><span class="line">​</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 javah 命令生成头文件</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javah -jni com.aliyun.utils.OpenCVHelper</span><br></pre></td></tr></table></figure>
+<p>  其中，javah的环境需要配置到电脑的 <code>path</code> 中去；<br>  生成了 <code>com_aliyun_utils_OpenCVHelper.h</code> 的头文件。</p>
+</li>
+<li><p>新建 cpp 文件，实现对应的方法</p>
+<p>  cpp 文件名为 <code>com_aliyun_utils_OpenCVHelper.cpp</code>，</p>
+</li>
+</ul>
+<ul>
+<li><p>在 Android.mk 文件中加入源文件</p>
+<p>  修改 <code>LOCAL_SRC_FILES := com_aliyun_utils_OpenCVHelper.cpp</code></p>
+</li>
+</ul>
+<h4 id="2-4、ndk-build"><a href="#2-4、ndk-build" class="headerlink" title="2.4、ndk-build"></a>2.4、ndk-build</h4><ul>
+<li>使用 Android studio 的 ndk-build 工具构建so库，点击右侧的 gradle ，展开在 other 下边找到 ndk-build。</li>
+<li>然后在 java 层中就可以使用 JNI 层的功能了。</li>
+</ul>
+<h3 id="3、静态还是共享链接-OpenCV"><a href="#3、静态还是共享链接-OpenCV" class="headerlink" title="3、静态还是共享链接 OpenCV"></a>3、静态还是共享链接 OpenCV</h3><p>上边我们在 Android.mk 中，使得 <code>OPENCV_LIB_TYPE :=STATIC</code>，以静态库的方式导入 OpenCV ，所以生成的 so 库比较大，达到好几M。   </p>
+<p>另一种方式是使用动态库的方式引入 OpenCV ，即把<code>OPENCV_LIB_TYPE :=SHARED</code>，动态加载所需要的库，在 ndk-build 时，会报 <code>-lopencv_java3</code> 的 warning :</p>
+<p><img src="http://qny.ivanfan.site/shared_warning.PNG" alt="libopencv_java3.so"></p>
+<p>这时我们把 native-jni-编译平台下的 <code>libopencv_java3.so</code> 导入即可。</p>
+<h2 id="OpenCV-for-Linux"><a href="#OpenCV-for-Linux" class="headerlink" title="OpenCV for Linux"></a>OpenCV for Linux</h2><p>OpenCV for Android 的 demo 完成了，但配置到服务器上，就是各种坑啊，一个 bug 接着一个 bug，所幸最终都依依解决了，现在把那些 bug 场景重现！</p>
+<p>要完成 JNI 中对 OpenCV 库的引用，<strong>关键</strong>就是需要把 <strong>OpenCV 库导入</strong>进来，不管是静态方式还是动态方式。<br>以下有俩种选择导入：</p>
+<ul>
+<li>方式一：利用已写好的 OpenCV.mk 引入</li>
+<li>方式二：在自己写的 Android.mk 中引入</li>
+</ul>
+<p>俩种方式并无本质差别，但用已有的 OpenCV.mk 引入时，会出现<strong>更多的问题</strong>，所以就单独作一类方法，来总结遇到的坑。</p>
+<h3 id="方法一、利用原来的-OpenCV-mk-引入"><a href="#方法一、利用原来的-OpenCV-mk-引入" class="headerlink" title="方法一、利用原来的 OpenCV.mk 引入"></a>方法一、利用原来的 OpenCV.mk 引入</h3><h4 id="1、OpenCV-mk-的路径问题"><a href="#1、OpenCV-mk-的路径问题" class="headerlink" title="1、OpenCV.mk 的路径问题"></a>1、OpenCV.mk 的路径问题</h4><p><strong>代码：</strong></p>
+<pre><code>include ..\..\native\jni\OpenCV.mk
+</code></pre><p><strong>报错：</strong></p>
+<pre><code>packages/apps/DVRRecorder/jni/OpenCV/Android.mk:9: ..\..\native\jni\OpenCV.mk: No such file or directory
+</code></pre><p>代码修改成这样：</p>
+<pre><code>$(LOCAL_PATH)\..\..\native\jni\OpenCV.mk
+</code></pre><p>还是报同样的错误。。。<br>认真思考一番,有办法了！！！   </p>
+<p><strong>解决：</strong><br>可以用 <strong>ls 命令在服务器上看能不能进入这个目录~</strong>，发现进不了，再细细思考一下，应该把斜杠给改反一下。<br>比如这样：<br>​<br>    include $(LOCAL_PATH)/../../native/jni/OpenCV.mk</p>
+<p>恩，没有报这个错误了，但紧接着又报了第二个错误。。。</p>
+<h4 id="2、TARGET-ARCH-ABI-的问题"><a href="#2、TARGET-ARCH-ABI-的问题" class="headerlink" title="2、TARGET_ARCH_ABI 的问题"></a>2、TARGET_ARCH_ABI 的问题</h4><p><strong>报错</strong>：</p>
+<pre><code>packages/apps/DVRRecorder/jni/OpenCV/../../native/jni/OpenCV.mk:40: packages/apps/DVRRecorder/jni/OpenCV/../../native/jni/OpenCV-.mk: No such file or directory
+</code></pre><p>OpenCV-.mk 是个什么鬼，但明显已经解决了 OpenCV.mk 的路径问题，怎么又出来 OpenCV-.mk 呢？   </p>
+<p><strong>深入：</strong><br>这时深入 OpenCV.mk，发现有这样的一段代码：</p>
+<pre><code>OPENCV_SUB_MK:=$(call my-dir)/OpenCV-$(TARGET_ARCH_ABI).mk
+</code></pre><p>这里找到了 -  号，很有可能是 <code>TARGET_ARCH_ABI</code> 的问题，于是在 导入的 native 目录下，全局搜索，发现</p>
+<pre><code>jni/OpenCV.mk:14:OPENCV_TARGET_ARCH_ABI:=$(TARGET_ARCH_ABI)
+jni/OpenCV.mk:17:OPENCV_LIBS_DIR:=$(OPENCV_THIS_DIR)/../libs/$(OPENCV_TARGET_ARC                                                                            H_ABI)
+jni/OpenCV.mk:18:OPENCV_3RDPARTY_LIBS_DIR:=$(OPENCV_THIS_DIR)/../3rdparty/libs/$                                                                            (OPENCV_TARGET_ARCH_ABI)
+jni/OpenCV.mk:22:OPENCV_SUB_MK:=$(call my-dir)/OpenCV-$(TARGET_ARCH_ABI).mk
+jni/OpenCV.mk:64:ifeq ($(OPENCV_MK_$(OPENCV_TARGET_ARCH_ABI)_ALREADY_INCLUDED),)
+jni/OpenCV.mk:76:    OPENCV_MK_$(OPENCV_TARGET_ARCH_ABI)_ALREADY_INCLUDED:=on
+</code></pre><p>搜索后发现<strong>只有使用，但没有定义</strong>！！！<br>问题就很明显了，<strong>没有导入编译的硬件平台</strong>，很有可能也是路径问题。   </p>
+<p><strong>解决：</strong><br>这里我们就不用去找 TARGET_ARCH_ABI 的路径了，直接根据所编译的平台，合理取值。   </p>
+<p>在 Android developer Guide上有说明：<a href="https://developer.android.com/ndk/guides/android_mk.html" target="_blank" rel="noopener">https://developer.android.com/ndk/guides/android_mk.html</a></p>
+<p><img src="http://qny.ivanfan.site/TARGET_ARCH_ABI.PNG" alt="TARGET_ARCH_ABI"></p>
+<p>用 <code>mm -B</code> 编译时，可以发现所编译的平台，根据使用的 CPU 架构来选取一个合理值，比如：</p>
+<pre><code>TARGET_ARCH_ABI := armeabi-v7a
+</code></pre><p>恩，以为没问题了，但下一个错误马上来~~~</p>
+<h4 id="3、编译，连接的问题"><a href="#3、编译，连接的问题" class="headerlink" title="3、编译，连接的问题"></a>3、编译，连接的问题</h4><p><strong>报错：</strong></p>
+<pre><code>No rule to make target `out/target/product/aeon6735_65c_s_l1/obj_arm/STATIC_LIBRARIES/opencv_shape_intermediates/export_includes&apos;, needed by `out/target/product/aeon6735_65c_s_l1/obj_arm/SHARED_LIBRARIES/OpenCV_intermediates/import_includes&apos;.  Stop.
+</code></pre><p>这就懵逼了~~~   </p>
+<p><strong>追踪：</strong></p>
+<p>但有关键字，<code>STATIC_LIBRARIES</code>，<code>SHARED_LIBRARIES</code>，且也肯定是 OpenCV.mk 出问题了，在 Android.mk 中我们声明了这俩个条件：</p>
+<pre><code>OpenCV_INSTALL_MODULES := on
+OpenCV_CAMERA_MODULES := off
+OPENCV_LIB_TYPE :=STATIC
+</code></pre><p>于是追踪到 OpenCV.mk 中发现：</p>
+<pre><code>ifeq ($(OPENCV_INSTALL_MODULES),on)
+        LOCAL_$(OPENCV_LIB_TYPE)_LIBRARIES += $(foreach mod, $(OPENCV_LIBS), opencv_$(mod))
+</code></pre><p>​    else<br>            LOCAL_LDLIBS += -L$(call host-path,$(LOCAL_PATH)/$(OPENCV_LIBS_DIR)) $(foreach lib, $(OPENCV_LIBS), -lopencv_$(lib))<br>​    endif</p>
+<pre><code>ifeq ($(OPENCV_LIB_TYPE),STATIC)
+        LOCAL_STATIC_LIBRARIES += $(OPENCV_3RDPARTY_COMPONENTS)
+</code></pre><p>​    endif</p>
+<p>猜测是这俩个条件判断后进去的语句出问题了，</p>
+<ul>
+<li>当为 <code>on</code> 时，以模块方式加载 <code>LOCAL_STATIC_LIBRARIES</code>，当为 <code>off</code> 时，以 <code>LOCAL_LDLIBS</code> 方式加载lib下的库。</li>
+<li>当 <code>OPENCV_LIB_TYPE==STATIC</code> 时，第三方的lib加载到 <code>LOCAL_STATIC_LIBRARIES</code> 中。</li>
+</ul>
+<p><strong>解决：</strong></p>
+<p>既然出错了，那把这俩句话都注释掉试试~  </p>
+<p>恩，注释肯定没用，但引入了下一个问题，既然我们把引入库的语句给删了，那接下来，肯定是需要我们把库的链接一个一个的引入咯。</p>
+<h4 id="4、STL-的头文件问题"><a href="#4、STL-的头文件问题" class="headerlink" title="4、STL 的头文件问题"></a>4、STL 的头文件问题</h4><p><strong>报错：</strong></p>
+<pre><code>packages/apps/DVRRecorder/jni/OpenCV/../../native/jni/include/opencv2/core/base.hpp:53:21: fatal error: algorithm: No such file or directory
+ #include &lt;algorithm&gt;
+</code></pre><p>STL 模板库的头文件没找到，所以需要引入 <code>algorithm</code> 的头文件。</p>
+<p><strong>解决：</strong>   </p>
+<p>找到头文件所在的位置，并以如下方式引入在 Android.mk 中：</p>
+<pre><code>LOCAL_C_INCLUDES := external/stlport/stlport/
+LOCAL_C_INCLUDES += bionic
+</code></pre><p><strong>解决了这个问题，发现又引入了更多的 bug ，但都是库的链接问题，接下来的库引入和第二种方式一样，只是第二种，就直接去掉了 OpenCV.mk，直接在 Android.mk 中一步一步的引入链接库。</strong></p>
+<h3 id="方法二、另启炉灶，在-Android-mk-中一个库一个库的引入"><a href="#方法二、另启炉灶，在-Android-mk-中一个库一个库的引入" class="headerlink" title="方法二、另启炉灶，在 Android.mk 中一个库一个库的引入"></a>方法二、另启炉灶，在 Android.mk 中一个库一个库的引入</h3><h3 id="1、静态库的引入"><a href="#1、静态库的引入" class="headerlink" title="1、静态库的引入"></a>1、静态库的引入</h3><p><strong>报错：</strong></p>
+<pre><code>packages/apps/DVRRecorder/jni/OpenCV/com_aliyun_utils_OpenCVHelper.cpp:30: error: undefined reference to &apos;cv::imread(cv::String const&amp;, int)&apos;
+packages/apps/DVRRecorder/jni/OpenCV/../../native/jni/include/opencv2/core/cvstd.hpp:667: error: undefined reference to &apos;cv::String::deallocate()&apos;
+packages/apps/DVRRecorder/jni/OpenCV/com_aliyun_utils_OpenCVHelper.cpp:31: error: undefined reference to &apos;cv::imread(cv::String const&amp;, int)&apos;
+packages/apps/DVRRecorder/jni/OpenCV/../../native/jni/include/opencv2/core/cvstd.hpp:667: error: undefined reference to &apos;cv::String::deallocate()&apos;
+packages/apps/DVRRecorder/jni/OpenCV/com_aliyun_utils_OpenCVHelper.cpp:34: error: undefined reference to &apos;cv::GaussianBlur(cv::_InputArray const&amp;, cv::_Outp
+</code></pre><p>找不到如 <code>imread</code>，<code>GaussianBlur</code> 的链接，而且这些链接应该是 OpenCV 库中的。</p>
+<p><strong>解决：</strong></p>
+<p>这里我们以静态库的方式引入 OpenCV 中的静态链接库，把 lib/armeabi-v7a 和 3rdparty/libs/armeabi-v7a 目录下的库全引入。</p>
+<p><strong>shell pwd：</strong>显示当前工作目录<br>这里我们以全路径的方式加入对应的库：</p>
+<pre><code>PATHD=$(shell pwd)
+LOCAL_LDFLAGS +=-L$(PATHD)/$(LOCAL_PATH)/lib/  -l$(PATHD)/$(LOCAL_PATH)/lib/libopencv_core.a \
+            -l$(PATHD)/$(LOCAL_PATH)/lib/libopencv_imgproc.a\
+            -l$(PATHD)/$(LOCAL_PATH)/lib/libopencv_highgui.a\
+            -l$(PATHD)/$(LOCAL_PATH)/lib/libopencv_imgcodecs.a \
+            -l$(PATHD)/$(LOCAL_PATH)/lib/libIlmImf.a  \
+            -l$(PATHD)/$(LOCAL_PATH)/lib/liblibjpeg.a  \
+            -l$(PATHD)/$(LOCAL_PATH)/lib/liblibwebp.a  \
+            -l$(PATHD)/$(LOCAL_PATH)/lib/liblibtiff.a  \
+            -l$(PATHD)/$(LOCAL_PATH)/lib/liblibpng.a  \
+            -l$(PATHD)/$(LOCAL_PATH)/lib/liblibjasper.a   \
+            -l$(PATHD)/$(LOCAL_PATH)/lib/libtbb.a  \
+            -l$(PATHD)/$(LOCAL_PATH)/lib/libopencv_java3.so \
+            -lstdc++
+</code></pre><h3 id="2、STL-库的引入"><a href="#2、STL-库的引入" class="headerlink" title="2、STL 库的引入"></a>2、STL 库的引入</h3><p><strong>报错</strong></p>
+<p>已经解决了 OpenCV 库的链接错误，但又报了如下错误：</p>
+<pre><code>error: undefined reference to &apos;vtable for std::basic_istringstream&lt;char, std::char_traits&lt;char&gt;, std::allocator&lt;char&gt; &gt;&apos;
+</code></pre><p>此处省略一堆同样的错误~~~<br>找度娘发现是 stl 标准库里边的，于是乎，我们还要引入关于 <strong>libgnustl</strong> <strong>libsupc++</strong> <strong>libstlport</strong>。</p>
+<p><strong>解决：</strong></p>
+<p>我们以静态的链接库引入 stl 等一系列库，如下：</p>
+<pre><code>prebuilt_stdcxx_PATH := prebuilts/ndk/current/sources/cxx-stl/gnu-libstdc++
+LOCAL_LDFLAGS += -L$(prebuilt_stdcxx_PATH)/libs/armeabi-v7a -lgnustl_static -lsupc++
+</code></pre><ul>
+<li>先定义一个路径的变量</li>
+<li>然后再在 LOCAL_LDFLAGS 中引入该链接库</li>
+</ul>
+<p>！！！但是，错误还是没变，但通过 <code>$(warning $(LOCAL_LDFLAGS))</code> 打印，确实可以找到对应的链接，这又是什么原因？？？  </p>
+<p>找了很久，决定在对应路径下再看看有没有其他的相同链接库，诶，发现有<strong>同名的共享 so 库</strong>，换成动态链接库试试~~  </p>
+<pre><code>LOCAL_LDFLAGS += -L$(prebuilt_stdcxx_PATH)/libs/armeabi-v7a -lgnustl_shared -lsupc++
+</code></pre><p>竟然发现报该错误的链接消失了！！神奇。   </p>
+<p><strong>猜测原因：</strong></p>
+<p>可能是我们在 Android.mk 中要编译的是动态 so 库，所以在既有静态库，也有动态库的情况下，需要引入和要编译的库相同类型的。</p>
+<h3 id="3、LOCAL-LDIBS-的引入"><a href="#3、LOCAL-LDIBS-的引入" class="headerlink" title="3、LOCAL_LDIBS 的引入"></a>3、LOCAL_LDIBS 的引入</h3><p><strong>报错：</strong></p>
+<pre><code>libopencv_core.a(ocl.cpp.o):ocl.cpp:function initOpenCLAndLoad: error: undefined reference to &apos;dlopen&apos;
+</code></pre><p>此处省略一堆同样的错误~~~  </p>
+<p><strong>解决：</strong> </p>
+<pre><code>LOCAL_LDLIBS +=  -lm -llog  -ldl -lz
+</code></pre><p>上边的的错误是没有引入  -ldl 的原因。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这次使用 OpenCV 的经历，bug 是一浪接着一浪。有些命令很有用，总结如下：</p>
+<ul>
+<li>强大的搜索：find * -exec grep -iHn ‘搜索名’ {} \;</li>
+<li>$(warning $(PATHD))：打印 makefile 中的 PATHD 变量</li>
+<li>PATHD=$(shell pwd)：获取当前工作目录，而不用手动书写全路径。</li>
+<li>LOCAL_C_INCLUDES：额外的 C/C++ 编译头文件路径</li>
+<li>LOCAL_LDLIBS：即 ldlibs，就是指定那些存在于<strong>系统目录下本模块需要连接的库</strong>。如果某一个库既有动态库又有静态库，那么在默认情况下是链接的动态库而非静态库</li>
+<li><p>LOCAL_LDFLAGS：这个编译变量传递给链接器一个一些额外的参数，比如想<strong>传递给外面的库和库路径给ld</strong>，那么就要加到这个上面，如：   </p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LOCAL_LDFLAGS += -L$(prebuilt_stdcxx_PATH1)/libs/armeabi-v7a -lstlport_shared</span><br></pre></td></tr></table></figure>
+<p>  或者直接加上绝对路径库的全名：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LOCAL_LDFLAGS +=-L$(PATHD)/$(LOCAL_PATH)/lib/  -l$(PATHD)/$(LOCAL_PATH)/lib/libopencv_core.a \</span><br><span class="line">			-l$(PATHD)/$(LOCAL_PATH)/lib/libopencv_imgproc.a\</span><br><span class="line">			-l$(PATHD)/$(LOCAL_PATH)/lib/libopencv_highgui.a\</span><br><span class="line">			-l$(PATHD)/$(LOCAL_PATH)/lib/libopencv_imgcodecs.a \</span><br></pre></td></tr></table></figure>
+<p>  且需要注意：如果是非系统的第三方库，只能用LOCAL_LDFLAGS方式，LOCAL_LDLIBS方式不行。</p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>知道是不会有人点的，但万一被感动了呢？</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/donate_wechat.png" alt="IvanFanWu 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    IvanFanWu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lavnfan.github.io/2016/08/20/OpenCV/" title="OpenCV for Andorid 的总结">http://lavnfan.github.io/2016/08/20/OpenCV/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
+          
+            <a href="/tags/OpenCV/" rel="tag"><i class="fa fa-tag"></i> OpenCV</a>
+          
+            <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/19/Animator/" rel="next" title="Android 动画">
+                <i class="fa fa-chevron-left"></i> Android 动画
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/21/Activity/" rel="prev" title="Activity">
+                Activity <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zODc4NS8xNTMxMw=="></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            关于作者
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="IvanFanWu">
+          
+            <p class="site-author-name" itemprop="name">IvanFanWu</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lavnFan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:lavnFan@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#OpenCV-for-Android"><span class="nav-number">1.</span> <span class="nav-text">OpenCV for Android</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、下载-OpenCV-for-Android-的-SDK"><span class="nav-number">1.1.</span> <span class="nav-text">1、下载 OpenCV for Android 的 SDK</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#解压后有："><span class="nav-number">1.1.1.</span> <span class="nav-text">解压后有：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#具体的-IDE-配置方法"><span class="nav-number">1.1.2.</span> <span class="nav-text">具体的 IDE 配置方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、Android-studio-配置"><span class="nav-number">1.2.</span> <span class="nav-text">2、Android studio 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1、拷贝-native"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1、拷贝 native</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2、-文件配置"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2、 文件配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-4、ndk-build"><span class="nav-number">1.2.3.</span> <span class="nav-text">2.4、ndk-build</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、静态还是共享链接-OpenCV"><span class="nav-number">1.3.</span> <span class="nav-text">3、静态还是共享链接 OpenCV</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OpenCV-for-Linux"><span class="nav-number">2.</span> <span class="nav-text">OpenCV for Linux</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#方法一、利用原来的-OpenCV-mk-引入"><span class="nav-number">2.1.</span> <span class="nav-text">方法一、利用原来的 OpenCV.mk 引入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、OpenCV-mk-的路径问题"><span class="nav-number">2.1.1.</span> <span class="nav-text">1、OpenCV.mk 的路径问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2、TARGET-ARCH-ABI-的问题"><span class="nav-number">2.1.2.</span> <span class="nav-text">2、TARGET_ARCH_ABI 的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3、编译，连接的问题"><span class="nav-number">2.1.3.</span> <span class="nav-text">3、编译，连接的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4、STL-的头文件问题"><span class="nav-number">2.1.4.</span> <span class="nav-text">4、STL 的头文件问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法二、另启炉灶，在-Android-mk-中一个库一个库的引入"><span class="nav-number">2.2.</span> <span class="nav-text">方法二、另启炉灶，在 Android.mk 中一个库一个库的引入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1、静态库的引入"><span class="nav-number">2.3.</span> <span class="nav-text">1、静态库的引入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、STL-库的引入"><span class="nav-number">2.4.</span> <span class="nav-text">2、STL 库的引入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、LOCAL-LDIBS-的引入"><span class="nav-number">2.5.</span> <span class="nav-text">3、LOCAL_LDIBS 的引入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div style="text-align: center;">
+<div class="copyright">
+  
+  &copy;  2016 &mdash; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">IvanFanWu</span>
+
+  
+</div>
+
+<div style="text-align: center;">
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  访客数：<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<span class="post-meta-divider">|</span>
+
+<i class="fa fa-eye"></i><span id="busuanzi_container_site_pv">
+    访问量：<span id="busuanzi_value_site_pv"></span>
+</span>
+
+  <div class="beian">
+    <img src="/images/beian.png" style="display:inline-block;text-decoration:none;height:13px;">
+    <a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备18126196号</a>
+  </div>
+
+
+
+<!--  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+-->
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </div></footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

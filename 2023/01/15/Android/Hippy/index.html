@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Android,跨平台,hippy,大前端,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="随着大前端技术栈的演变，各种跨平台框架层出不穷，本文选用 Hippy 作为跨平台框架，以 Hippy/Vue 为切入点，深入分析从前端到终端整个链路上的渲染流程。  一、为什么选择 Hippy  Hippy 性能高：性能优化可到秒开，对比 H5 优势非常明显 HIppy 集成小：Android 增量共 3.8M（so占2.9M），iOS 增量1M，对比 Flutter Android 集成增量">
+<meta name="keywords" content="Android,跨平台,hippy,大前端">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hippy 剖析">
+<meta property="og:url" content="http://lavnfan.github.io/2023/01/15/Android/Hippy/index.html">
+<meta property="og:site_name" content="IvanFanWu">
+<meta property="og:description" content="随着大前端技术栈的演变，各种跨平台框架层出不穷，本文选用 Hippy 作为跨平台框架，以 Hippy/Vue 为切入点，深入分析从前端到终端整个链路上的渲染流程。  一、为什么选择 Hippy  Hippy 性能高：性能优化可到秒开，对比 H5 优势非常明显 HIppy 集成小：Android 增量共 3.8M（so占2.9M），iOS 增量1M，对比 Flutter Android 集成增量">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://qny.ivanfan.site/android/%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9Hippy.png">
+<meta property="og:image" content="https://qny.ivanfan.site/android/Hippy%E6%9E%B6%E6%9E%84.png">
+<meta property="og:image" content="https://qny.ivanfan.site/android/Hippy%E8%8A%82%E7%82%B9.png">
+<meta property="og:image" content="https://qny.ivanfan.site/android/hippy%20tree.png">
+<meta property="og:image" content="https://qny.ivanfan.site/android/hippy-vue%E6%9E%B6%E6%9E%84.png">
+<meta property="og:image" content="https://qny.ivanfan.site/android/hippy-vue%E8%AF%A6%E5%89%96.png">
+<meta property="og:image" content="https://qny.ivanfan.site/android/hippy-css.png">
+<meta property="og:image" content="https://qny.ivanfan.site/android/hippy-js%E4%BC%A0%E8%BE%93.png">
+<meta property="og:image" content="https://qny.ivanfan.site/android/hippy%20%E7%BB%88%E7%AB%AF.png">
+<meta property="og:image" content="https://qny.ivanfan.site/android/hippy-jsbinding.png">
+<meta property="og:image" content="https://qny.ivanfan.site/android/hippy-jsi.png">
+<meta property="og:image" content="https://qny.ivanfan.site/android/hippy%E7%BB%84%E4%BB%B6.png">
+<meta property="og:image" content="https://qny.ivanfan.site/android/hippy-ul.png">
+<meta property="og:image" content="https://qny.ivanfan.site/android/hippy%E5%B1%80%E9%83%A8%E5%88%B7%E6%96%B0.png">
+<meta property="og:updated_time" content="2023-05-27T08:08:12.544Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hippy 剖析">
+<meta name="twitter:description" content="随着大前端技术栈的演变，各种跨平台框架层出不穷，本文选用 Hippy 作为跨平台框架，以 Hippy/Vue 为切入点，深入分析从前端到终端整个链路上的渲染流程。  一、为什么选择 Hippy  Hippy 性能高：性能优化可到秒开，对比 H5 优势非常明显 HIppy 集成小：Android 增量共 3.8M（so占2.9M），iOS 增量1M，对比 Flutter Android 集成增量">
+<meta name="twitter:image" content="https://qny.ivanfan.site/android/%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9Hippy.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://lavnfan.github.io/2023/01/15/Android/Hippy/">
+
+
+
+
+
+  <title>Hippy 剖析 | IvanFanWu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">IvanFanWu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lavnfan.github.io/2023/01/15/Android/Hippy/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="IvanFanWu">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="IvanFanWu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Hippy 剖析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-01-15T11:00:00+08:00">
+                2023-01-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/跨平台/" itemprop="url" rel="index">
+                    <span itemprop="name">跨平台</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/跨平台/Hippy/" itemprop="url" rel="index">
+                    <span itemprop="name">Hippy</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i> 阅读次数
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>随着大前端技术栈的演变，各种跨平台框架层出不穷，本文选用 Hippy 作为跨平台框架，以 Hippy/Vue 为切入点，深入分析从前端到终端整个链路上的渲染流程。</p>
+</blockquote>
+<h2 id="一、为什么选择-Hippy"><a href="#一、为什么选择-Hippy" class="headerlink" title="一、为什么选择 Hippy"></a>一、为什么选择 Hippy</h2><p><img src="https://qny.ivanfan.site/android/%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9Hippy.png" alt="为什么选择Hippy"></p>
+<ul>
+<li>Hippy 性能高：性能优化可到秒开，对比 H5 优势非常明显</li>
+<li>HIppy 集成小：Android 增量共 3.8M（so占2.9M），iOS 增量1M，对比 Flutter Android 集成增量 5.16M，iOS增量14.2M</li>
+<li>Hippy 支持大：专门中台维护保证新功能迭代/问题响应</li>
+</ul>
+<h2 id="二、Hippy-整体架构"><a href="#二、Hippy-整体架构" class="headerlink" title="二、Hippy 整体架构"></a>二、Hippy 整体架构</h2><p><img src="https://qny.ivanfan.site/android/Hippy%E6%9E%B6%E6%9E%84.png" alt="Hippy架构"></p>
+<p>Hippy 从技术栈的角度上划分为三层：</p>
+<ul>
+<li>Java/OC：应用框架层，主要框架的 module、views、adapter 提供和绑定，以及使用的流程等</li>
+<li>C++：内核层，主要的是对 V8/JSC 引擎的封装和运行，以及提供了 JSI 绑定的 基础模块，和 JS Bridge 和 JNI Bridge 两层模块的交互等</li>
+<li>JS：驱动层，主要是支持 react/vue 在 hippy 上运行和渲染，并封装了对齐 H5 的基础组件和样式等</li>
+</ul>
+<h2 id="三、Hippy-框架剖析"><a href="#三、Hippy-框架剖析" class="headerlink" title="三、Hippy 框架剖析"></a>三、Hippy 框架剖析</h2><h3 id="1、Hippy-Vue-如何生成-DOM-Tree"><a href="#1、Hippy-Vue-如何生成-DOM-Tree" class="headerlink" title="1、Hippy/Vue 如何生成 DOM Tree"></a>1、Hippy/Vue 如何生成 DOM Tree</h3><h4 id="1）节点映射"><a href="#1）节点映射" class="headerlink" title="1）节点映射"></a>1）节点映射</h4><p>我们书写一个页面的代码，并打印它最终传输到终端的数据如下：</p>
+<p><img src="https://qny.ivanfan.site/android/Hippy%E8%8A%82%E7%82%B9.png" alt="hippy2.x框架"></p>
+<p>终端就是根据右边的 node 数据进行渲染的，它会组成一个 DOM Tree：</p>
+<p><img src="https://qny.ivanfan.site/android/hippy%20tree.png" alt="hippy tree"></p>
+<p>其中有每个节点的终端组件名称和属性样式，以及节点之间的关系包括自身节点和父子节点。那这个 hippy/vue 是如何生成一颗传给终端的 DOM Tree 的？</p>
+<h4 id="2）hippy-vue-运行原理"><a href="#2）hippy-vue-运行原理" class="headerlink" title="2）hippy/vue 运行原理"></a>2）hippy/vue 运行原理</h4><p><img src="https://qny.ivanfan.site/android/hippy-vue%E6%9E%B6%E6%9E%84.png" alt="hippy-vue架构"></p>
+<ul>
+<li>编译阶段：提前确定、不变的部分提前转换为终端识别的组件或属性</li>
+<li>运行阶段：监听 node-ops，构建 DOM Tree</li>
+<li>绘制阶段：insert/remove/update 放入 batchNodes， $nextTick 批量传输给终端</li>
+</ul>
+<h4 id="3）hippy-vue-模版生成"><a href="#3）hippy-vue-模版生成" class="headerlink" title="3）hippy/vue 模版生成"></a>3）hippy/vue 模版生成</h4><p><img src="https://qny.ivanfan.site/android/hippy-vue%E8%AF%A6%E5%89%96.png" alt="hippy-vue详剖"></p>
+<ul>
+<li>基于 Vue 框架提供的 node-ops 钩子函数，拦截 DOM 的增、删、改操作，可应用在 Web、Server 或 Hippy 渲染中，这里转到 Hippy 框架中进行组装</li>
+<li>Hippy/Vue 构造了一个 ViewNode 树，并保存在一个数组结构中，放入数组中的 node 已经是转换为 NativeNode 的终端结构，包括样式匹配、终端组件名称映射</li>
+<li>并在每个 tick 会检查是否有需要传输的节点，若有则批量传输给终端</li>
+</ul>
+<h4 id="4）hippy-vue-样式匹配"><a href="#4）hippy-vue-样式匹配" class="headerlink" title="4）hippy/vue 样式匹配"></a>4）hippy/vue 样式匹配</h4><p><img src="https://qny.ivanfan.site/android/hippy-css.png" alt="hippy-css"></p>
+<ul>
+<li>编译时：CSS 样式文本会编译成 AST Tree，并放入 global[GLOBAL_STYLE_NAME] 全局变量中</li>
+<li>运行时：<ul>
+<li>将 CSSRules 构建成 CSS 选择器，可被 id、tag、class 查询</li>
+<li>在 ViewNode 转成 NativeNode 时，会根据 id、tag、class 查询和获取节点的样式信息，并组装到 NativeNode 的 props.style 属性中</li>
+</ul>
+</li>
+</ul>
+<h3 id="2、如何传输-DOM-Tree"><a href="#2、如何传输-DOM-Tree" class="headerlink" title="2、如何传输 DOM Tree"></a>2、如何传输 DOM Tree</h3><p><img src="https://qny.ivanfan.site/android/hippy-js%E4%BC%A0%E8%BE%93.png" alt="hippy-js传输"></p>
+<ul>
+<li>Hippy/Vue、Hippy/React 节点构建统一调用 UIManager 批量传输</li>
+<li>js-native 提供 Hippy.bridge.callNative 等通用能力通过 JSBinding 到 C++，再调用到 Java/OC 层</li>
+</ul>
+<h3 id="3、如何根据-DOM-Tree-渲染"><a href="#3、如何根据-DOM-Tree-渲染" class="headerlink" title="3、如何根据 DOM Tree 渲染"></a>3、如何根据 DOM Tree 渲染</h3><p>终端接收到 DOM Tree 数据后，整体会经过两个阶段，第一个阶段是序列化还原到 DOM Tree 结构，第二个阶段是把 DOM Node 批量转换到终端真实的 Render View 组件并渲染。</p>
+<p><img src="https://qny.ivanfan.site/android/hippy%20%E7%BB%88%E7%AB%AF.png" alt="为什么选择Hippy"></p>
+<p>① dom tree 构建：DOMManager 接收 UIManager 发送过来的节点数据组装还原 DOM Tree</p>
+<p>② node 布局计算：调用 flex 布局引擎计算每个 node 的节点位置</p>
+<p>③ render tree 构建：将 DOM Node 转换到终端的渲染节点 RenderNode，并传入对应的坐标位置和属性</p>
+<p>④ render view 构建：批量将 RenderNode 节点转换到终端真实的组件 Render View 节点进行创建</p>
+<p>⑤ render view 更新：更新 Render View，进行 children 的添加、调用 props 方法和 layout 排版</p>
+<h3 id="4、模块调用优化（JSBinding-amp-JSI）"><a href="#4、模块调用优化（JSBinding-amp-JSI）" class="headerlink" title="4、模块调用优化（JSBinding &amp; JSI）"></a>4、模块调用优化（JSBinding &amp; JSI）</h3><p>JS 到业务应用层一般要经过 JS -&gt; C++ -&gt; Java/OC，Android 比 iOS 多一层 JNI 传输，对于传输的数据比较大时，序列化、反序列化的耗时会成为性能瓶颈。于是有 JSBinding 和 JSI 的优化。</p>
+<h4 id="1）JSBinding"><a href="#1）JSBinding" class="headerlink" title="1）JSBinding"></a>1）JSBinding</h4><p><img src="https://qny.ivanfan.site/android/hippy-jsbinding.png" alt="hippy-jsbinding"></p>
+<p>对于需要传给 Java 层的一般通过统一的 bridge 调用，有序列化、反序列化和 JNI 的耗时，于是就有了直接在 C++ 层直接实现对应的 Module，通过 JSBinding 的机制绑定调用，省去了 C++ <-> Java 的损耗，但使用范围有限，只能局限于 SDK 内部的 Module，对于业务应用层的 Module 调用跑不通。</-></p>
+<h4 id="2）JSI"><a href="#2）JSI" class="headerlink" title="2）JSI"></a>2）JSI</h4><p><img src="https://qny.ivanfan.site/android/hippy-jsi.png" alt="hippy-jsi"></p>
+<ul>
+<li>JSI 在 C++ 层通过 JSBinding 的 <strong>NamedPropertyHandlerConfiguration</strong> 拦截调用的对象名和方法名，转发给 HostObjectProxy 进行分发</li>
+<li>同时在 C++ 侧动态创建和持有 Java 层的 module 对象，被 TurboModuleManager 管理</li>
+<li>HostObjectProxy 将 Get/Set 的属性/方法处理后分发给 HostObject，它同时持有对应的 Java Module 对象，以此实现 JS 的 同步调用</li>
+</ul>
+<p>JSI 适用于调用频繁，数据对象简单，耗时较少需要同步的场景。</p>
+<h2 id="四、Hippy-常用组件"><a href="#四、Hippy-常用组件" class="headerlink" title="四、Hippy 常用组件"></a>四、Hippy 常用组件</h2><h3 id="1、常用-Hippy-组件"><a href="#1、常用-Hippy-组件" class="headerlink" title="1、常用 Hippy 组件"></a>1、常用 Hippy 组件</h3><p>以下是 Hippy 经常使用的 标签跟终端组件的映射关系：</p>
+<p><img src="https://qny.ivanfan.site/android/hippy%E7%BB%84%E4%BB%B6.png" alt="hippy组件"></p>
+<h3 id="2、ul-复用优化"><a href="#2、ul-复用优化" class="headerlink" title="2、ul 复用优化"></a>2、ul 复用优化</h3><p>ul 的使用是非常频繁的，重点讲下它的复用逻辑：</p>
+<p><img src="https://qny.ivanfan.site/android/hippy-ul.png" alt="hippy-ul"></p>
+<p>ul 在Android 端使用的是 RecyclerView 组件，这里主要讲它的一级 Cache 缓存和三级 RecyclerPool 缓存。</p>
+<ul>
+<li>Cache 缓存：当前刚刚滑出屏幕的缓存，默认是 2个，根据 position 查找复用，可用来上下滑动时能够快速复用，被复用后可以直接拿过来使用，无需经过 Create 和 Bind</li>
+<li>RecyclerPool 缓存：缓存池的复用，根据 type 查找，每个 type 默认是5个，被复用后需要拿出来重新 Bind，即对 UI 根据数据重新刷新</li>
+<li>未命中缓存：需要重新走 Create 和 Bind 流程</li>
+</ul>
+<p>如果存在刷新时闪烁的情况，可以检查是否使用到了视频组件，此时可能会由于视频组件的 Surface 销毁创建造成闪烁。在全局数据刷新时：</p>
+<p><img src="https://qny.ivanfan.site/android/hippy%E5%B1%80%E9%83%A8%E5%88%B7%E6%96%B0.png" alt="hippy局部刷新"></p>
+<p>由于全局刷新时是不知道哪些 item 有变更的，那么根据 position 拿屏幕上的缓存时可能由于类型不一样就会发生错误。所以它只能把屏幕上的 View 都设置为 invalid 状态，对应的 View 会被 remove 再 add，这对于带 Surface 的视频组件会监听到当前宿主发生了变化，造成销毁和创建，导致闪烁。</p>
+<p>那么我们可以把 <code>hasStableIds</code> 设置为 true ，相当于强制所有 Item View 都设置了唯一的 id，这样在全局刷新时，获取屏幕上的 View 缓存，是明确知道哪些 positin 位置上的 View 完全没发生变化，就不会有 remove 和 add 的问题了。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>知道是不会有人点的，但万一被感动了呢？</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/donate_wechat.png" alt="IvanFanWu 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    IvanFanWu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lavnfan.github.io/2023/01/15/Android/Hippy/" title="Hippy 剖析">http://lavnfan.github.io/2023/01/15/Android/Hippy/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
+          
+            <a href="/tags/跨平台/" rel="tag"><i class="fa fa-tag"></i> 跨平台</a>
+          
+            <a href="/tags/hippy/" rel="tag"><i class="fa fa-tag"></i> hippy</a>
+          
+            <a href="/tags/大前端/" rel="tag"><i class="fa fa-tag"></i> 大前端</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/07/16/JS/v8-inspector 调试/" rel="next" title="基于 V8 引擎实现 JS 调试的 DevTools">
+                <i class="fa fa-chevron-left"></i> 基于 V8 引擎实现 JS 调试的 DevTools
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zODc4NS8xNTMxMw=="></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            关于作者
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="IvanFanWu">
+          
+            <p class="site-author-name" itemprop="name">IvanFanWu</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lavnFan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:lavnFan@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、为什么选择-Hippy"><span class="nav-number">1.</span> <span class="nav-text">一、为什么选择 Hippy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、Hippy-整体架构"><span class="nav-number">2.</span> <span class="nav-text">二、Hippy 整体架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、Hippy-框架剖析"><span class="nav-number">3.</span> <span class="nav-text">三、Hippy 框架剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、Hippy-Vue-如何生成-DOM-Tree"><span class="nav-number">3.1.</span> <span class="nav-text">1、Hippy/Vue 如何生成 DOM Tree</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1）节点映射"><span class="nav-number">3.1.1.</span> <span class="nav-text">1）节点映射</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2）hippy-vue-运行原理"><span class="nav-number">3.1.2.</span> <span class="nav-text">2）hippy/vue 运行原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3）hippy-vue-模版生成"><span class="nav-number">3.1.3.</span> <span class="nav-text">3）hippy/vue 模版生成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4）hippy-vue-样式匹配"><span class="nav-number">3.1.4.</span> <span class="nav-text">4）hippy/vue 样式匹配</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、如何传输-DOM-Tree"><span class="nav-number">3.2.</span> <span class="nav-text">2、如何传输 DOM Tree</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、如何根据-DOM-Tree-渲染"><span class="nav-number">3.3.</span> <span class="nav-text">3、如何根据 DOM Tree 渲染</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4、模块调用优化（JSBinding-amp-JSI）"><span class="nav-number">3.4.</span> <span class="nav-text">4、模块调用优化（JSBinding &amp; JSI）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1）JSBinding"><span class="nav-number">3.4.1.</span> <span class="nav-text">1）JSBinding</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2）JSI"><span class="nav-number">3.4.2.</span> <span class="nav-text">2）JSI</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、Hippy-常用组件"><span class="nav-number">4.</span> <span class="nav-text">四、Hippy 常用组件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、常用-Hippy-组件"><span class="nav-number">4.1.</span> <span class="nav-text">1、常用 Hippy 组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、ul-复用优化"><span class="nav-number">4.2.</span> <span class="nav-text">2、ul 复用优化</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div style="text-align: center;">
+<div class="copyright">
+  
+  &copy;  2016 &mdash; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">IvanFanWu</span>
+
+  
+</div>
+
+<div style="text-align: center;">
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  访客数：<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<span class="post-meta-divider">|</span>
+
+<i class="fa fa-eye"></i><span id="busuanzi_container_site_pv">
+    访问量：<span id="busuanzi_value_site_pv"></span>
+</span>
+
+  <div class="beian">
+    <img src="/images/beian.png" style="display:inline-block;text-decoration:none;height:13px;">
+    <a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备18126196号</a>
+  </div>
+
+
+
+<!--  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+-->
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </div></footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

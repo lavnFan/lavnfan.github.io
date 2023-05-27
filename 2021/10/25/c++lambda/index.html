@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="C++,lambda,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="lambda 是 c++11 引入，c++14 完善，是最常用的特性之一。本文是小组 C++ 学习分享系列之 - lambda 表达式，内容主要从 lambda 解决的问题、用法、实现、对比、总结这几方面来讲述。  一、lambda 解决的问题 find_if 是算法库中用于指定区域查找符合要求第一个元素，函数声明：InputIterator find_if (InputIterator fir">
+<meta name="keywords" content="C++,lambda">
+<meta property="og:type" content="article">
+<meta property="og:title" content="玩转 C++ lambda">
+<meta property="og:url" content="http://lavnfan.github.io/2021/10/25/c++lambda/index.html">
+<meta property="og:site_name" content="IvanFanWu">
+<meta property="og:description" content="lambda 是 c++11 引入，c++14 完善，是最常用的特性之一。本文是小组 C++ 学习分享系列之 - lambda 表达式，内容主要从 lambda 解决的问题、用法、实现、对比、总结这几方面来讲述。  一、lambda 解决的问题 find_if 是算法库中用于指定区域查找符合要求第一个元素，函数声明：InputIterator find_if (InputIterator fir">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2021-12-26T07:00:05.650Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="玩转 C++ lambda">
+<meta name="twitter:description" content="lambda 是 c++11 引入，c++14 完善，是最常用的特性之一。本文是小组 C++ 学习分享系列之 - lambda 表达式，内容主要从 lambda 解决的问题、用法、实现、对比、总结这几方面来讲述。  一、lambda 解决的问题 find_if 是算法库中用于指定区域查找符合要求第一个元素，函数声明：InputIterator find_if (InputIterator fir">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://lavnfan.github.io/2021/10/25/c++lambda/">
+
+
+
+
+
+  <title>玩转 C++ lambda | IvanFanWu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">IvanFanWu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lavnfan.github.io/2021/10/25/c++lambda/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="IvanFanWu">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="IvanFanWu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">玩转 C++ lambda</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2021-10-25T11:00:00+08:00">
+                2021-10-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index">
+                    <span itemprop="name">C++</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i> 阅读次数
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>lambda 是 c++11 引入，c++14 完善，是最常用的特性之一。本文是小组 C++ 学习分享系列之 - lambda 表达式，内容主要从 lambda 解决的问题、用法、实现、对比、总结这几方面来讲述。</p>
+</blockquote>
+<h2 id="一、lambda-解决的问题"><a href="#一、lambda-解决的问题" class="headerlink" title="一、lambda 解决的问题"></a>一、lambda 解决的问题</h2><blockquote>
+<p>find_if 是算法库中用于指定区域查找符合要求第一个元素，函数声明：InputIterator find_if (InputIterator first, InputIterator last, UnaryPredicate pred)。其中，first 和 last 是输入迭代器，其组合 [first, last) 用于指定要查找的区域；pred 是接收一个参数的表达式。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt;find_if(_InputIterator __first, _InputIterator __last, _Predicate __pred)</span><br><span class="line">&gt;&#123;</span><br><span class="line">&gt;    <span class="keyword">for</span> (; __first != __last; ++__first)</span><br><span class="line">&gt;        <span class="keyword">if</span> (__pred(*__first))</span><br><span class="line">&gt;            <span class="keyword">break</span>;</span><br><span class="line">&gt;    <span class="keyword">return</span> __first;</span><br><span class="line">&gt;&#125;</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>现在我们查找输入序列<code>{&quot;a&quot;, &quot;bbb&quot;, &quot;cc&quot;, &quot;d&quot;, &quot;ee&quot;, &quot;fff&quot;}</code> 中长度大于的1的第一个元素，可以用算法库中的 find_if 来实现一下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">isOverOneLength</span><span class="params">(<span class="keyword">const</span> <span class="built_in">string</span>&amp; s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> s.size() &gt; <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">bigs</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&amp; words)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> words_over_sz = find_if(words.begin(), words.end(), isOverOneLength);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>find_if 的第三个参数是一元谓词，即只接收一个参数的表达式 <code>func(args)</code>，为此我们实现一个函数，并返回长度是否大于1。</p>
+<p>对于需要寻找长度大于 1 的第一个元素，也会需要寻找长度大于 2 的第一个元素，此时的方式是再写一个函数<code>isOverTwoLength</code> ，这种情况下，<strong>是否有用完即扔的代码表达式，无需像函数那样需要提前定义或声明</strong>。</p>
+<p>一般来说，我们可以把长度抽象到函数的参数上，避免硬编码来实现函数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">biggies</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&amp; words, <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;::size_type sz)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> words_over_sz = find_if(words.begin(), words.end(), isOverOneLength);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但对于 find_if 的第三个参数是严格的一元谓词，实现的函数 <code>isOverOneLength</code> 已经接收了迭代过程中的元素，<strong>不可能再接收局部作用域的 sz 长度参数。为解决这个问题，就需要使用一些新的表达式，如 lambda 表达式。</strong></p>
+<h2 id="二、lambda-用法"><a href="#二、lambda-用法" class="headerlink" title="二、lambda 用法"></a>二、lambda 用法</h2><p>lambda 表达式表示一个可调用的代码单元，可以理解为一个未命名的内联函数。一个 lambda 表达式有如下形式：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[capture <span class="built_in">list</span>] (params <span class="built_in">list</span>) -&gt; <span class="keyword">return</span> type &#123; function body &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>[capture list]</code> ：捕获列表，能够捕获局部作用域的变量（包含形参）以供lambda函数使用。</li>
+<li><code>(parameters)</code> ：参数列表，与函数的参数列表一致，若不需要参数传递，可同括号一起省略。</li>
+<li><code>-&gt;return-type</code> ：返回类型。编译器会对返回类型自动推导，可以省略该部分。</li>
+<li><code>{function body}</code> ：函数体，跟函数一致。除了可以使用的形参之外，还可以使用所有捕获的变量，和非局部的变量。</li>
+</ul>
+<p>现在尝试使用 lambda 表达式来构造接收局部作用域 sz 长度参数来查找第一个元素：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">biggies</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&amp; words, <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;::size_type sz)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> words_over_sz = find_if(words.begin(), words.end(), [sz](<span class="keyword">const</span> <span class="built_in">string</span>&amp; s) &#123;</span><br><span class="line">        <span class="keyword">return</span> s.size() &gt; sz;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>lambda 表达式捕获 sz 变量，在函数体判断长度迭代的元素长度是否大于 sz，其中返回类型 bool 由编译器自动判断：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> f = [sz](<span class="keyword">const</span> <span class="built_in">string</span>&amp; s) &#123;</span><br><span class="line">      <span class="keyword">return</span> s.size() &gt; sz;</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="显示捕获"><a href="#显示捕获" class="headerlink" title="显示捕获"></a>显示捕获</h3><h4 id="值捕获"><a href="#值捕获" class="headerlink" title="值捕获"></a>值捕获</h4><p>值捕获需要变量是可以拷贝的，需要注意的是，<strong>被捕获的变量的值是在 lambda 创建时拷贝，而不是调用时拷贝</strong> ：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">testLambdaValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">size_t</span> v1 = <span class="number">42</span>;  <span class="comment">// 局部变量</span></span><br><span class="line">    <span class="keyword">auto</span> f = [v1]() &#123;  <span class="comment">// 将 v1 拷贝到名为 f 的可调用对象</span></span><br><span class="line">        <span class="keyword">return</span> v1;</span><br><span class="line">    &#125;;</span><br><span class="line">    v1 = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">auto</span> j = f();</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"testLambdaValue:"</span> &lt;&lt; j &lt;&lt; <span class="built_in">endl</span>;  <span class="comment">// j 为 42，f 保存了创建它时 v1的拷贝</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于被捕获变量的值时在 lambda 创建时拷贝的，因此之后的修改不会影响到 lambda 内对应的值。</p>
+<h4 id="引用捕获"><a href="#引用捕获" class="headerlink" title="引用捕获"></a>引用捕获</h4><p>使用引用捕获时，在 lambda 函数体使用的是引用所绑定的对象：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">testLambdaRef</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">size_t</span> v1 = <span class="number">42</span>;  <span class="comment">// 局部变量</span></span><br><span class="line">    <span class="keyword">auto</span> f = [&amp;v1]() &#123;  <span class="comment">// 对象 f 包含 v1 的引用</span></span><br><span class="line">        <span class="keyword">return</span> v1;</span><br><span class="line">    &#125;;</span><br><span class="line">    v1 = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">auto</span> j = f();</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"testLambdaValue:"</span> &lt;&lt; j &lt;&lt; <span class="built_in">endl</span>;  <span class="comment">// j 为0，f2 保存 v1 的引用，而非拷贝</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用引用捕获时，必须确保被被引用的对象在 lambda 执行的时候时存在的。lambda 捕获的都是局部变量，这些变量在函数结束后就不复存在，<strong>如果 lambda 在函数结束后执行，则捕获的引用指向的局部变量已经消失，造成悬垂指针</strong>。</p>
+<h3 id="隐式捕获"><a href="#隐式捕获" class="headerlink" title="隐式捕获"></a>隐式捕获</h3><p>除了显示列出希望使用来自所在函数的变量外，还可以让编译器根据 lambda 体中的代码，推断捕我们要使用的变量。此时使用 &amp; 或 = 来告诉编译起采用的捕获方式，例如以下使用 = 来默认捕获 sz：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">biggies</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&amp; words, <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;::size_type sz)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> words_over_sz = find_if(words.begin(), words.end(), [=](<span class="keyword">const</span> <span class="built_in">string</span>&amp; s) &#123;</span><br><span class="line">        <span class="keyword">return</span> s.size() &gt; sz;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果希望对一部分变量采用值捕获，对其他变量采用引用捕获，可以混合使用隐式和显示捕获：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">biggies</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&amp; words, ostream &amp;os = <span class="built_in">cout</span>, <span class="built_in">string</span> str = <span class="string">"|"</span>)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// os 隐式捕获， str 显示捕获</span></span><br><span class="line">    for_each(words.begin(), words.end(), [&amp;, str](<span class="keyword">const</span> <span class="built_in">string</span> &amp;s) &#123;</span><br><span class="line">        os &lt;&lt; s &lt;&lt; str;</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="comment">// os 显示捕获， str 隐式捕获</span></span><br><span class="line">    for_each(words.begin(), words.end(), [=, &amp;os](<span class="keyword">const</span> <span class="built_in">string</span> &amp;s) &#123;</span><br><span class="line">        os &lt;&lt; s &lt;&lt; str;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>混合使用的情况下，捕获列表的第一个元素必须是 &amp; 或 = ，代表默认的捕获方式。剩下其他的元素就必须与第一个元素不同的捕获方式。以下是详细列表说明：</p>
+<table>
+<thead>
+<tr>
+<th>捕获形式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[]</td>
+<td>空捕获列表，lambda不能使用所在函数的变量</td>
+</tr>
+<tr>
+<td>[names]</td>
+<td>nanes 是一个逗号分隔的名字列表，这些名字都是lambda所在函数的局部变量。默认情况下捕获的变量都被拷贝，名字如果前采用&amp;，则采用引用捕获的方式</td>
+</tr>
+<tr>
+<td>[&amp;]</td>
+<td>隐士捕获列表，采用引用捕获方式。lambda体中所使用的来自函数的实体都采用引用的方式</td>
+</tr>
+<tr>
+<td>[=]</td>
+<td>隐士捕获列表，采用值捕获方式。lambda 体将拷贝所使用的来自所在函数的实体的值</td>
+</tr>
+<tr>
+<td>[&amp;, identifier_list]</td>
+<td>identifier_list 是一个逗号分隔列表，包含 0 个或多个来自函数的变量。这些变量采用值捕获的方式，而任何隐式捕获的变量都采用引用方式捕获。 identifier_list 的名字前不能使用&amp;</td>
+</tr>
+<tr>
+<td>[=, identifier_list]</td>
+<td>identifier_list的变量都采用引用的方式捕获，而任何隐式捕获的变量都采用值方式捕获。identifier_list 中的名字不能包括this，且这些名字前必须采用&amp;</td>
+</tr>
+</tbody>
+</table>
+<p>但在实践的过程中，<strong>需要避免使用默认捕获</strong>，默认捕获很难显示的注意被捕获的变量生命周期与局部函数的生命周期情况，容易造成悬垂指针的错误等。</p>
+<h3 id="可变值"><a href="#可变值" class="headerlink" title="可变值"></a>可变值</h3><p>默认情况下，对于按值捕获的变量，lambda 不会改变其值。如果希望改变被捕获的变量的值，必须在参数列表首加上关键字 mutable：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">testLambdaChangeValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">size_t</span> v1 = <span class="number">42</span>;</span><br><span class="line">    <span class="keyword">auto</span> f = [v1]() <span class="keyword">mutable</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> ++v1;</span><br><span class="line">    &#125;;</span><br><span class="line">    v1 = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">auto</span> j = f();</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"testLambdaValue:"</span> &lt;&lt; j &lt;&lt; <span class="built_in">endl</span>;  <span class="comment">// j 为 43</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而引用捕获的变量是否可以修改，取决于它的引用指向的是否为一个 const 类型。</p>
+<h3 id="示例练习"><a href="#示例练习" class="headerlink" title="示例练习"></a>示例练习</h3><p>以下函数俩次打印值分别是什么：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">testLambdaUse</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">1</span>, b = <span class="number">1</span>, c = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> m1 = [a, &amp;b, &amp;c]() <span class="keyword">mutable</span> &#123;</span><br><span class="line">        <span class="keyword">auto</span> m2 = [a, b, &amp;c]() <span class="keyword">mutable</span> &#123;</span><br><span class="line">            <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; a &lt;&lt; b &lt;&lt; c &lt;&lt; <span class="string">'\n'</span>;</span><br><span class="line">            a = <span class="number">4</span>; b = <span class="number">4</span>; c = <span class="number">4</span>;</span><br><span class="line">        &#125;;</span><br><span class="line">        a = <span class="number">3</span>; b = <span class="number">3</span>; c = <span class="number">3</span>;</span><br><span class="line">        m2();</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    a = <span class="number">2</span>; b = <span class="number">2</span>; c = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">    m1();                             </span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; a &lt;&lt; b &lt;&lt; c &lt;&lt; <span class="string">'\n'</span>; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>创建 m1 的 lambda 时，a=1 按值拷贝捕获，b 和是 c 是 2 的引用</li>
+<li>创建 m2 的 lambda 时，a=1，b=2 按值拷贝捕获，c 按引用捕获</li>
+<li>m1 调用时，会接着调用 m2，此时打印的 a=1，b=2，c  为 m2 被调用前最新修改的值 3</li>
+<li>最后一次打印时，a 都是按值捕获，外部赋值不影响， b 受 m1 的引用捕获，最终是 m1 中改变的值，c 受 m1 和 m2 引用捕获，是最终 m2 修改的值。</li>
+</ul>
+<p>最后的输出：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 调用 m2() 并打印 123</span></span><br><span class="line"><span class="comment">// 打印 234</span></span><br></pre></td></tr></table></figure>
+<h2 id="三、lambda-本质"><a href="#三、lambda-本质" class="headerlink" title="三、lambda 本质"></a>三、lambda 本质</h2><p>lambda 表达式在编译时被翻译成一个未命名的未命名对象，产生的类中含有一个重载的函数调用运算符<code>operator()</code>，即仿函数。</p>
+<p>以下 lambda 表达式，接收 ostream 和 间隔符 str 来迭代打印字符：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> lambda = [&amp;os, str](<span class="keyword">const</span> <span class="built_in">string</span> &amp;s) &#123;</span><br><span class="line">    os &lt;&lt; s &lt;&lt; str;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>其对应编译起翻译后的类：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LambdaImpl</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// [] 引用/值捕获</span></span><br><span class="line">    LambdaImpl(ostream &amp;os, <span class="built_in">string</span> str) : os_(os), str_(str) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// () 调用参数</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">(<span class="keyword">const</span> <span class="built_in">string</span>&amp; s)</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; s &lt;&lt; str_;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    ostream &amp;os_;</span><br><span class="line">    <span class="built_in">string</span> str_;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>引用/值的变量捕获通过构造函数传入，当作类的成员变量</li>
+<li>重载函数操作符()，并声明行参，该函数默认为 const，不允许修改任何类成员变量</li>
+<li>lambda 产生的类不含默认构造、赋值运算符及默认析构函数，是否含有拷贝/移动构造函数则视捕获的数据成员类型而定</li>
+</ul>
+<p>使用方式：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">biggies</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&amp; words, ostream &amp;os = <span class="built_in">cout</span>, <span class="built_in">string</span> str = <span class="string">"|"</span>)</span> </span>&#123;</span><br><span class="line">  	<span class="comment">// lambda 方式</span></span><br><span class="line">    for_each(words.begin(), words.end(), lambda);</span><br><span class="line">    <span class="comment">// 重载函数调用符对象</span></span><br><span class="line">    for_each(words.begin(), words.end(), LambdaImpl(os, str));</span><br><span class="line">  	</span><br><span class="line">  	<span class="comment">// lambda 方式</span></span><br><span class="line">    lambda(<span class="string">"this is lambda"</span>);</span><br><span class="line">    <span class="keyword">auto</span> lambda_impl = LambdaImpl(os, str);</span><br><span class="line">  	<span class="comment">// 重载函数调用符对象</span></span><br><span class="line">    lambda_impl(<span class="string">"this is lambda impl"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="四、lambda-对比"><a href="#四、lambda-对比" class="headerlink" title="四、lambda 对比"></a>四、lambda 对比</h2><p>C++ 中有几种可调用的对象：函数、函数指针、lambda表达式、bind 创建的对象以及重载了函数调用运算符的类，他们都可以用 f(args) 的调用形式。 </p>
+<p>前边提到 find_if 的第三个参数只接收一元谓词的参数，当如果还想把长度参数 sz 传递时，普通的函数/函数指针就不能胜任。那除了 lambda 表达式或重载函数调用的类外，还有其他方式解决吗？</p>
+<h3 id="C-的-bind"><a href="#C-的-bind" class="headerlink" title="C++ 的 bind"></a>C++ 的 bind</h3><p>在 functional 中有一个 bind 的通用函数适配器，它接受一个可调用对象，生成一个新的可调用对象来“适应”原对象的参数列表：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> newCallable = bind(callable, arg_list)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>arg_list：逗号分隔的参数列表，会当作参数传递给 callback 的函数<ul>
+<li>arg_list 可能包含 <code>std::placeholders::_n</code> 的名字，其中 n 为一个整数，是“占位符”，表示 newCallable 的参数，它们占据了 newCallable 的参数的位置。<code>_1</code> 表示 第一个参数，<code>_2</code> 表示第二个参数，依次类推。</li>
+</ul>
+</li>
+<li>newCallable：可调用对象，调用 newCallable 时，它会调用 callable，并传递 arg_list 中的参数</li>
+</ul>
+<p>回顾之前 find_if 查找 sz 长度的第一个元素的实现：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">biggies</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&amp; words, <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;::size_type sz)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> words_over_sz = find_if(words.begin(), words.end(), [sz](<span class="keyword">const</span> <span class="built_in">string</span>&amp; s) &#123;</span><br><span class="line">        <span class="keyword">return</span> s.size() &gt; sz;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们使用 bind 实现如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">isOverSzLength</span><span class="params">(<span class="keyword">const</span> <span class="built_in">string</span>&amp; s, <span class="built_in">string</span>::size_type sz)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> s.size() &gt; sz;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">biggies</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&amp; words, <span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;::size_type sz)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> bind_over_sz = bind(isOverSzLength, <span class="built_in">std</span>::placeholders::_1, sz);</span><br><span class="line">    <span class="keyword">auto</span> words_over_sz = find_if(words.begin(), words.end(), bind_over_sz);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同样的，有些参数不希望以值的方式传递，希望以引用的方式传递，可以使用 ref 来生成一个 const 的引用：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">print</span><span class="params">(ostream&amp; os, <span class="keyword">const</span> <span class="built_in">string</span> &amp;s, <span class="built_in">string</span> str)</span> </span>&#123;</span><br><span class="line">    os &lt;&lt; s &lt;&lt; str;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">biggies</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">string</span>&gt;&amp; words, ostream &amp;os = <span class="built_in">cout</span>, <span class="built_in">string</span> str = <span class="string">"|"</span>)</span> </span>&#123;</span><br><span class="line">    for_each(words.begin(), words.end(), bind(print, ref(os), placeholders::_1, <span class="string">"|"</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="lambda-vs-bind"><a href="#lambda-vs-bind" class="headerlink" title="lambda vs bind"></a>lambda vs bind</h4><ul>
+<li>lambda 表达式具有更强的可读性，表达力更好，lambda 的传参方式比 bind 函数更直观。</li>
+<li>bind函数绑定重载函数时会遇到二义性问题。由于函数名只是个名字，不带形参类型等其他附加信息，所以无法知道被绑定的是哪个重载版本的函数。</li>
+<li>lambda 表达式可能生成比使用 bind 运行效率更高的代码。lambda 表达式会生成一个确定的重载函数调用类的实例，编译器可以进行 inline 函数调用优化。但 bind 绑定的是函数指针，运行时分配，无法内联优化。</li>
+</ul>
+<h4 id="c-14-lambda-增加初始化捕获"><a href="#c-14-lambda-增加初始化捕获" class="headerlink" title="c++14 lambda 增加初始化捕获"></a>c++14 lambda 增加初始化捕获</h4><p>在 c++ 11 的 lambda 里，捕获的值无法是初始化的变量，会带来一个问题：对于无法拷贝或引用的一些捕获，如 <code>std::unique_ptr</code> ，就只能进行移动，该如何实现？</p>
+<p>lambda 表达式本质上也是重载函数调用的类，所以这里可以通过类来实现，成员变量是支持移动初始化的。如果强行用 lambda 来实现，则需要借助 bind ：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> pw = <span class="built_in">std</span>::make_unique&lt;UniqueObject&gt;(); </span><br><span class="line"><span class="keyword">auto</span> func = <span class="built_in">std</span>::bind([](<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">unique_ptr</span>&lt;UniqueObject&gt; &amp;pw) &#123;&#125;, <span class="built_in">std</span>::move(pw));</span><br></pre></td></tr></table></figure>
+<p>在 bind 的参数上对 <code>std::unique_ptr</code> 进行移动，作为参数传入到 lambda 表达式中。在 c++ 14 中 lambda 增加了初始化捕获：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> func = [pw = <span class="built_in">std</span>::move(pw)]&#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>在 c++14 后，lambda 几乎可替代 bind 的场景。</p>
+<h2 id="五、lambda-总结"><a href="#五、lambda-总结" class="headerlink" title="五、lambda 总结"></a>五、lambda 总结</h2><h3 id="1、使用场景"><a href="#1、使用场景" class="headerlink" title="1、使用场景"></a>1、使用场景</h3><p>如果出现以下情况的，优先考虑使用 Lambda 表达式</p>
+<ul>
+<li>需要捕获局部变量的，优先使用 Lambda 表达式，而不要使用 <code>std::bind</code> 或重载函数调用的仿函数类。</li>
+<li>如果函数仅在局部使用且短小，优先使用 Lambda 表达式，而不是全局静态函数。</li>
+</ul>
+<h3 id="2、捕获建议"><a href="#2、捕获建议" class="headerlink" title="2、捕获建议"></a>2、捕获建议</h3><p>1）对于局部使用的 Lambda （非常确定的在何时调用 Lambda，例如 <code>std::find_if</code>），优先采用按引用捕获非值捕获。</p>
+<p>2）对于非局部使用的 Lambda （不确定何时调用 Lambda 或 Lambda 执行顺序和主调方有数据竞争，例如 <code>std::thread</code>），避免采用按引用捕获。</p>
+<p>3）尽量避免使用默认捕获：</p>
+<ul>
+<li>如果捕获的 <code>this</code>，禁止使用默认捕获；</li>
+<li>如果某个 Lambda 表达式并未捕获任何局部变量，禁止添加默认捕获；</li>
+<li>仅在 Lambda 函数体较短，或生命周期比捕获的内容短时，才应该考虑使用默认捕获。</li>
+</ul>
+<h3 id="3、lambda-优缺点"><a href="#3、lambda-优缺点" class="headerlink" title="3、lambda 优缺点"></a>3、lambda 优缺点</h3><h4 id="优点："><a href="#优点：" class="headerlink" title="优点："></a>优点：</h4><ul>
+<li>Lambda 减少全局函数的声明，使得代码更加简洁。</li>
+<li>Lambda 提升了可读性，比如使用 STL 算法传递函数对象 <code>find_if</code> 等场景时。</li>
+<li>Lambda、重载函数调用的仿函数类、<code>std::bind</code> 相比函数、函数指针，可以接受或捕获更多的变量信息，更适用通用的回调机制。</li>
+</ul>
+<h4 id="缺点："><a href="#缺点：" class="headerlink" title="缺点："></a>缺点：</h4><ul>
+<li>Lambda 捕获的变量可能导致悬垂指针错误，尤其在 lambda 离开当前作用域的场景。</li>
+<li>按值捕获也可能导致悬垂指针错误。因为捕获指针不会深拷贝，所以和按引用捕获一样，会遇到同样的生命周期问题。尤其在隐式使用 <code>this</code>，导致按值捕获 <code>this</code> 的场景下，使人困惑。</li>
+<li>Lambda 可能被滥用，层层嵌套的匿名函数让代码难以理解。</li>
+</ul>
+<p><strong>相关参考：</strong></p>
+<ul>
+<li><p>c++primer 第五版，10.3：p344-p357</p>
+</li>
+<li><p>lambda 表达式：<a href="https://zh.cppreference.com/w/cpp/language/lambda" target="_blank" rel="noopener">https://zh.cppreference.com/w/cpp/language/lambda</a></p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>知道是不会有人点的，但万一被感动了呢？</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/donate_wechat.png" alt="IvanFanWu 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    IvanFanWu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lavnfan.github.io/2021/10/25/c++lambda/" title="玩转 C++ lambda">http://lavnfan.github.io/2021/10/25/c++lambda/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C/" rel="tag"><i class="fa fa-tag"></i> C++</a>
+          
+            <a href="/tags/lambda/" rel="tag"><i class="fa fa-tag"></i> lambda</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/10/20/深圳楼市-如何打新/" rel="next" title="深圳楼市-如何打新">
+                <i class="fa fa-chevron-left"></i> 深圳楼市-如何打新
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/01/05/Android/VPN代理加速/" rel="prev" title="VPN 代理加速">
+                VPN 代理加速 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zODc4NS8xNTMxMw=="></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            关于作者
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="IvanFanWu">
+          
+            <p class="site-author-name" itemprop="name">IvanFanWu</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lavnFan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:lavnFan@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一、lambda-解决的问题"><span class="nav-number">1.</span> <span class="nav-text">一、lambda 解决的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二、lambda-用法"><span class="nav-number">2.</span> <span class="nav-text">二、lambda 用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#显示捕获"><span class="nav-number">2.1.</span> <span class="nav-text">显示捕获</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#值捕获"><span class="nav-number">2.1.1.</span> <span class="nav-text">值捕获</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#引用捕获"><span class="nav-number">2.1.2.</span> <span class="nav-text">引用捕获</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#隐式捕获"><span class="nav-number">2.2.</span> <span class="nav-text">隐式捕获</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可变值"><span class="nav-number">2.3.</span> <span class="nav-text">可变值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#示例练习"><span class="nav-number">2.4.</span> <span class="nav-text">示例练习</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三、lambda-本质"><span class="nav-number">3.</span> <span class="nav-text">三、lambda 本质</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四、lambda-对比"><span class="nav-number">4.</span> <span class="nav-text">四、lambda 对比</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#C-的-bind"><span class="nav-number">4.1.</span> <span class="nav-text">C++ 的 bind</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#lambda-vs-bind"><span class="nav-number">4.1.1.</span> <span class="nav-text">lambda vs bind</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#c-14-lambda-增加初始化捕获"><span class="nav-number">4.1.2.</span> <span class="nav-text">c++14 lambda 增加初始化捕获</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五、lambda-总结"><span class="nav-number">5.</span> <span class="nav-text">五、lambda 总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、使用场景"><span class="nav-number">5.1.</span> <span class="nav-text">1、使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、捕获建议"><span class="nav-number">5.2.</span> <span class="nav-text">2、捕获建议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3、lambda-优缺点"><span class="nav-number">5.3.</span> <span class="nav-text">3、lambda 优缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#优点："><span class="nav-number">5.3.1.</span> <span class="nav-text">优点：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缺点："><span class="nav-number">5.3.2.</span> <span class="nav-text">缺点：</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div style="text-align: center;">
+<div class="copyright">
+  
+  &copy;  2016 &mdash; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">IvanFanWu</span>
+
+  
+</div>
+
+<div style="text-align: center;">
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  访客数：<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<span class="post-meta-divider">|</span>
+
+<i class="fa fa-eye"></i><span id="busuanzi_container_site_pv">
+    访问量：<span id="busuanzi_value_site_pv"></span>
+</span>
+
+  <div class="beian">
+    <img src="/images/beian.png" style="display:inline-block;text-decoration:none;height:13px;">
+    <a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备18126196号</a>
+  </div>
+
+
+
+<!--  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+-->
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </div></footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

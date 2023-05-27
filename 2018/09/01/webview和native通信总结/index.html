@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Android,webview,js,native,jsbridge,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="作为跨平台的解决方案之一，使用 webview 这种 hybrid 方式是最早被应用起来的，现在也已慢慢走向成熟。本文简单介绍一下使用 webview 过程中 js 和 native 的几种通信方式和性能对比。  通信方式介绍Android webview 关于 Js 和 Native 的几种通信方式如下所示：  Native-Jswebview.loadUrlJava 中调用 Js 代码，使用">
+<meta name="keywords" content="Android,webview,js,native,jsbridge">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Webview 和 Native 通信总结">
+<meta property="og:url" content="http://lavnfan.github.io/2018/09/01/webview和native通信总结/index.html">
+<meta property="og:site_name" content="IvanFanWu">
+<meta property="og:description" content="作为跨平台的解决方案之一，使用 webview 这种 hybrid 方式是最早被应用起来的，现在也已慢慢走向成熟。本文简单介绍一下使用 webview 过程中 js 和 native 的几种通信方式和性能对比。  通信方式介绍Android webview 关于 Js 和 Native 的几种通信方式如下所示：  Native-Jswebview.loadUrlJava 中调用 Js 代码，使用">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://qny.ivanfan.site/webview-native%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F.png">
+<meta property="og:updated_time" content="2019-02-01T08:49:00.949Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Webview 和 Native 通信总结">
+<meta name="twitter:description" content="作为跨平台的解决方案之一，使用 webview 这种 hybrid 方式是最早被应用起来的，现在也已慢慢走向成熟。本文简单介绍一下使用 webview 过程中 js 和 native 的几种通信方式和性能对比。  通信方式介绍Android webview 关于 Js 和 Native 的几种通信方式如下所示：  Native-Jswebview.loadUrlJava 中调用 Js 代码，使用">
+<meta name="twitter:image" content="http://qny.ivanfan.site/webview-native%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://lavnfan.github.io/2018/09/01/webview和native通信总结/">
+
+
+
+
+
+  <title>Webview 和 Native 通信总结 | IvanFanWu</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">IvanFanWu</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://lavnfan.github.io/2018/09/01/webview和native通信总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="IvanFanWu">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="IvanFanWu">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Webview 和 Native 通信总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-01T20:00:00+08:00">
+                2018-09-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/Webview/" itemprop="url" rel="index">
+                    <span itemprop="name">Webview</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-eye"></i> 阅读次数
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>作为跨平台的解决方案之一，使用 webview 这种 hybrid 方式是最早被应用起来的，现在也已慢慢走向成熟。本文简单介绍一下使用 webview 过程中 js 和 native 的几种通信方式和性能对比。</p>
+</blockquote>
+<h2 id="通信方式介绍"><a href="#通信方式介绍" class="headerlink" title="通信方式介绍"></a>通信方式介绍</h2><p>Android webview 关于 Js 和 Native 的几种通信方式如下所示：</p>
+<p><img src="http://qny.ivanfan.site/webview-native%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F.png" alt></p>
+<h3 id="Native-Js"><a href="#Native-Js" class="headerlink" title="Native-Js"></a>Native-Js</h3><h4 id="webview-loadUrl"><a href="#webview-loadUrl" class="headerlink" title="webview.loadUrl"></a>webview.loadUrl</h4><p>Java 中调用 Js 代码，使用 <code>loadUrl()</code> 比较简单，如下所示条用弹出一个提示框：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webView.loadUrl(<span class="string">"javascript:alert('hello')"</span>);</span><br></pre></td></tr></table></figure>
+<p>Js 代码统一在页面加载完成，即 <code>onPageFinished()</code> 之后调用。</p>
+<h4 id="webview-evaluateJavaScript"><a href="#webview-evaluateJavaScript" class="headerlink" title="webview.evaluateJavaScript"></a>webview.evaluateJavaScript</h4><p>在 Android 4.4（API ≥ 19）后，新增了在 Native 中调用 Js 代码的方式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">webView.evaluateJavascript(<span class="string">"(function() &#123; return 'evaluateJavascript'; &#125;)()"</span>, <span class="keyword">new</span> ValueCallback&lt;String&gt;() &#123;</span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onReceiveValue</span><span class="params">(String value)</span> </span>&#123;</span><br><span class="line">             Log.d(TAG, <span class="string">"onReceiveValue:"</span> + value);</span><br><span class="line">       &#125;</span><br><span class="line"> &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这种方式优点：</p>
+<ul>
+<li>执行效率高</li>
+<li>有 Js 层执行后的回调</li>
+</ul>
+<p>但要注意的是，这种方式不会触发页面的刷新（<code>loadUrl()</code>加载页面时会触发刷新）。</p>
+<h3 id="Js-Native"><a href="#Js-Native" class="headerlink" title="Js-Native"></a>Js-Native</h3><h4 id="addJavaScriptInterface"><a href="#addJavaScriptInterface" class="headerlink" title="addJavaScriptInterface"></a>addJavaScriptInterface</h4><p>js 调用 native 效率最高的是使用 addJavaScriptInterface 方式，获取注入在 Js 中的 Java 对象，直接调用它的成员方法。</p>
+<p>在 Java 层中只需要创建一个对象，并声明给 Js 层调用的方法，再添加即可。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequiresApi</span>(Build.VERSION_CODES.JELLY_BEAN_MR1)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerJSInterface</span><span class="params">(WebView webView)</span> </span>&#123;</span><br><span class="line">    Log.d(TAG, <span class="string">"registerJSInterface"</span>);</span><br><span class="line">    webView.addJavascriptInterface(<span class="keyword">new</span> WebViewJSInterface(), <span class="string">"mWebViewJSInterface"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebViewJSInterface</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@JavascriptInterface</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">invoke</span><span class="params">(String url)</span> </span>&#123;</span><br><span class="line">        Log.d(TAG, <span class="string">"invoke url:"</span> + url);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Js 层调用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mWebViewJSInterface.invoke(<span class="string">'hello'</span>)</span><br></pre></td></tr></table></figure>
+<p>需要注意的是：addJavascriptInterface 的执行时机是，页面的下一次 load 时。所以一般可以将它放在页面加载之前进行注册。</p>
+<h4 id="shouldOverrideUrlLoading"><a href="#shouldOverrideUrlLoading" class="headerlink" title="shouldOverrideUrlLoading"></a>shouldOverrideUrlLoading</h4><p>Js 层可以通过 a 标签的跳转和 HTML 的请求有相关的响应，可以被 <code>WebViewClient</code> 的回调方法 <code>shouldOverrideUrlLoading ()</code> 拦截。这里我们可以利用 scheme iframe 机制，来实现类 shouldOverrideUrlLoading 的请求。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> url = <span class="string">'jsbridge://apollo/isApolloEngineReady?p=%7B%22callback%22%3A%22__MQQ_CALLBACK_AUTO_54%22%7D#54'</span>;  </span><br><span class="line"><span class="keyword">var</span> iframe = <span class="built_in">document</span>.createElement(<span class="string">'iframe'</span>);  </span><br><span class="line">iframe.src = url;  </span><br><span class="line"><span class="built_in">document</span>.body.appendChild(iframe);  </span><br><span class="line">setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;  </span><br><span class="line">    iframe.remove();</span><br><span class="line">&#125;, <span class="number">100</span>);</span><br></pre></td></tr></table></figure>
+<p>再在 Java 层给 webView 设置 WebViewClient 的回调，实现 <code>shouldOverrideUrlLoading</code> 拦截：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mWebView.setWebViewClient(<span class="keyword">new</span> WebViewClient()&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">shouldOverrideUrlLoading</span><span class="params">(WebView view, String url)</span> </span>&#123;</span><br><span class="line">            Log.d(TAG, <span class="string">"shouldOverrideUrlLoading url:"</span> + url);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">super</span>.shouldOverrideUrlLoading(view, url);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+<p>使用 <code>loadUrl()</code> 或 <code>window.location</code> 第一次加载页面时，<code>shouldOverrideUrlLoading</code> 是不会接收到回调的，但之后的每次页面请求都可以拦截到，可以用来判断是否为重定向。</p>
+<h4 id="onJsPromt、onJsAlert、onJsConfirm-onConsoleMessage"><a href="#onJsPromt、onJsAlert、onJsConfirm-onConsoleMessage" class="headerlink" title="onJsPromt、onJsAlert、onJsConfirm/onConsoleMessage"></a>onJsPromt、onJsAlert、onJsConfirm/onConsoleMessage</h4><p>在 Android 中， WebChromeClient 回调会处理 Js 层调用 window 对象的 alert，confirm，prompt，console 方法，可以在拦截时进行定制化 UI 。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> WebChromeClient mWebChromeClient = <span class="keyword">new</span> WebChromeClient() &#123;</span><br><span class="line">       <span class="meta">@Override</span></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onJsAlert</span><span class="params">(WebView view, String url, String message, <span class="keyword">final</span> JsResult result)</span> </span>&#123;</span><br><span class="line">           Log.d(TAG, <span class="string">"onJsAlert url:"</span> + url + <span class="string">",message:"</span> + message);</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">super</span>.onJsAlert(view, url, message, result);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="meta">@Override</span></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onConsoleMessage</span><span class="params">(ConsoleMessage consoleMessage)</span> </span>&#123;</span><br><span class="line">           Log.d(TAG, <span class="string">"onConsoleMessage consoleMessage:"</span> + consoleMessage.message());</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">super</span>.onConsoleMessage(consoleMessage);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="meta">@Override</span></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onJsConfirm</span><span class="params">(WebView view, String url, String message, JsResult result)</span> </span>&#123;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">super</span>.onJsConfirm(view, url, message, result);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="meta">@Override</span></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onJsPrompt</span><span class="params">(WebView view, String url, String message, String defaultValue, JsPromptResult result)</span> </span>&#123;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">super</span>.onJsPrompt(view, url, message, defaultValue, result);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">   &#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h3><p>综合以上 Js - Native 的通信方式，对比如下：</p>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>性能</th>
+<th>适用范围</th>
+<th>有无返回值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>addJavaScriptInterface</td>
+<td>高，直接调用native方法，无需模式匹配</td>
+<td>4.2及以上版本</td>
+<td>可以返回任意值</td>
+</tr>
+<tr>
+<td>shouldOverrideUrlLoading</td>
+<td>低，通过iframe或者script方式发起url请求</td>
+<td>兼容性好</td>
+<td>无返回值</td>
+</tr>
+<tr>
+<td>onJsPromt/console.log</td>
+<td>较快</td>
+<td>兼容性一般</td>
+<td>返回值只有true or false</td>
+</tr>
+<tr>
+<td>webview.loadUrl()</td>
+<td>慢，会刷新触发新页面</td>
+<td>所有版本</td>
+<td>无</td>
+</tr>
+<tr>
+<td>webview.evaluateJavaScript()</td>
+<td>快</td>
+<td>4.4以上版本</td>
+<td>有返回值</td>
+</tr>
+</tbody>
+</table>
+<p>对于 Native 处理后想给 Js 回调：</p>
+<ul>
+<li><p>addJavaScriptInterface 或 onJsPromt/console.log 这俩种方式有同步直接返回值，shouldOverrideUrlLoading 是不能直接返回的。当然为了保持前端抒写一致性，这里需要统一处理异步回调。</p>
+</li>
+<li><p>Js 传入 Url 参数时就传入唯一的自增的 callbackId 方法的名字，Native 层处理后再通过 <code>loadUrl()</code> 或 <code>evaluateJavascript()</code> 通过 window 对象调用全局监听的 callbackId 方法，以此完成异步回调。</p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>知道是不会有人点的，但万一被感动了呢？</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/donate_wechat.png" alt="IvanFanWu 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    IvanFanWu
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://lavnfan.github.io/2018/09/01/webview和native通信总结/" title="Webview 和 Native 通信总结">http://lavnfan.github.io/2018/09/01/webview和native通信总结/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"><i class="fa fa-tag"></i> Android</a>
+          
+            <a href="/tags/webview/" rel="tag"><i class="fa fa-tag"></i> webview</a>
+          
+            <a href="/tags/js/" rel="tag"><i class="fa fa-tag"></i> js</a>
+          
+            <a href="/tags/native/" rel="tag"><i class="fa fa-tag"></i> native</a>
+          
+            <a href="/tags/jsbridge/" rel="tag"><i class="fa fa-tag"></i> jsbridge</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/03/weex源码剖析/" rel="next" title="Weex 源码分析和实践总结">
+                <i class="fa fa-chevron-left"></i> Weex 源码分析和实践总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/10/14/把时间当做朋友/" rel="prev" title="把时间当做朋友 - 笔记感悟">
+                把时间当做朋友 - 笔记感悟 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zODc4NS8xNTMxMw=="></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            关于作者
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          
+            <img class="site-author-image" itemprop="image" src="/images/avatar.jpg" alt="IvanFanWu">
+          
+            <p class="site-author-name" itemprop="name">IvanFanWu</p>
+            <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+            
+              <a href="/archives/">
+            
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lavnFan" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>GitHub</a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="mailto:lavnFan@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#通信方式介绍"><span class="nav-number">1.</span> <span class="nav-text">通信方式介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Native-Js"><span class="nav-number">1.1.</span> <span class="nav-text">Native-Js</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#webview-loadUrl"><span class="nav-number">1.1.1.</span> <span class="nav-text">webview.loadUrl</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#webview-evaluateJavaScript"><span class="nav-number">1.1.2.</span> <span class="nav-text">webview.evaluateJavaScript</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Js-Native"><span class="nav-number">1.2.</span> <span class="nav-text">Js-Native</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#addJavaScriptInterface"><span class="nav-number">1.2.1.</span> <span class="nav-text">addJavaScriptInterface</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#shouldOverrideUrlLoading"><span class="nav-number">1.2.2.</span> <span class="nav-text">shouldOverrideUrlLoading</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#onJsPromt、onJsAlert、onJsConfirm-onConsoleMessage"><span class="nav-number">1.2.3.</span> <span class="nav-text">onJsPromt、onJsAlert、onJsConfirm/onConsoleMessage</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#性能对比"><span class="nav-number">1.3.</span> <span class="nav-text">性能对比</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div style="text-align: center;">
+<div class="copyright">
+  
+  &copy;  2016 &mdash; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">IvanFanWu</span>
+
+  
+</div>
+
+<div style="text-align: center;">
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  访客数：<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+
+<span class="post-meta-divider">|</span>
+
+<i class="fa fa-eye"></i><span id="busuanzi_container_site_pv">
+    访问量：<span id="busuanzi_value_site_pv"></span>
+</span>
+
+  <div class="beian">
+    <img src="/images/beian.png" style="display:inline-block;text-decoration:none;height:13px;">
+    <a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备18126196号</a>
+  </div>
+
+
+
+<!--  <div class="powered-by">由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.2</div>
+-->
+</div>
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </div></footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

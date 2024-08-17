@@ -103,14 +103,14 @@
 <meta property="og:site_name" content="IvanFanWu">
 <meta property="og:description" content="做过 Android 软键盘的或多或少都会踩的坑，adjustResize 和 adjusPan 有什么区别，为什么 adjustPan 会把当前页面顶出去？全屏模式下 adjustResize 怎么也顶出去了，如何适配不让当前页面顶出屏幕？  1、软键盘介绍系统软键盘是由 InputMethodService 管理，它为软键盘创建了一个继承 Diaolog 的 SoftInputWindow">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://qny.ivanfan.site/android/%E8%BD%AF%E9%94%AE%E7%9B%98windowsoftinput.png">
-<meta property="og:image" content="https://qny.ivanfan.site/android/%E8%BD%AF%E9%94%AE%E7%9B%98%E5%BC%82%E5%B8%B8.gif">
-<meta property="og:image" content="https://qny.ivanfan.site/android/%E8%BD%AF%E9%94%AE%E7%9B%98%E6%AD%A3%E5%B8%B8.gif">
-<meta property="og:updated_time" content="2023-05-27T08:00:16.337Z">
+<meta property="og:image" content="http://lavnfan.github.io/2022/04/24/Android/输入法键盘适配/%E8%BD%AF%E9%94%AE%E7%9B%98windowsoftinput.png">
+<meta property="og:image" content="http://lavnfan.github.io/2022/04/24/Android/输入法键盘适配/%E8%BD%AF%E9%94%AE%E7%9B%98%E5%BC%82%E5%B8%B8.gif">
+<meta property="og:image" content="http://lavnfan.github.io/2022/04/24/Android/输入法键盘适配/%E8%BD%AF%E9%94%AE%E7%9B%98%E6%AD%A3%E5%B8%B8.gif">
+<meta property="og:updated_time" content="2024-06-30T02:57:59.240Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android 软键盘输入法问题">
 <meta name="twitter:description" content="做过 Android 软键盘的或多或少都会踩的坑，adjustResize 和 adjusPan 有什么区别，为什么 adjustPan 会把当前页面顶出去？全屏模式下 adjustResize 怎么也顶出去了，如何适配不让当前页面顶出屏幕？  1、软键盘介绍系统软键盘是由 InputMethodService 管理，它为软键盘创建了一个继承 Diaolog 的 SoftInputWindow">
-<meta name="twitter:image" content="https://qny.ivanfan.site/android/%E8%BD%AF%E9%94%AE%E7%9B%98windowsoftinput.png">
+<meta name="twitter:image" content="http://lavnfan.github.io/2022/04/24/Android/输入法键盘适配/%E8%BD%AF%E9%94%AE%E7%9B%98windowsoftinput.png">
 
 
 
@@ -406,7 +406,7 @@
 </tbody>
 </table>
 <p>adjust 系列的适配模式可用如下图来表达主窗口的调整适配：</p>
-<p><img src="https://qny.ivanfan.site/android/%E8%BD%AF%E9%94%AE%E7%9B%98windowsoftinput.png" alt="软键盘windowsoftinput"></p>
+<p><img src="/2022/04/24/Android/输入法键盘适配/%E8%BD%AF%E9%94%AE%E7%9B%98windowsoftinput.png" alt="软键盘windowsoftinput"></p>
 <h3 id="2、软键盘遮挡及滑动问题"><a href="#2、软键盘遮挡及滑动问题" class="headerlink" title="2、软键盘遮挡及滑动问题"></a>2、软键盘遮挡及滑动问题</h3><p>对于非全屏，我们使用 <code>adjustResize</code> 就能适配一般情况下的软键盘弹出场景，但对于以下情况还需要额外进行适配：</p>
 <ul>
 <li>非全屏模式下，软键盘弹出时遮挡住了需要显示的非输入焦点区域</li>
@@ -421,7 +421,7 @@
 <p>例如在面板根布局下监听 <code>onLayoutChange</code> ，获取弹出前后的位置，再添加被遮挡区域的高度进行绘制。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">panelView.addOnLayoutChangeListener(<span class="keyword">new</span> View.OnLayoutChangeListener() &#123;</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onLayoutChange</span><span class="params">(View v， <span class="keyword">int</span> left， <span class="keyword">int</span> top， <span class="keyword">int</span> right， <span class="keyword">int</span> bottom， <span class="keyword">int</span> oldLeft， <span class="keyword">int</span> oldTop， <span class="keyword">int</span> oldRight， <span class="keyword">int</span> oldBottom)</span> </span>&#123;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;);</span><br></pre></td></tr></table></figure>
 <p>对于卡噗的全屏模式来说，<code>adjustResize</code>失效 ，系统仍然会平移当前窗口把标题栏顶上去，而不会让主窗口调整。</p>
-<p><img src="https://qny.ivanfan.site/android/%E8%BD%AF%E9%94%AE%E7%9B%98%E5%BC%82%E5%B8%B8.gif" alt="软键盘异常"></p>
+<p><img src="/2022/04/24/Android/输入法键盘适配/%E8%BD%AF%E9%94%AE%E7%9B%98%E5%BC%82%E5%B8%B8.gif" alt="软键盘异常"></p>
 <p>所以需要使用方案二的 <code>onGlobalLayoutListener</code> 全局监听来解决标题栏被顶出去的问题。</p>
 <h4 id="2、解决方案二：onGlobalLayoutListener"><a href="#2、解决方案二：onGlobalLayoutListener" class="headerlink" title="2、解决方案二：onGlobalLayoutListener"></a>2、解决方案二：onGlobalLayoutListener</h4><p><code>OnGlobalLayoutListener</code> 是 <code>ViewTree</code> 的全局布局状态或可见性发生变化时的监听，我们可以在软键盘弹出/消失触发主窗口的全局布局变化监听里，改变主窗口不把标题栏顶出去。</p>
 <p>不把顶部标题栏顶出去，就是要重新设置主窗口的布局，有以下几种方式可以做到：</p>
@@ -433,7 +433,7 @@
 <p>经过每种方法验证，最终发现是 padding 方案最适合。所以这里通过设置 <code>rootView</code> 的底部间距，来调整主窗口正好在输入法窗口之上。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> ViewTreeObserver.OnGlobalLayoutListener mRootViewListener = <span class="keyword">new</span> ViewTreeObserver.OnGlobalLayoutListener() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onGlobalLayout</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Rect rect = <span class="keyword">new</span> Rect();</span><br><span class="line">        mRootView.getWindowVisibleDisplayFrame(rect);</span><br><span class="line">        <span class="keyword">int</span> diff = mHeight - rect.bottom;  <span class="comment">//软键盘高度 = 屏幕高度-主窗口可见高度</span></span><br><span class="line">        <span class="keyword">int</span> displayHeight = rect.bottom - rect.top;  <span class="comment">//主窗口可见高度  </span></span><br><span class="line">        <span class="keyword">boolean</span> visible = (<span class="keyword">double</span>) displayHeight / mHeight &lt; <span class="number">0.8</span>; <span class="comment">//非主窗口高度比较大，视为软键盘可见</span></span><br><span class="line">        <span class="keyword">if</span> (visible != isVisiableForLast || visible &amp;&amp; diff != mLastDiff) &#123;</span><br><span class="line">             <span class="keyword">if</span> (mRootView.getPaddingBottom() != diff) &#123; </span><br><span class="line">                <span class="keyword">if</span> (visible) &#123;</span><br><span class="line">                    mSoftInputListener.softInputPop(<span class="keyword">true</span>);</span><br><span class="line">                    updateContentPadding(diff);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    mSoftInputListener.softInputPop(<span class="keyword">false</span>);</span><br><span class="line">                    updateContentPadding(<span class="number">0</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            mLastDiff = diff;</span><br><span class="line">            isVisiableForLast = visible;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>适配情况如下所示：</p>
-<p><img src="https://qny.ivanfan.site/android/%E8%BD%AF%E9%94%AE%E7%9B%98%E6%AD%A3%E5%B8%B8.gif" alt="软键盘正常"></p>
+<p><img src="/2022/04/24/Android/输入法键盘适配/%E8%BD%AF%E9%94%AE%E7%9B%98%E6%AD%A3%E5%B8%B8.gif" alt="软键盘正常"></p>
 <h3 id="3、其他问题"><a href="#3、其他问题" class="headerlink" title="3、其他问题"></a>3、其他问题</h3><p>1、部分机型兼容性问题，无 <code>onGlobalLayoutListener</code> 回调</p>
 <p>在使用 <code>onGlobalLayoutListener</code> 方法时，部分低端机型上没有回调，导致标题栏仍然被顶上去。尝试的解决方案有：</p>
 <ul>
@@ -526,7 +526,7 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2022/07/16/JS/v8-inspector 调试/" rel="prev" title="基于 V8 引擎实现 JS 调试的 DevTools">
+              <a href="/2022/07/16/v8/v8-inspector 调试/" rel="prev" title="基于 V8 引擎实现 JS 调试的 DevTools">
                 基于 V8 引擎实现 JS 调试的 DevTools <i class="fa fa-chevron-right"></i>
               </a>
             
@@ -608,7 +608,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-count">29</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -619,7 +619,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-count">18</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -630,7 +630,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-count">53</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -703,7 +703,7 @@
 <div class="copyright">
   
   &copy;  2016 &mdash; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>

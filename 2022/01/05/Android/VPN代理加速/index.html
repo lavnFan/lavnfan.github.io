@@ -95,34 +95,34 @@
 
 
 
-<meta name="description" content="本文主要调研游戏网络加速，网络代理的技术方案和实现，可以用于解决网速低、网络信号差等带来的卡顿、丢帧等体验问题  一、整体方案          复杂繁多的运营商：对于没有建立互联的运营商，需要先经数据中心迂回再到上车点 代理服务器：上车点目前不承担认证协商能力，需要部署代理服务器与 App 之间进行认证协商/加解密，同时为加快代理服务器到上车点的传输，可以部署到同个 IDC GAAP 专线：使">
+<meta name="description" content="本文主要调研游戏网络加速，网络代理的技术方案和实现，可以用于解决网速低、网络信号差等带来的卡顿、丢帧等体验问题  一、整体方案   复杂繁多的运营商：对于没有建立互联的运营商，需要先经数据中心迂回再到上车点 代理服务器：上车点目前不承担认证协商能力，需要部署代理服务器与 App 之间进行认证协商/加解密，同时为加快代理服务器到上车点的传输，可以部署到同个 IDC GAAP 专线：使用部署的私有">
 <meta name="keywords" content="Android,VPN,代理">
 <meta property="og:type" content="article">
 <meta property="og:title" content="VPN 代理加速">
 <meta property="og:url" content="http://lavnfan.github.io/2022/01/05/Android/VPN代理加速/index.html">
 <meta property="og:site_name" content="IvanFanWu">
-<meta property="og:description" content="本文主要调研游戏网络加速，网络代理的技术方案和实现，可以用于解决网速低、网络信号差等带来的卡顿、丢帧等体验问题  一、整体方案          复杂繁多的运营商：对于没有建立互联的运营商，需要先经数据中心迂回再到上车点 代理服务器：上车点目前不承担认证协商能力，需要部署代理服务器与 App 之间进行认证协商/加解密，同时为加快代理服务器到上车点的传输，可以部署到同个 IDC GAAP 专线：使">
+<meta property="og:description" content="本文主要调研游戏网络加速，网络代理的技术方案和实现，可以用于解决网速低、网络信号差等带来的卡顿、丢帧等体验问题  一、整体方案   复杂繁多的运营商：对于没有建立互联的运营商，需要先经数据中心迂回再到上车点 代理服务器：上车点目前不承担认证协商能力，需要部署代理服务器与 App 之间进行认证协商/加解密，同时为加快代理服务器到上车点的传输，可以部署到同个 IDC GAAP 专线：使用部署的私有">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://qny.ivanfan.site/android/%E5%8A%A0%E9%80%9F%E5%99%A8.png">
-<meta property="og:image" content="https://qny.ivanfan.site/android/android_vpn.png">
-<meta property="og:image" content="https://qny.ivanfan.site/android/ip_udp.png">
-<meta property="og:image" content="https://qny.ivanfan.site/android/ip_socks.png">
-<meta property="og:image" content="https://qny.ivanfan.site/android/tun2socks.png">
-<meta property="og:image" content="https://qny.ivanfan.site/android/socks5%E4%BB%A3%E7%90%86.png">
-<meta property="og:image" content="https://qny.ivanfan.site/android/shadowsocks%E4%BB%A3%E7%90%86.png">
-<meta property="og:image" content="https://qny.ivanfan.site/android/shadowsocks.png">
-<meta property="og:image" content="https://qny.ivanfan.site/android/gaap.png">
-<meta property="og:image" content="https://qny.ivanfan.site/android/ip.png">
-<meta property="og:image" content="https://qny.ivanfan.site/android/tcp.png">
-<meta property="og:image" content="https://qny.ivanfan.site/android/udp.png">
-<meta property="og:image" content="https://qny.ivanfan.site/android/lwip_in.png">
-<meta property="og:image" content="https://qny.ivanfan.site/android/lwip_out.png">
-<meta property="og:image" content="https://qny.ivanfan.site/android/shadowsocks%E6%9C%AC%E5%9C%B0%E8%BF%9E%E6%8E%A5.png">
-<meta property="og:updated_time" content="2022-08-06T02:31:34.473Z">
+<meta property="og:image" content="http://lavnfan.github.io/2022/01/05/Android/VPN代理加速/%E5%8A%A0%E9%80%9F%E5%99%A8.png">
+<meta property="og:image" content="http://lavnfan.github.io/2022/01/05/Android/VPN代理加速/android_vpn.png">
+<meta property="og:image" content="http://lavnfan.github.io/2022/01/05/Android/VPN代理加速/ip_udp.png">
+<meta property="og:image" content="http://lavnfan.github.io/2022/01/05/Android/VPN代理加速/ip_socks.png">
+<meta property="og:image" content="http://lavnfan.github.io/2022/01/05/Android/VPN代理加速/tun2socks.png">
+<meta property="og:image" content="http://lavnfan.github.io/2022/01/05/Android/VPN代理加速/socks5%E4%BB%A3%E7%90%86.png">
+<meta property="og:image" content="http://lavnfan.github.io/2022/01/05/Android/VPN代理加速/shadowsocks%E4%BB%A3%E7%90%86.png">
+<meta property="og:image" content="http://lavnfan.github.io/2022/01/05/Android/VPN代理加速/shadowsocks.png">
+<meta property="og:image" content="http://lavnfan.github.io/2022/01/05/Android/VPN代理加速/gaap.png">
+<meta property="og:image" content="http://lavnfan.github.io/2022/01/05/Android/VPN代理加速/ip.png">
+<meta property="og:image" content="http://lavnfan.github.io/2022/01/05/Android/VPN代理加速/tcp.png">
+<meta property="og:image" content="http://lavnfan.github.io/2022/01/05/Android/VPN代理加速/udp.png">
+<meta property="og:image" content="http://lavnfan.github.io/2022/01/05/Android/VPN代理加速/lwip_in.png">
+<meta property="og:image" content="http://lavnfan.github.io/2022/01/05/Android/VPN代理加速/lwip_out.png">
+<meta property="og:image" content="http://lavnfan.github.io/2022/01/05/Android/VPN代理加速/shadowsocks%E6%9C%AC%E5%9C%B0%E8%BF%9E%E6%8E%A5.png">
+<meta property="og:updated_time" content="2024-06-30T03:01:41.694Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="VPN 代理加速">
-<meta name="twitter:description" content="本文主要调研游戏网络加速，网络代理的技术方案和实现，可以用于解决网速低、网络信号差等带来的卡顿、丢帧等体验问题  一、整体方案          复杂繁多的运营商：对于没有建立互联的运营商，需要先经数据中心迂回再到上车点 代理服务器：上车点目前不承担认证协商能力，需要部署代理服务器与 App 之间进行认证协商/加解密，同时为加快代理服务器到上车点的传输，可以部署到同个 IDC GAAP 专线：使">
-<meta name="twitter:image" content="https://qny.ivanfan.site/android/%E5%8A%A0%E9%80%9F%E5%99%A8.png">
+<meta name="twitter:description" content="本文主要调研游戏网络加速，网络代理的技术方案和实现，可以用于解决网速低、网络信号差等带来的卡顿、丢帧等体验问题  一、整体方案   复杂繁多的运营商：对于没有建立互联的运营商，需要先经数据中心迂回再到上车点 代理服务器：上车点目前不承担认证协商能力，需要部署代理服务器与 App 之间进行认证协商/加解密，同时为加快代理服务器到上车点的传输，可以部署到同个 IDC GAAP 专线：使用部署的私有">
+<meta name="twitter:image" content="http://lavnfan.github.io/2022/01/05/Android/VPN代理加速/%E5%8A%A0%E9%80%9F%E5%99%A8.png">
 
 
 
@@ -393,21 +393,21 @@
         <blockquote>
 <p>本文主要调研游戏网络加速，网络代理的技术方案和实现，可以用于解决网速低、网络信号差等带来的卡顿、丢帧等体验问题</p>
 </blockquote>
-<h2 id="一、整体方案"><a href="#一、整体方案" class="headerlink" title="一、整体方案"></a>一、整体方案</h2><p><img src="https://qny.ivanfan.site/android/%E5%8A%A0%E9%80%9F%E5%99%A8.png" alt="img">        </p>
+<h2 id="一、整体方案"><a href="#一、整体方案" class="headerlink" title="一、整体方案"></a>一、整体方案</h2><p><img src="/2022/01/05/Android/VPN代理加速/%E5%8A%A0%E9%80%9F%E5%99%A8.png" alt="img"> </p>
 <ol>
 <li>复杂繁多的运营商：对于没有建立互联的运营商，需要先经数据中心迂回再到上车点</li>
 <li>代理服务器：上车点目前不承担认证协商能力，需要部署代理服务器与 App 之间进行认证协商/加解密，同时为加快代理服务器到上车点的传输，可以部署到同个 IDC</li>
 <li>GAAP 专线：使用部署的私有 VPC 在内网传输</li>
 <li>游戏目标服务器：下车点进行 DNAT 转换，为避免伪造攻击，源 IP 需多个</li>
 </ol>
-<h2 id="二、Android-VPN-加速方案"><a href="#二、Android-VPN-加速方案" class="headerlink" title="二、Android VPN 加速方案"></a>二、Android VPN 加速方案</h2><p>​                 <img src="https://qny.ivanfan.site/android/android_vpn.png" alt="img">        </p>
+<h2 id="二、Android-VPN-加速方案"><a href="#二、Android-VPN-加速方案" class="headerlink" title="二、Android VPN 加速方案"></a>二、Android VPN 加速方案</h2><p><img src="/2022/01/05/Android/VPN代理加速/android_vpn.png" alt="img"> </p>
 <ul>
 <li>从本地接口的文件描述符（fd）读取传出的 IP 数据包，进行加密并通过 VPN 网关发送到代理服务器，代理服务器寻找加速节点，经过加速专线到达游戏服务器</li>
 <li>将传入的数据包（从 VPN 网关接收并解密）写入本地接口的文件描述符（fd）。</li>
 <li>5.0 及以上按应用拦截，5.0 以下按目标 IP 地址拦截，(0.0.0.0) 拦截所有流量</li>
 </ul>
 <h3 id="方案一：包裹-IP-数据包以-UDP-TCP-数据包转发"><a href="#方案一：包裹-IP-数据包以-UDP-TCP-数据包转发" class="headerlink" title="方案一：包裹 IP 数据包以 UDP/TCP 数据包转发"></a>方案一：包裹 IP 数据包以 UDP/TCP 数据包转发</h3><p>通过 UDP/TCP 包裹 IP 数据包转发到代理服务器，代理服务器脱去 UDP/TCP 头获取拦截的 IP 数据包，再进行 NAT IP 地址转换，转发到目标服务器的加速节点。</p>
-<p>​                 <img src="https://qny.ivanfan.site/android/ip_udp.png" alt="img">        </p>
+<p>​                 <img src="/2022/01/05/Android/VPN代理加速/ip_udp.png" alt="img"> </p>
 <ul>
 <li>TCP/UDP 对 IP 包进行封装，代理服务器再将该 IP 包发到网络协议栈中</li>
 </ul>
@@ -419,7 +419,7 @@
 <ul>
 <li>传输的包大小增大，多了 udp/tcp 和 ip 的头部</li>
 </ul>
-<h3 id="方案二：解析-IP-数据包以-SOCKS-代理协议转发"><a href="#方案二：解析-IP-数据包以-SOCKS-代理协议转发" class="headerlink" title="方案二：解析 IP 数据包以 SOCKS 代理协议转发"></a>方案二：解析 IP 数据包以 SOCKS 代理协议转发</h3><p>使用 tun2socks 将 IP 数据包解析成原始数据，再用 SOCKS 协议封装进行转发<br><img src="https://qny.ivanfan.site/android/ip_socks.png" alt="img">        </p>
+<h3 id="方案二：解析-IP-数据包以-SOCKS-代理协议转发"><a href="#方案二：解析-IP-数据包以-SOCKS-代理协议转发" class="headerlink" title="方案二：解析 IP 数据包以 SOCKS 代理协议转发"></a>方案二：解析 IP 数据包以 SOCKS 代理协议转发</h3><p>使用 tun2socks 将 IP 数据包解析成原始数据，再用 SOCKS 协议封装进行转发<br><img src="/2022/01/05/Android/VPN代理加速/ip_socks.png" alt="img"></p>
 <ul>
 <li>解析了 IP 数据包后，需要维护 TCP/IP 的协议栈交互</li>
 <li>使用 shadowsocks/socks5 等方式协商认证/加密传输到代理服务器</li>
@@ -434,7 +434,7 @@
 <li>需要维护与 tun0 的 TCP/IP 协议栈交互</li>
 <li>lwip 会进行魔改，维护成本高</li>
 </ul>
-<h4 id="tun2socks-方案"><a href="#tun2socks-方案" class="headerlink" title="tun2socks 方案"></a><strong>tun2socks 方案</strong></h4><p>​                 <img src="https://qny.ivanfan.site/android/tun2socks.png" alt="img">        </p>
+<h4 id="tun2socks-方案"><a href="#tun2socks-方案" class="headerlink" title="tun2socks 方案"></a><strong>tun2socks 方案</strong></h4><p>​                 <img src="/2022/01/05/Android/VPN代理加速/tun2socks.png" alt="img">        </p>
 <p>1）与Android VpnService fd 交互</p>
 <ul>
 <li>IP 读取：fd_handler read fd 后在 device_read_handler_send 中进行分发，tcp 丢给 lwip 的 ip_input 处理，udp 自己处理 process_device_udp_packet</li>
@@ -456,7 +456,7 @@
 <li>UDP 读取：收到 ip 数据报文后，若是 udp 的报文，则解析数据后，用 socks 封装通过 SocksUdpGwClient 发送</li>
 <li>UDP 写回：监听 udp 的数据报文，对 socks 进行解析，再封装 ip 报文通过 BTap_Send 写回 fd 中。</li>
 </ul>
-<h4 id="Socks5-协议封装"><a href="#Socks5-协议封装" class="headerlink" title="Socks5 协议封装"></a>Socks5 协议封装</h4><p><img src="https://qny.ivanfan.site/android/socks5%E4%BB%A3%E7%90%86.png" alt="img">        </p>
+<h4 id="Socks5-协议封装"><a href="#Socks5-协议封装" class="headerlink" title="Socks5 协议封装"></a>Socks5 协议封装</h4><p><img src="/2022/01/05/Android/VPN代理加速/socks5%E4%BB%A3%E7%90%86.png" alt="img"> </p>
 <ul>
 <li>认证方法协商</li>
 <li>身份信息认证</li>
@@ -467,7 +467,7 @@
 <li>SOCKS5 连接需要三次握手，有连接延迟</li>
 <li>SOCKS5 协议只负责传输，不负责加密，如 Http 协议通过 SOCKS5 代理的流量将全是明文，需要用其他方式如 TLS 等来保证的安全性</li>
 </ul>
-<h3 id="方案三：解析-IP-数据包以-shadowsocks-协议转发"><a href="#方案三：解析-IP-数据包以-shadowsocks-协议转发" class="headerlink" title="方案三：解析 IP 数据包以 shadowsocks 协议转发"></a>方案三：解析 IP 数据包以 <strong>shadowsocks</strong> 协议转发</h3><p>​        <img src="https://qny.ivanfan.site/android/shadowsocks%E4%BB%A3%E7%90%86.png" alt="shadowsocks代理"></p>
+<h3 id="方案三：解析-IP-数据包以-shadowsocks-协议转发"><a href="#方案三：解析-IP-数据包以-shadowsocks-协议转发" class="headerlink" title="方案三：解析 IP 数据包以 shadowsocks 协议转发"></a>方案三：解析 IP 数据包以 <strong>shadowsocks</strong> 协议转发</h3><p>​        <img src="/2022/01/05/Android/VPN代理加速/shadowsocks%E4%BB%A3%E7%90%86.png" alt="shadowsocks代理"></p>
 <ul>
 <li>建立 SOCKS Server，将数据转发到本地建的 shadowsocks local</li>
 <li>shadowsocks local 对数据进行加密，先通知目标服务器的地址信息，再传输密文和随机数 IV</li>
@@ -481,12 +481,12 @@
 <ul>
 <li>没有协商认证过程，加密方式和加密的用户密码是事先定义好的</li>
 </ul>
-<h4 id="shadowsocks-协议加密"><a href="#shadowsocks-协议加密" class="headerlink" title="shadowsocks 协议加密"></a>shadowsocks 协议加密</h4><p><img src="https://qny.ivanfan.site/android/shadowsocks.png" alt="img">        </p>
+<h4 id="shadowsocks-协议加密"><a href="#shadowsocks-协议加密" class="headerlink" title="shadowsocks 协议加密"></a>shadowsocks 协议加密</h4><p><img src="/2022/01/05/Android/VPN代理加速/shadowsocks.png" alt="img"> </p>
 <ul>
 <li>传输目标地址和端口</li>
 <li>使用 AES-256 等算法根据用户密码生成密钥，再根据密钥+随机数IV生成的密文和 IV 进行传输</li>
 </ul>
-<h3 id="方案四：解析-IP-数据包直接转发（腾讯云GAAP方案）"><a href="#方案四：解析-IP-数据包直接转发（腾讯云GAAP方案）" class="headerlink" title="方案四：解析 IP 数据包直接转发（腾讯云GAAP方案）"></a>方案四：解析 IP 数据包直接转发（腾讯云GAAP方案）</h3><p> <img src="https://qny.ivanfan.site/android/gaap.png" alt="img">        </p>
+<h3 id="方案四：解析-IP-数据包直接转发（腾讯云GAAP方案）"><a href="#方案四：解析-IP-数据包直接转发（腾讯云GAAP方案）" class="headerlink" title="方案四：解析 IP 数据包直接转发（腾讯云GAAP方案）"></a>方案四：解析 IP 数据包直接转发（腾讯云GAAP方案）</h3><p> <img src="/2022/01/05/Android/VPN代理加速/gaap.png" alt="img">        </p>
 <ul>
 <li>客户端获取单个 App 的接入点 VIP 和端口，并将数据包转发</li>
 <li>接入点进行 NAT 源地址和目标地址转换，目标地址根据 VIP 匹配控制台配置的目标 IP 和端口，客户端源 IP 和端口 TOA 携带</li>
@@ -501,7 +501,7 @@
 <li>不能通用加速，只能配置 VIP 和目标 IP 信息的基础上才能加速</li>
 <li>没有认证方式，VIP 和端口容易被攻击</li>
 </ul>
-<h2 id="三、报文分析"><a href="#三、报文分析" class="headerlink" title="三、报文分析"></a>三、报文分析</h2><h3 id="1、TCP-UDP"><a href="#1、TCP-UDP" class="headerlink" title="1、TCP/UDP"></a>1、TCP/UDP</h3><h4 id="IP-报文"><a href="#IP-报文" class="headerlink" title="IP 报文"></a>IP 报文</h4><p><img src="https://qny.ivanfan.site/android/ip.png" alt="ip"></p>
+<h2 id="三、报文分析"><a href="#三、报文分析" class="headerlink" title="三、报文分析"></a>三、报文分析</h2><h3 id="1、TCP-UDP"><a href="#1、TCP-UDP" class="headerlink" title="1、TCP/UDP"></a>1、TCP/UDP</h3><h4 id="IP-报文"><a href="#IP-报文" class="headerlink" title="IP 报文"></a>IP 报文</h4><p><img src="/2022/01/05/Android/VPN代理加速/ip.png" alt="ip"></p>
 <ul>
 <li>version：IP协议版本，4bit，0100（IPv4），0110（IPv6）</li>
 <li>header length：IP包头长度，4bit，包长度可变</li>
@@ -531,7 +531,7 @@
 <li>可靠性：需要超时、重传、窗口管理、流量控制、拥塞控制等功能来解决比特错误、包乱序、包重复、丢包等传输错误</li>
 <li>字节流：需要用 TCP 窗口管理、拥塞控制等功能来对应用层发送的数据进行统一分片或打包发送</li>
 </ul>
-<p><img src="https://qny.ivanfan.site/android/tcp.png" alt="tcp"></p>
+<p><img src="/2022/01/05/Android/VPN代理加速/tcp.png" alt="tcp"></p>
 <ul>
 <li>源端口：16bit，发送应用程序对应的端口，端口在0～65535之间，在收到服务请求时，操作系统动态地为客户端的应用程序分配端口号</li>
 <li>目的端口：16bit，报文接收计算机上的应用程序地址端口</li>
@@ -556,7 +556,7 @@
 <li>选项，长度不变，但必须是 32bit 的整数倍</li>
 </ul>
 <h4 id="UDP-报文"><a href="#UDP-报文" class="headerlink" title="UDP 报文"></a>UDP 报文</h4><p>无连接，数据包套接字，不保证到达性</p>
-<p><img src="https://qny.ivanfan.site/android/udp.png" alt="udp"></p>
+<p><img src="/2022/01/05/Android/VPN代理加速/udp.png" alt="udp"></p>
 <ul>
 <li>源端口：16bit，</li>
 <li>目的端口：16bit</li>
@@ -564,10 +564,10 @@
 <li>校验：16bit</li>
 </ul>
 <h3 id="2、LWIP-TCP-IP"><a href="#2、LWIP-TCP-IP" class="headerlink" title="2、LWIP TCP/IP"></a>2、LWIP TCP/IP</h3><p>LWIP 是一个轻量型的 TCP/IP 协议栈，我们可以在拦截 Android IP 报文包后，将其解析成 TCP 报文桥接到外部使用 Socks 协议发出：</p>
-<p><img src="https://qny.ivanfan.site/android/lwip_in.png" alt="lwip_in"></p>
+<p><img src="/2022/01/05/Android/VPN代理加速/lwip_in.png" alt="lwip_in"></p>
 <p>拦截 IP 报文后，输出 <code>tcp_input</code>，我们可以在  <code>tcp_input</code> 中将协议转发到外部。</p>
 <p>当收到外部消息后，使用代理 Socks 协议解析成裸数据，然后使用 LWIP <code>tcp_write</code>  写回，并封装成 IP 报文回给 Android VPN。</p>
-<p><img src="https://qny.ivanfan.site/android/lwip_out.png" alt="lwip_out"></p>
+<p><img src="/2022/01/05/Android/VPN代理加速/lwip_out.png" alt="lwip_out"></p>
 <h1 id="四、Demo-示例"><a href="#四、Demo-示例" class="headerlink" title="四、Demo 示例"></a>四、Demo 示例</h1><p>我们使用 shadowsocks 在服务端部署，并在客户端进行 VPN 代理转发。</p>
 <h3 id="服务部署"><a href="#服务部署" class="headerlink" title="服务部署"></a>服务部署</h3><p>1）shadowsocks 安装</p>
 <p>CentOS：</p>
@@ -582,9 +582,9 @@
 <li>server_port：服务端口需要加安全组</li>
 </ul>
 <p>启动运行 shadowsocks server</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 运行在前台</span></span><br><span class="line">ssserver -c shadowsocks.json</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 运行在后台</span></span><br><span class="line">ssserver -c shadowsocks.json -d start</span><br><span class="line">ssserver -c shadowsocks.json -d stop</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 运行在前台</span><br><span class="line">ssserver -c shadowsocks.json</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span> 运行在后台</span><br><span class="line">ssserver -c shadowsocks.json -d start</span><br><span class="line">ssserver -c shadowsocks.json -d stop</span><br></pre></td></tr></table></figure>
 <h3 id="本地连接"><a href="#本地连接" class="headerlink" title="本地连接"></a>本地连接</h3><p>下载个 shadowsocks app 设置已经部署的 IP:Port 进行连接：</p>
-<p><img src="https://qny.ivanfan.site/android/shadowsocks%E6%9C%AC%E5%9C%B0%E8%BF%9E%E6%8E%A5.png" alt="shadowsocks本地连接"></p>
+<p><img src="/2022/01/05/Android/VPN代理加速/shadowsocks%E6%9C%AC%E5%9C%B0%E8%BF%9E%E6%8E%A5.png" alt="shadowsocks本地连接"></p>
 
       
     </div>
@@ -661,7 +661,7 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2021/10/25/c++lambda/" rel="next" title="玩转 C++ lambda">
+              <a href="/2021/10/25/c++/c++lambda/" rel="next" title="玩转 C++ lambda">
                 <i class="fa fa-chevron-left"></i> 玩转 C++ lambda
               </a>
             
@@ -753,7 +753,7 @@
             
               <a href="/archives/">
             
-                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-count">29</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -764,7 +764,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-count">18</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -775,7 +775,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">55</span>
+                <span class="site-state-item-count">53</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -848,7 +848,7 @@
 <div class="copyright">
   
   &copy;  2016 &mdash; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
